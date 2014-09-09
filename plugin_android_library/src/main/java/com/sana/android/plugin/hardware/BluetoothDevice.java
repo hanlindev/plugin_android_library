@@ -17,7 +17,12 @@ public class BluetoothDevice<T> extends DeviceBase<T> {
     }
 
     @Override
-    public <T1> T1 stop(DataConverter<T1> converter) {
+    public T stop(DataConverter<T> converter) {
+        return null;
+    }
+
+    @Override
+    public T stop() {
         return null;
     }
 }

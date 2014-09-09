@@ -27,5 +27,6 @@ public abstract class DeviceBase<T> extends Observable {
 
     public abstract void prepare();
     public abstract void start();
-    public abstract <T> T stop(DataConverter<T> converter);
+    public abstract T stop(DataConverter<T> converter);
+    public abstract T stop();
 }
