@@ -18,6 +18,12 @@ import java.util.concurrent.TimeUnit;
 public abstract class DataChunkListener
     implements BinaryDataListener, Runnable {
 
+    private final static String FATAL_INTERRUPTION_MSG_FORMAT =
+        "Unable to carry out critical operation - %s";
+
+    private final static String PUT_BYTE_OPERATION_NAME =
+        "register incoming bytes.";
+
     private final static int SHUTDOWN_TIMEOUT = 5;
     private final static TimeUnit SHUTDOWN_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
@@ -44,22 +50,37 @@ public abstract class DataChunkListener
      * @throws InterruptedException when the bytes fail to be put into the
      * waiting list.
      */
-    public synchronized void putBytes(byte[] bytes)
-            throws InterruptedException {
-
+    @Override
+    public synchronized void putBytes(Byte[] bytes) {
         if (this.isListening) {
-            this.appendOperations.put(new ByteAppender(this.buffer, bytes));
+            try {
+                this.appendOperations.put(new ByteAppender(this.buffer, bytes));
+            } catch (InterruptedException e) {
+                // This is designed to wait indefinitely before the new bytes
+                // are registered. If it is interrupted, we can assume
+                // that something really bad happened, e.g. not enough memory.
+                throw new Error(String.format(
+                    DataChunkListener.FATAL_INTERRUPTION_MSG_FORMAT,
+                    DataChunkListener.PUT_BYTE_OPERATION_NAME
+                ));
+            }
         }
     }
 
     /**
      * Start the background thread and begin accepting bytes.
      */
+    @Override
     public void startListening() {
         this.isListening = true;
         this.receiverThread.submit(this);
     }
 
+    /**
+     * Attempt to stop this data listener. It will wait for 5 seconds before
+     * timing out.
+     */
+    @Override
     public void stopListening() {
         this.stopListening(
             DataChunkListener.SHUTDOWN_TIMEOUT,
@@ -70,6 +91,7 @@ public abstract class DataChunkListener
      * Stop accepting more bytes, then signal the monitoring thread to finish
      * the remaining job.
      */
+    @Override
     public void stopListening(long timeout, TimeUnit unit) {
         this.isListening = false;
         this.receiverThread.shutdown();
