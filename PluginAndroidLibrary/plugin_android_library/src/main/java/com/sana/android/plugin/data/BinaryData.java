@@ -1,37 +1,37 @@
 package com.sana.android.plugin.data;
 
+import android.content.ContentResolver;
+import android.content.Context;
 import android.net.Uri;
+import android.text.style.AlignmentSpan;
 
 import com.sana.android.plugin.communication.MimeType;
+import com.sana.android.plugin.data.event.BaseDataEvent;
 import com.sana.android.plugin.hardware.Feature;
 
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
  * Created by Han Lin on 9/10/14.
  */
-public class BinaryData {
+public abstract class BinaryData implements DataWithEvent {
     private Feature source;
     private MimeType type;
     private Uri uriToData;
-    private URI javaUriToData;
-    private FileInputStream fin;
 
     public BinaryData(Feature source, MimeType type, Uri uriToData)
             throws URISyntaxException, FileNotFoundException {
         this.source = source;
         this.type = type;
         this.uriToData = uriToData;
-        this.javaUriToData = new URI(this.uriToData.toString());
-        this.fin = new FileInputStream(new File(this.javaUriToData));
     }
 
     public Feature getSource() {
@@ -54,11 +54,28 @@ public class BinaryData {
     /**
      * Get the data that was captured.
      *
+     * @param contentResolver    The ContentResolver instance of the app. You
+     *                           can use getContentResolver() static method
+     *                           to get the instance.
      * @return The byte array containing the captured data.
+     * @throws IOException
      */
-    public byte[] getBinaryData() throws URISyntaxException, IOException {
-        URI javaUri = new URI(this.uriToData.toString());
-        return IOUtils.toByteArray(new FileInputStream(new File(javaUri)));
+    public byte[] getBinaryData(ContentResolver contentResolver
+    ) throws IOException {
+        InputStream is = contentResolver.openInputStream(this.uriToData);
+        return IOUtils.toByteArray(is);
+    }
+
+    /**
+     * @param contentResolver    The ContentResolver instance of the app. You
+     *                           can use getContentResolver() static method
+     *                           to get the instance.
+     * @return
+     * @throws IOException
+     */
+    public String getStringData(ContentResolver contentResolver
+    ) throws IOException {
+        return new String(this.getBinaryData(contentResolver));
     }
 
     /**
@@ -72,4 +89,7 @@ public class BinaryData {
     public Byte[] getBinaryData(int start, int length) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public abstract BaseDataEvent getEvent();
 }
