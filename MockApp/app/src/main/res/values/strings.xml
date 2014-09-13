@@ -4,5 +4,7 @@
     <string name="app_name">MockApp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="send_text">Send Text to MockSana</string>
+    <string name="send_binary">Send Binary to MockSana</string>
 
 </resources>

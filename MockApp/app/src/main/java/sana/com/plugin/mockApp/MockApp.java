@@ -1,9 +1,11 @@
 package sana.com.plugin.mockApp;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class MockApp extends ActionBarActivity {
@@ -12,6 +14,21 @@ public class MockApp extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_app);
+
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, "Share text to.."));
+            }
+        }
     }
 
 
@@ -32,5 +49,27 @@ public class MockApp extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+        Called when the user clicks send text button
+     */
+    public void sendTextToSana(View view) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, "Share text to.."));
+    }
+
+    /*
+        Called when the user clicks send binary data button
+     */
+    public void sendBinaryToSana(View view) {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        //shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+        shareIntent.setType("image/jpeg");
+        startActivity(Intent.createChooser(shareIntent, "Share binary data to.."));
     }
 }
