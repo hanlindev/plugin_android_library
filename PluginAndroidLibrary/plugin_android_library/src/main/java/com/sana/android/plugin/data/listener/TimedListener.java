@@ -1,5 +1,7 @@
 package com.sana.android.plugin.data.listener;
 
+import android.util.Log;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -9,12 +11,15 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Han Lin
  */
-public abstract class TimedListener implements BinaryDataListener, Runnable {
+public abstract class TimedListener implements Runnable, DataListener {
+    private final static String LOG_TAG =
+            "TimedListener";
+    private final static String SHUTDOWN_INTERRUPTED_EXCEPTION_MSG =
+            "Timed listener shutdown interrupted.";
     private final static String FATAL_INTERRUPTION_MSG_FORMAT =
             "Unable to carry out critical operation - %s";
-
     private final static String PUT_BYTE_OPERATION_NAME =
-            "register incoming bytes.";
+            "register incoming data.";
 
     private final static int SHUTDOWN_TIMEOUT = 5;
     private final static TimeUnit SHUTDOWN_TIMEOUT_UNIT = TimeUnit.SECONDS;
@@ -22,43 +27,50 @@ public abstract class TimedListener implements BinaryDataListener, Runnable {
     private long interval;
     private TimeUnit timeUnit;
     private ScheduledExecutorService scheduledThread;
-    private LinkedBlockingQueue<Byte> buffer;
+    private LinkedBlockingQueue<Object> buffer;
+    private Object sender;
+
     /**
      * @param interval  Is the time interval in milliseconds.
      */
-    public TimedListener(long interval, TimeUnit unit) {
+    public TimedListener(Object sender, long interval, TimeUnit unit) {
+        this.sender = sender;
         this.interval = interval;
         this.timeUnit = unit;
         this.scheduledThread = Executors.newSingleThreadScheduledExecutor();
-        this.buffer = new LinkedBlockingQueue<Byte>();
+        this.buffer = new LinkedBlockingQueue<Object>();
+    }
+
+    public Object getExpectedSender() {
+        return this.sender;
     }
 
     @Override
     public void run() {
         try {
             int currentSize = this.buffer.size();
-            Byte[] bufferedBytes = new Byte[currentSize];
+            Object[] bufferedObjects = new Object[currentSize];
             for (int i = 0; i < currentSize; ++i) {
-                    bufferedBytes[i] = this.buffer.take();
+                    bufferedObjects[i] = this.buffer.take();
             }
-            this.updateBytes(bufferedBytes);
+            this.processData(this.sender, bufferedObjects);
         } catch (InterruptedException e) {
             this.processRemainingData();
         }
     }
 
     private void processRemainingData() {
-        Byte[] remaining = this.buffer.toArray(new Byte[0]);
-        this.updateBytes(remaining);
+        Object[] remaining = this.buffer.toArray(new Object[0]);
+        this.processData(this.sender, remaining);
     }
 
     @Override
-    public synchronized void putBytes(Byte[] bytes) {
-        for (Byte element : bytes) {
+    public synchronized void putData(Object[] data) {
+        for (Object element : data) {
             try {
                 this.buffer.put(element);
             } catch (InterruptedException e) {
-                // This is designed to wait indefinitely before the new bytes
+                // This is designed to wait indefinitely before the new data
                 // are registered. If it is interrupted, we can assume
                 // that something really bad happened, e.g. not enough memory.
                 throw new Error(String.format(
@@ -92,9 +104,14 @@ public abstract class TimedListener implements BinaryDataListener, Runnable {
             }
         } catch (InterruptedException e) {
             // TODO decide what to do when shutdown is interrupted.
+            Log.d(
+                    TimedListener.LOG_TAG,
+                    TimedListener.SHUTDOWN_INTERRUPTED_EXCEPTION_MSG,
+                    e
+            );
         }
     }
 
     @Override
-    public abstract void updateBytes(Byte[] bytes);
+    public abstract void processData(Object sender, Object[] data);
 }

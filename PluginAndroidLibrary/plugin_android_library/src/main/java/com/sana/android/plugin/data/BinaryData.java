@@ -8,7 +8,9 @@ import com.sana.android.plugin.hardware.Feature;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,11 +22,16 @@ public class BinaryData {
     private Feature source;
     private MimeType type;
     private Uri uriToData;
+    private URI javaUriToData;
+    private FileInputStream fin;
 
-    public BinaryData(Feature source, MimeType type, Uri uriToData) {
+    public BinaryData(Feature source, MimeType type, Uri uriToData)
+            throws URISyntaxException, FileNotFoundException {
         this.source = source;
         this.type = type;
         this.uriToData = uriToData;
+        this.javaUriToData = new URI(this.uriToData.toString());
+        this.fin = new FileInputStream(new File(this.javaUriToData));
     }
 
     public Feature getSource() {

@@ -5,24 +5,31 @@ import java.util.concurrent.ArrayBlockingQueue;
 /**
  * Created by hanlin on 9/10/14.
  */
-public class ByteAppender {
+public class DataAppender {
     private final static String NULL_ARGUMENT_ERROR_MSG =
         "Arguments can't be null";
-    private ArrayBlockingQueue<Byte> to;
-    private Byte[] from;
+
+    private Object sender;
+    private ArrayBlockingQueue<Object> to;
+    private Object[] from;
     // This is the position of the next byte to be transferred to 'to'.
     // It is used because the operation can be unsuccessful due to
     // 'to' being full.
     private int currentPosition;
 
-    public ByteAppender(ArrayBlockingQueue<Byte> to, Byte[] from) {
+    public DataAppender(ArrayBlockingQueue<Object> to, Object[] from) {
+        this.sender = sender;
         if (to == null || from == null) {
-            throw new Error(ByteAppender.NULL_ARGUMENT_ERROR_MSG);
+            throw new Error(DataAppender.NULL_ARGUMENT_ERROR_MSG);
         }
 
         this.to = to;
         this.from = from;
         this.currentPosition = 0;
+    }
+
+    public Object getSender() {
+        return this.sender;
     }
 
     public boolean run() {

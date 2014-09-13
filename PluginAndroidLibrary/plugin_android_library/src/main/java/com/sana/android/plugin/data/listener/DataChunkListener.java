@@ -1,5 +1,7 @@
 package com.sana.android.plugin.data.listener;
 
+import android.util.Log;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,55 +10,63 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This is the base listener that listens for updates by a fixed number of
- * bytes. It works by having a background thread monitoring new bytes
+ * datas. It works by having a background thread monitoring new datas
  * coming in. The listener has a fixed sized buffer that holds the incoming
- * bytes. When the buffer is full, the listener will process the bytes in
- * the buffer and clear it, allowing more bytes to be filled into the buffer.
+ * datas. When the buffer is full, the listener will process the datas in
+ * the buffer and clear it, allowing more datas to be filled into the buffer.
  *
  * @author Han Lin
  */
 public abstract class DataChunkListener
-    implements BinaryDataListener, Runnable {
+    implements DataListener, Runnable {
 
+    private final static String LOG_TAG = "IEL.DataChunkListener";
+    private final static String SHUTDOWN_INTERRUPTED_MSG_EXCEPTION_MSG =
+        "Listener shutdown interrupted.";
     private final static String FATAL_INTERRUPTION_MSG_FORMAT =
         "Unable to carry out critical operation - %s";
-
     private final static String PUT_BYTE_OPERATION_NAME =
-        "register incoming bytes.";
+        "register incoming data.";
 
     private final static int SHUTDOWN_TIMEOUT = 5;
     private final static TimeUnit SHUTDOWN_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
-    private ArrayBlockingQueue<Byte> buffer;
-    private LinkedBlockingQueue<ByteAppender> appendOperations;
+    private ArrayBlockingQueue<Object> buffer;
+    private LinkedBlockingQueue<DataAppender> appendOperations;
     private boolean isListening;
     private ExecutorService receiverThread;
+    private Object sender;
 
     /**
      * @param bufferSize   The size of the temporary buffer. This is also
      *                     the interval of update.
      */
-    public DataChunkListener(int bufferSize) {
-        this.buffer = new ArrayBlockingQueue<Byte>(bufferSize, true);
-        this.appendOperations = new LinkedBlockingQueue<>();
+    public DataChunkListener(Object sender, int bufferSize) {
+        this.sender = sender;
+        this.buffer = new ArrayBlockingQueue<Object>(bufferSize, true);
+        this.appendOperations = new LinkedBlockingQueue<DataAppender>();
         this.isListening = false;
         this.receiverThread = Executors.newSingleThreadExecutor();
     }
 
+    public Object getExpectedSender() {
+        return this.sender;
+    }
+
     /**
-     * Put the given bytes in the waiting list of bytes to be processed.
+     * Put the given data in the waiting list of data to be processed.
      *
-     * @param bytes    The bytes to be processed.
-     * @throws InterruptedException when the bytes fail to be put into the
+     * @param data    The data to be processed.
+     * @throws InterruptedException when the data fail to be put into the
      * waiting list.
      */
     @Override
-    public synchronized void putBytes(Byte[] bytes) {
+    public synchronized void putData(Object[] data) {
         if (this.isListening) {
             try {
-                this.appendOperations.put(new ByteAppender(this.buffer, bytes));
+                this.appendOperations.put(new DataAppender(this.buffer, data));
             } catch (InterruptedException e) {
-                // This is designed to wait indefinitely before the new bytes
+                // This is designed to wait indefinitely before the new data
                 // are registered. If it is interrupted, we can assume
                 // that something really bad happened, e.g. not enough memory.
                 throw new Error(String.format(
@@ -68,7 +78,7 @@ public abstract class DataChunkListener
     }
 
     /**
-     * Start the background thread and begin accepting bytes.
+     * Start the background thread and begin accepting data.
      */
     @Override
     public void startListening() {
@@ -88,7 +98,7 @@ public abstract class DataChunkListener
         );
     }
     /**
-     * Stop accepting more bytes, then signal the monitoring thread to finish
+     * Stop accepting more data, then signal the monitoring thread to finish
      * the remaining job.
      */
     @Override
@@ -101,18 +111,23 @@ public abstract class DataChunkListener
             }
         } catch (InterruptedException e) {
             // TODO decide what to do when shutdown is interrupted.
+            Log.d(
+                    DataChunkListener.LOG_TAG,
+                    DataChunkListener.SHUTDOWN_INTERRUPTED_MSG_EXCEPTION_MSG,
+                    e
+            );
         }
     }
 
     /**
-     * The procedure the background thread uses to monitor incoming bytes.
-     * Process the bytes when the buffer is full and clear the buffer after
+     * The procedure the background thread uses to monitor incoming data.
+     * Process the data when the buffer is full and clear the buffer after
      * that.
      */
     @Override
     public void run() {
         while (this.isListening || !this.appendOperations.isEmpty()) {
-            ByteAppender appendOperation = null;
+            DataAppender appendOperation = null;
             try {
                 appendOperation = this.appendOperations.take();
                 this.processAppendOperation(appendOperation);
@@ -123,31 +138,31 @@ public abstract class DataChunkListener
         }
     }
 
-    private void processAppendOperation(ByteAppender appendOperation) {
+    private void processAppendOperation(DataAppender appendOperation) {
         while (!appendOperation.run()) {
-            this.updateBytes(this.buffer.toArray(new Byte[0]));
+            this.processData(this.sender, this.buffer.toArray());
             this.buffer.clear();
         }
     }
 
     private void processRemainingData() {
-        ByteAppender[] appenders = this.buffer.toArray(new ByteAppender[0]);
-        for (ByteAppender appender : appenders) {
+        DataAppender[] appenders = this.buffer.toArray(new DataAppender[0]);
+        for (DataAppender appender : appenders) {
             this.processAppendOperation(appender);
         }
 
         if (!this.buffer.isEmpty()) {
-            this.updateBytes(this.buffer.toArray(new Byte[0]));
+            this.processData(this.sender, this.buffer.toArray(new Byte[0]));
         }
     }
 
     /**
-     * Process the new bytes.
+     * Process the new data.
      *
-     * @param bytes   This can be any number of bytes. But when invoked by the
-     *                incoming bytes monitoring thread the number of bytes
+     * @param data This can be any number of data. But when invoked by the
+     *                incoming data monitoring thread the number of data
      *                is less than or equal to the buffer size.
      */
     @Override
-    public abstract void updateBytes(Byte[] bytes);
+    public abstract void processData(Object sender, Object[] data);
 }

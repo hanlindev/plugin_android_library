@@ -8,5 +8,8 @@ import java.util.concurrent.TimeUnit;
 public interface DataListener {
     public void startListening();
     public void stopListening();
+    public Object getExpectedSender();
     public void stopListening(long timeout, TimeUnit unit);
+    public void putData(Object[] data);
+    public void processData(Object sender, Object[] data);
 }
