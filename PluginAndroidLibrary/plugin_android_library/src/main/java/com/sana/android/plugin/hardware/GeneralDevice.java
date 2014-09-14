@@ -13,7 +13,8 @@ public interface GeneralDevice {
      *
      * @return The data instance that has the appropriate event type.
      */
-    public abstract DataWithEvent prepare();
-    public abstract void begin();
-    public abstract void stop();
+    public DataWithEvent prepare();
+    public void begin();
+    public void stop();
+    public void reset();
 }
