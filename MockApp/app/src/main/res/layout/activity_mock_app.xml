@@ -12,6 +12,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/capture"
+        android:id="@+id/capture_button"
+        android:onClock="startCapture"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/send_text"
         android:id="@+id/text_button"
         android:layout_alignParentTop="true"

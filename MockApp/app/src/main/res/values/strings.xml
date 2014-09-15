@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="send_text">Send Text to MockSana</string>
     <string name="send_binary">Send Binary to MockSana</string>
+    <string name="capture">Capture</string>
 
 </resources>

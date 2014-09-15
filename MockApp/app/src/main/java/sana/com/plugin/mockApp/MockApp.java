@@ -7,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.sana.android.plugin.*;
+
+
 
 public class MockApp extends ActionBarActivity {
 
@@ -49,6 +52,13 @@ public class MockApp extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+        Called when the user clicks capture button
+     */
+    public void startCapture() {
+
     }
 
     /*

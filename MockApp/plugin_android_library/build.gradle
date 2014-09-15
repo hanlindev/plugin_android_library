@@ -1,0 +1,2 @@
+configurations.create("default")
+artifacts.add("default", file('plugin_android_library.aar'))
