@@ -40,6 +40,4 @@
         android:onClick="bluetoothRecord"/>
 
 
-
-
 </LinearLayout>
