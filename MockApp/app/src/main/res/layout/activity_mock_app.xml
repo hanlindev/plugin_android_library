@@ -29,4 +29,17 @@
         android:layout_alignParentStart="true"
         android:onClick="sendBinaryToSana"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bluetooth_button"
+        android:id="@+id/bluetooth_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="bluetoothRecord"/>
+
+
+
+
 </LinearLayout>

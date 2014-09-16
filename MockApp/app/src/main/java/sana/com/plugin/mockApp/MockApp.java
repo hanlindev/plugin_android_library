@@ -33,7 +33,6 @@ public class MockApp extends ActionBarActivity {
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -77,5 +76,10 @@ public class MockApp extends ActionBarActivity {
         //shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
         shareIntent.setType("image/jpeg");
         startActivity(Intent.createChooser(shareIntent, "Share binary data to.."));
+    }
+
+    public void bluetoothRecord(){
+        Intent intent = new Intent(this, AudioRecordingActivity.class);
+        startActivity(intent);
     }
 }
