@@ -82,4 +82,19 @@ public class MockApp extends ActionBarActivity {
         Intent intent = new Intent(this, BluetoothRecordingActivity.class);
         startActivity(intent);
     }
+
+    /** Called when the user clicks the record audio from mic button */
+    public void recordAudioFromMic(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, AudioRecordActivity.class);
+        startActivity(intent);
+    }
+
+    /** Called when the user clicks the take photo button */
+    public void takePhotoOrVideo(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, TakePhotoOrVideoActivity.class);
+        startActivity(intent);
+
+    }
 }
