@@ -1,6 +1,7 @@
 package com.sana.android.plugin.data;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.event.BytePushingDataEvent;

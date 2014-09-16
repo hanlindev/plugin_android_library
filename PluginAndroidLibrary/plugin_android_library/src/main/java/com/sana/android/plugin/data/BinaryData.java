@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.text.style.AlignmentSpan;
+import android.util.Log;
 
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.event.BaseDataEvent;
@@ -47,9 +48,7 @@ public abstract class BinaryData implements DataWithEvent {
      *
      * @return The URI of the file.
      */
-    public Uri getUriToData() {
-        return this.uriToData;
-    }
+    public Uri getUriToData() { return this.uriToData; }
 
     /**
      * Get the data that was captured.

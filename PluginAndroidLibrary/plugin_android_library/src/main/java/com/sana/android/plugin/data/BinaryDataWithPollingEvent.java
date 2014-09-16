@@ -34,7 +34,5 @@ public class BinaryDataWithPollingEvent extends BinaryData {
     }
 
     @Override
-    public BytePollingDataEvent getEvent() {
-        return this.event;
-    }
+    public BytePollingDataEvent getEvent() { return this.event; }
 }
