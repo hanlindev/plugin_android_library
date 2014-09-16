@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.sana.android.plugin.hardware.BluetoothDevice;
+
 
 public class MockApp extends ActionBarActivity {
 
@@ -51,10 +53,14 @@ public class MockApp extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void testGit(){
+        
+    }
     /*
         Called when the user clicks send text button
      */
     public void sendTextToSana(View view) {
+
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
