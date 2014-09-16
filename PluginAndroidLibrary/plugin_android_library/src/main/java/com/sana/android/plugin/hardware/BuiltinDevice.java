@@ -20,4 +20,14 @@ public class BuiltinDevice implements GeneralDevice {
     public void stop() {
 
     }
+
+    @Override
+    public void reset() {
+
+    }
+
+    @Override
+    public void setCaptureSetting(CaptureSetting setting) {
+
+    }
 }

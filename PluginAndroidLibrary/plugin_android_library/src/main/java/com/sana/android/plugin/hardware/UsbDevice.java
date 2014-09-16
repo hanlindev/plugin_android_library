@@ -1,5 +1,6 @@
 package com.sana.android.plugin.hardware;
 
+import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
 import com.sana.android.plugin.data.DataWithEvent;
 
 /**
@@ -18,6 +19,16 @@ public class UsbDevice implements GeneralDevice {
 
     @Override
     public void stop() {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
+
+    @Override
+    public void setCaptureSetting(CaptureSetting setting) {
 
     }
 }
