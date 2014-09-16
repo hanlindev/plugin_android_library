@@ -1,5 +1,7 @@
 package com.sana.android.plugin.hardware;
 
+import android.media.MediaRecorder;
+
 import com.sana.android.plugin.data.DataWithEvent;
 
 /**
@@ -13,11 +15,20 @@ public class BluetoothDevice implements GeneralDevice {
 
     @Override
     public void begin() {
-
     }
 
     @Override
     public void stop() {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
+
+    @Override
+    public void setCaptureSetting(CaptureSetting setting) {
 
     }
 }
