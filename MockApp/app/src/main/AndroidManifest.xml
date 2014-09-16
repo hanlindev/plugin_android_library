@@ -26,8 +26,17 @@
             android:label="@string/title_activity_audio_recording" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".AudioRecordActivity"
+            android:label="@string/title_activity_audio_record" >
+        </activity>
+        <activity
+            android:name=".TakePhotoOrVideoActivity"
+            android:label="@string/title_activity_take_photo_or_video" >
         </activity>
     </application>
 
