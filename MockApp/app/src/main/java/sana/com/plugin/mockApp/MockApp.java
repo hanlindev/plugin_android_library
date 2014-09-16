@@ -54,7 +54,7 @@ public class MockApp extends ActionBarActivity {
     }
 
     public void testGit(){
-        
+
     }
     /*
         Called when the user clicks send text button
