@@ -10,6 +10,11 @@
     tools:context=".MockApp"
     android:weightSum="1">
 
+    <EditText
+        android:layout_width="198dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

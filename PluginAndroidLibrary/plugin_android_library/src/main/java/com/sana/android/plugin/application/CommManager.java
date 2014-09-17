@@ -12,9 +12,17 @@ import java.util.HashMap;
 public class CommManager {
     private Intent intent;
     private HashMap<String, IntentAction> actionMap;
+    private static CommManager sharedInstance;
 
-    public CommManager() {
+    private CommManager() {
         this.actionMap = new HashMap<>();
+    }
+
+    public static CommManager getInstance() {
+        if (sharedInstance == null) {
+            sharedInstance = new CommManager();
+        }
+        return sharedInstance;
     }
 
     public void addAction(String actionValue, IntentAction action) {
@@ -30,8 +38,11 @@ public class CommManager {
     }
 
     public void respondToIntent(Intent intent) {
+        this.intent = intent;
         String action = intent.getAction();
-        this.actionMap.get(action).react(this);
+        if (this.actionMap.get(action) != null) {
+            this.actionMap.get(action).react(this);
+        }
     }
 
     public Intent getIntent() {
@@ -45,8 +56,9 @@ public class CommManager {
     }
 
     public MimeType getMimeType() {
-        // TODO
-        return null;
+        String value = intent.getType();
+        MimeType mimeType = MimeType.fromString(value);
+        return mimeType;
     }
 
     public void sendData(Uri uri) {

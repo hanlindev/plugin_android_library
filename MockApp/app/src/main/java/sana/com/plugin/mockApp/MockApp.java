@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
+import com.sana.android.plugin.application.CommManager;
 import com.sana.android.plugin.hardware.BluetoothDevice;
 
 
@@ -24,11 +26,13 @@ public class MockApp extends ActionBarActivity {
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, "Share text to.."));
+                CommManager cm = CommManager.getInstance();
+                cm.respondToIntent(intent);
+//                Intent sendIntent = new Intent();
+//                sendIntent.setAction(Intent.ACTION_SEND);
+//                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
+//                sendIntent.setType("text/plain");
+//                startActivity(Intent.createChooser(sendIntent, "Share text to.."));
             }
         }
     }
@@ -59,11 +63,13 @@ public class MockApp extends ActionBarActivity {
         Called when the user clicks send text button
      */
     public void sendTextToSana(View view) {
-
+        CommManager cm = CommManager.getInstance();
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
-        sendIntent.setType("text/plain");
+        EditText editText = (EditText) findViewById(R.id.editText);
+        String message = editText.getText().toString();
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sendIntent.setType(cm.getMimeType().toString());
         startActivity(Intent.createChooser(sendIntent, "Share text to.."));
     }
 
