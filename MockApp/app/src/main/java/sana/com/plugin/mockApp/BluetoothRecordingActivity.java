@@ -35,7 +35,7 @@ public class BluetoothRecordingActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.activity_audio_recording);
+        setContentView(R.layout.activity_bluetooth_recording);
 
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
         final ToggleButton mPlayButton = (ToggleButton) findViewById(R.id.play_button);

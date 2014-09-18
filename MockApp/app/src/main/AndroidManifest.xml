@@ -23,14 +23,6 @@
         <activity
             android:name=".BluetoothRecordingActivity"
             android:label="@string/title_activity_audio_recording" >
-<<<<<<< HEAD
-=======
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
->>>>>>> 9138e1c8a965e88a11984e48007f76daa25fde4d
         </activity>
         <activity
             android:name=".AudioRecordActivity"
