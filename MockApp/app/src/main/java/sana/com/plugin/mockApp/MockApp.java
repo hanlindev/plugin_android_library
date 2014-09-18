@@ -85,7 +85,7 @@ public class MockApp extends ActionBarActivity {
     }
 
     public void bluetoothRecord(){
-        Intent intent = new Intent(this, AudioRecordingActivity.class);
+        Intent intent = new Intent(this, BluetoothRecordingActivity.class);
         startActivity(intent);
     }
 
