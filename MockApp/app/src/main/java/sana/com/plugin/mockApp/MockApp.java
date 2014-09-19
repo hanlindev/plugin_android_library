@@ -127,7 +127,6 @@ public class MockApp extends ActionBarActivity {
         this.registerReceiver(mReceiver, filter2);
         this.registerReceiver(mReceiver, filter3);
 
-
         if(bluetoothConnected){
             Intent intent = new Intent(this, BluetoothRecordingActivity.class);
             startActivity(intent);
