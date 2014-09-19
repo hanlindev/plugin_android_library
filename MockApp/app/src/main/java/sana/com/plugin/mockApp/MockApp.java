@@ -18,15 +18,15 @@ import android.bluetooth.BluetoothDevice;
 
 public class MockApp extends ActionBarActivity {
 
-    private static final String TAG = "BluetoothRecordTest";
+    private static final String BLUETOOTH_ERROR_TITLE = "Bluetooth not connected!";
+    private static final String BUILTIN_ERROR_TITLE = "Bluetooth connected!";
+    private static final String BLUETOOTH_ERROR_MESSAGE= "Please go to settings, turn on bluetooth and try to pair with a bluetooth mic";
+    private static final String BUILTIN_ERROR_MESSAGE= "System detects a connected bluetooth device. Please use bluetooth mic to record.";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_app);
-        // zhaoyue's code start here
-        //setUpReceiver();
-        // zhaoyue's code end here
-
         // Get intent, action and MIME type
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -51,27 +51,7 @@ public class MockApp extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.mock_app, menu);
         return true;
     }
-    //zhaoyue's code to set up receiver
-    /*
-    private void setUpReceiver(){
-        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        this.registerReceiver(mReceiver, filter1);
-        this.registerReceiver(mReceiver, filter2);
-        this.registerReceiver(mReceiver, filter3);
-    }
-    private static boolean bluetoothConnected = false;
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            bluetoothConnected= BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)?true:false;
-            context.unregisterReceiver(this);
-        }
-    };
-    */
-    //zhaoyue's bluetooth code finishes here
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -134,8 +114,8 @@ public class MockApp extends ActionBarActivity {
         }
         else {
             new AlertDialog.Builder(this)
-                    .setTitle("Bluetooth Not Connected")
-                    .setMessage("Please go to settings, turn on bluetooth and try to pair with a bluetooth mic")
+                    .setTitle(BLUETOOTH_ERROR_TITLE)
+                    .setMessage(BLUETOOTH_ERROR_MESSAGE)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // continue with delete
@@ -156,8 +136,8 @@ public class MockApp extends ActionBarActivity {
         }
         else {
             new AlertDialog.Builder(this)
-                    .setTitle("Bluetooth Connected!")
-                    .setMessage("System detects a connected bluetooth device. Please use bluetooth mic to record.")
+                    .setTitle(BUILTIN_ERROR_TITLE)
+                    .setMessage(BUILTIN_ERROR_MESSAGE)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // continue with delete
