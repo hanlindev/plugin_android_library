@@ -22,7 +22,7 @@ import com.sana.android.plugin.hardware.BluetoothDevice;
 import java.io.IOException;
 
 
-public class AudioRecordingActivity extends Activity {
+public class BluetoothRecordingActivity extends Activity {
     private static final String TAG = "AudioRecordTest";
     private static final String mFileName = Environment
             .getExternalStorageDirectory().getAbsolutePath()
@@ -35,7 +35,7 @@ public class AudioRecordingActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.activity_audio_recording);
+        setContentView(R.layout.activity_bluetooth_recording);
 
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
         final ToggleButton mPlayButton = (ToggleButton) findViewById(R.id.play_button);

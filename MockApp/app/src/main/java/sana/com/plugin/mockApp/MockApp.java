@@ -6,16 +6,26 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.sana.android.plugin.hardware.BluetoothDevice;
-
+import android.widget.EditText;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import com.sana.android.plugin.application.CommManager;
+//import com.sana.android.plugin.hardware.BluetoothDevice;
+import android.bluetooth.BluetoothDevice;
 
 public class MockApp extends ActionBarActivity {
 
+    private static final String TAG = "BluetoothRecordTest";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_app);
+        // zhaoyue's code start here
+        setUpReceiver();
+        // zhaoyue's code end here
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -24,11 +34,13 @@ public class MockApp extends ActionBarActivity {
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, "Share text to.."));
+                CommManager cm = CommManager.getInstance();
+                cm.respondToIntent(intent);
+//                Intent sendIntent = new Intent();
+//                sendIntent.setAction(Intent.ACTION_SEND);
+//                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
+//                sendIntent.setType("text/plain");
+//                startActivity(Intent.createChooser(sendIntent, "Share text to.."));
             }
         }
     }
@@ -39,7 +51,24 @@ public class MockApp extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.mock_app, menu);
         return true;
     }
-
+    //zhaoyue's code to set up receiver
+    private void setUpReceiver(){
+        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver, filter1);
+        this.registerReceiver(mReceiver, filter2);
+        this.registerReceiver(mReceiver, filter3);
+    }
+    private static boolean bluetoothConnected = true;
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            bluetoothConnected= BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)?true:false;
+        }
+    };
+    //zhaoyue's bluetooth code finishes here
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -59,11 +88,13 @@ public class MockApp extends ActionBarActivity {
         Called when the user clicks send text button
      */
     public void sendTextToSana(View view) {
-
+        CommManager cm = CommManager.getInstance();
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
-        sendIntent.setType("text/plain");
+        EditText editText = (EditText) findViewById(R.id.editText);
+        String message = editText.getText().toString();
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sendIntent.setType(cm.getMimeType().toString());
         startActivity(Intent.createChooser(sendIntent, "Share text to.."));
     }
 
@@ -78,8 +109,38 @@ public class MockApp extends ActionBarActivity {
         startActivity(Intent.createChooser(shareIntent, "Share binary data to.."));
     }
 
-    public void bluetoothRecord(){
-        Intent intent = new Intent(this, AudioRecordingActivity.class);
+    // called when the user clicks the record from bluetooth mic button
+    public void bluetoothRecord(View view){
+        if(bluetoothConnected){
+            Intent intent = new Intent(this, BluetoothRecordingActivity.class);
+            startActivity(intent);
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setTitle("Bluetooth Not Connected")
+                    .setMessage("Please go to settings, turn on bluetooth and try to pair with a bluetooth mic")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+    }
+
+    /** Called when the user clicks the record audio from mic button */
+    public void recordAudioFromMic(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, AudioRecordActivity.class);
         startActivity(intent);
+    }
+
+    /** Called when the user clicks the take photo button */
+    public void takePhotoOrVideo(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, TakePhotoOrVideoActivity.class);
+        startActivity(intent);
+
     }
 }

@@ -84,7 +84,7 @@ public class MockSana extends ActionBarActivity {
         startActivity(LaunchIntent);
     }
 
-    public void launchMockAppWithRequiredData(View view) {
+    public void launchMockAppWithRequiredText(View view) {
         Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("sana.com.plugin.mockApp");
         LaunchIntent.setAction(Intent.ACTION_SEND);
         LaunchIntent.setType("text/plain");
