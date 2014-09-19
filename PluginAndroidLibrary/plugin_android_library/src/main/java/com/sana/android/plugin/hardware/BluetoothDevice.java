@@ -1,5 +1,6 @@
 package com.sana.android.plugin.hardware;
 
+import android.content.ContentResolver;
 import android.media.MediaRecorder;
 
 import com.sana.android.plugin.application.CommManager;
@@ -12,6 +13,8 @@ import java.io.InputStream;
  * Created by hanlin on 9/14/14.
  */
 public class BluetoothDevice implements GeneralDevice {
+    private ContentResolver contentResolver;
+
     @Override
     //prepare is to store location of recorded audio?
     public DataWithEvent prepare() {
