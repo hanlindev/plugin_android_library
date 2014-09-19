@@ -24,7 +24,7 @@ public class MockApp extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_app);
         // zhaoyue's code start here
-        setUpReceiver();
+        //setUpReceiver();
         // zhaoyue's code end here
 
         // Get intent, action and MIME type
@@ -52,6 +52,7 @@ public class MockApp extends ActionBarActivity {
         return true;
     }
     //zhaoyue's code to set up receiver
+    /*
     private void setUpReceiver(){
         IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
         IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
@@ -60,14 +61,16 @@ public class MockApp extends ActionBarActivity {
         this.registerReceiver(mReceiver, filter2);
         this.registerReceiver(mReceiver, filter3);
     }
-    private static boolean bluetoothConnected = true;
+    private static boolean bluetoothConnected = false;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             bluetoothConnected= BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)?true:false;
+            context.unregisterReceiver(this);
         }
     };
+    */
     //zhaoyue's bluetooth code finishes here
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -79,10 +82,6 @@ public class MockApp extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void testGit(){
-
     }
     /*
         Called when the user clicks send text button
@@ -97,7 +96,6 @@ public class MockApp extends ActionBarActivity {
         sendIntent.setType(cm.getMimeType().toString());
         startActivity(Intent.createChooser(sendIntent, "Share text to.."));
     }
-
     /*
         Called when the user clicks send binary data button
      */
@@ -110,7 +108,26 @@ public class MockApp extends ActionBarActivity {
     }
 
     // called when the user clicks the record from bluetooth mic button
+    private static boolean bluetoothConnected = false;
     public void bluetoothRecord(View view){
+
+        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+
+        final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                bluetoothConnected= BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)?true:false;
+                context.unregisterReceiver(this);
+            }
+        };
+        this.registerReceiver(mReceiver, filter1);
+        this.registerReceiver(mReceiver, filter2);
+        this.registerReceiver(mReceiver, filter3);
+
+
         if(bluetoothConnected){
             Intent intent = new Intent(this, BluetoothRecordingActivity.class);
             startActivity(intent);
@@ -141,6 +158,5 @@ public class MockApp extends ActionBarActivity {
         // Do something in response to button
         Intent intent = new Intent(this, TakePhotoOrVideoActivity.class);
         startActivity(intent);
-
     }
 }
