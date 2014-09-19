@@ -109,8 +109,7 @@ public class MockApp extends ActionBarActivity {
 
     // called when the user clicks the record from bluetooth mic button
     private static boolean bluetoothConnected = false;
-    public void bluetoothRecord(View view){
-
+    private void testBluetoothMic(){
         IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
         IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
@@ -126,7 +125,9 @@ public class MockApp extends ActionBarActivity {
         this.registerReceiver(mReceiver, filter1);
         this.registerReceiver(mReceiver, filter2);
         this.registerReceiver(mReceiver, filter3);
-
+    }
+    public void bluetoothRecord(View view){
+        testBluetoothMic();
         if(bluetoothConnected){
             Intent intent = new Intent(this, BluetoothRecordingActivity.class);
             startActivity(intent);
@@ -148,8 +149,23 @@ public class MockApp extends ActionBarActivity {
     /** Called when the user clicks the record audio from mic button */
     public void recordAudioFromMic(View view) {
         // Do something in response to button
-        Intent intent = new Intent(this, AudioRecordActivity.class);
-        startActivity(intent);
+        testBluetoothMic();
+        if(!bluetoothConnected) {
+            Intent intent = new Intent(this, AudioRecordActivity.class);
+            startActivity(intent);
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setTitle("Bluetooth Connected!")
+                    .setMessage("System detects a connected bluetooth device. Please use bluetooth mic to record.")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
     }
 
     /** Called when the user clicks the take photo button */

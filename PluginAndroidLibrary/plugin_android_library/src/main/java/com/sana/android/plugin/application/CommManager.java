@@ -61,6 +61,11 @@ public class CommManager {
         return mimeType;
     }
 
+    public Uri getUri() {
+        // TODO implement
+        return null;
+    }
+
     public void sendData(Uri uri) {
         // TODO
     }
