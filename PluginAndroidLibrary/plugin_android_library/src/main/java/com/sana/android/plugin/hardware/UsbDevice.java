@@ -1,5 +1,7 @@
 package com.sana.android.plugin.hardware;
 
+import android.content.ContentResolver;
+
 import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
 import com.sana.android.plugin.data.DataWithEvent;
 
@@ -7,6 +9,8 @@ import com.sana.android.plugin.data.DataWithEvent;
  * Created by hanlin on 9/14/14.
  */
 public class UsbDevice implements GeneralDevice {
+    private ContentResolver contentResolver;
+
     @Override
     public DataWithEvent prepare() {
         return null;
