@@ -39,7 +39,6 @@ public class BluetoothRecordingActivity extends Activity {
 
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
         final ToggleButton mPlayButton = (ToggleButton) findViewById(R.id.play_button);
-
         // Set up record Button
         mRecordButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -51,7 +50,6 @@ public class BluetoothRecordingActivity extends Activity {
                 onRecordPressed(isChecked);
             }
         });
-
         // Set up play Button
         mPlayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
