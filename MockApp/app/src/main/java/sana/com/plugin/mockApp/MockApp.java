@@ -27,22 +27,11 @@ public class MockApp extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_app);
-        // Get intent, action and MIME type
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/plain".equals(type)) {
-                CommManager cm = CommManager.getInstance();
-                cm.respondToIntent(intent);
-//                Intent sendIntent = new Intent();
-//                sendIntent.setAction(Intent.ACTION_SEND);
-//                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
-//                sendIntent.setType("text/plain");
-//                startActivity(Intent.createChooser(sendIntent, "Share text to.."));
-            }
-        }
+        // Get intent
+        Intent intent = getIntent();
+        CommManager cm = CommManager.getInstance();
+        cm.respondToIntent(intent);
     }
 
     @Override
@@ -63,28 +52,30 @@ public class MockApp extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    /*
-        Called when the user clicks send text button
+
+    /**
+     * Called when the user clicks send text button
      */
     public void sendTextToSana(View view) {
         CommManager cm = CommManager.getInstance();
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
+        cm.sendData(this, getSendText());
+    }
+
+    /**
+     * Capture plain text
+     */
+    private String getSendText() {
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
-        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
-        sendIntent.setType(cm.getMimeType().toString());
-        startActivity(Intent.createChooser(sendIntent, "Share text to.."));
+        return message;
     }
-    /*
-        Called when the user clicks send binary data button
+
+    /**
+     * Called when the user clicks send binary data button
      */
     public void sendBinaryToSana(View view) {
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        //shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
-        shareIntent.setType("image/jpeg");
-        startActivity(Intent.createChooser(shareIntent, "Share binary data to.."));
+        CommManager cm = CommManager.getInstance();
+        cm.sendData(this);
     }
 
     // called when the user clicks the record from bluetooth mic button
