@@ -36,6 +36,13 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
         this(sender, incomingDataChannel, BytePollingDataEvent.BUFFER_SIZE_SMALL);
     }
 
+    /**
+     * @param sender                The owner of the event.
+     * @param incomingDataChannel   The input stream where the data comes from.
+     * @param bufferSize            The size of the buffer. The event will only
+     *                              notify listeners when its buffer becomes
+     *                              full.
+     */
     public BytePollingDataEvent(
             Object sender, InputStream incomingDataChannel, int bufferSize) {
         super(sender);
