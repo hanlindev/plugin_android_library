@@ -7,7 +7,7 @@ import com.sana.android.plugin.data.DataWithEvent;
 /**
  * Created by hanlin on 9/14/14.
  */
-public class BuiltinDevice implements GeneralDevice {
+public class BuiltinDevice extends AudioRecordDevice {
     private ContentResolver resolver;
 
     @Override
