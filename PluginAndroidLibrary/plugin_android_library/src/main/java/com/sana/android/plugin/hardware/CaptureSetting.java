@@ -9,11 +9,11 @@ import com.sana.android.plugin.communication.MimeType;
  * should return this instance. See the existing methods for reference.
  */
 public class CaptureSetting {
-    private MediaRecorder.AudioEncoder audioEncoder;
-    private MediaRecorder.AudioSource audioSource;
-    private MediaRecorder.OutputFormat outputFormat;
-    private MediaRecorder.VideoEncoder videoEncoder;
-    private MediaRecorder.VideoSource videoSource;
+    private int audioEncoder;
+    private int audioSource;
+    private int outputFormat;
+    private int videoEncoder;
+    private int videoSource;
 
     public static CaptureSetting defaultSetting(Feature source, MimeType type
     ) {
@@ -32,47 +32,47 @@ public class CaptureSetting {
     }
 
 
-    public MediaRecorder.AudioEncoder getAudioEncoder() {
+    public int getAudioEncoder() {
         return audioEncoder;
     }
 
-    public CaptureSetting setAudioEncoder(MediaRecorder.AudioEncoder audioEncoder) {
+    public CaptureSetting setAudioEncoder(int audioEncoder) {
         this.audioEncoder = audioEncoder;
         return this;
     }
 
-    public MediaRecorder.AudioSource getAudioSource() {
+    public int getAudioSource() {
         return audioSource;
     }
 
-    public CaptureSetting setAudioSource(MediaRecorder.AudioSource audioSource) {
+    public CaptureSetting setAudioSource(int audioSource) {
         this.audioSource = audioSource;
         return this;
     }
 
-    public MediaRecorder.OutputFormat getOutputFormat() {
+    public int getOutputFormat() {
         return outputFormat;
     }
 
-    public CaptureSetting setOutputFormat(MediaRecorder.OutputFormat outputFormat) {
+    public CaptureSetting setOutputFormat(int outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }
 
-    public MediaRecorder.VideoEncoder getVideoEncoder() {
+    public int getVideoEncoder() {
         return videoEncoder;
     }
 
-    public CaptureSetting setVideoEncoder(MediaRecorder.VideoEncoder videoEncoder) {
+    public CaptureSetting setVideoEncoder(int videoEncoder) {
         this.videoEncoder = videoEncoder;
         return this;
     }
 
-    public MediaRecorder.VideoSource getVideoSource() {
+    public int getVideoSource() {
         return videoSource;
     }
 
-    public CaptureSetting setVideoSource(MediaRecorder.VideoSource videoSource) {
+    public CaptureSetting setVideoSource(int videoSource) {
         this.videoSource = videoSource;
         return this;
     }
