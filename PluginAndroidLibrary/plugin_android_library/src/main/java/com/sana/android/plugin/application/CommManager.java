@@ -1,5 +1,6 @@
 package com.sana.android.plugin.application;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
@@ -46,13 +47,7 @@ public class CommManager {
     }
 
     public Intent getIntent() {
-        // TODO
-        return null;
-    }
-
-    public Feature getFeature() {
-        // TODO
-        return null;
+        return this.intent;
     }
 
     public MimeType getMimeType() {
@@ -62,15 +57,31 @@ public class CommManager {
     }
 
     public Uri getUri() {
-        // TODO implement
-        return null;
+        return this.intent.getData();
     }
 
-    public void sendData(Uri uri) {
-        // TODO
+    /*
+        Send binary data to Sana
+     */
+    public void sendData(Activity sender) {
+        Uri uri = this.intent.getData();
+        String type = this.intent.getType();
+        Intent dataIntent = new Intent();
+        dataIntent.setDataAndType(uri, type);
+        sender.setResult(Activity.RESULT_OK, dataIntent);
+        sender.finish();
     }
 
-    public void sendData(String data) {
-        // TODO
+    /*
+        Send plain text data to Sana
+     */
+    public void sendData(Activity sender, String data) {
+        Uri uri = this.intent.getData();
+        String type = this.intent.getType();
+        Intent dataIntent = new Intent();
+        dataIntent.setDataAndType(uri, type);
+        dataIntent.putExtra(Intent.EXTRA_TEXT, data);
+        sender.setResult(Activity.RESULT_OK, dataIntent);
+        sender.finish();
     }
 }

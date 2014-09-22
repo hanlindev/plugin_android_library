@@ -92,6 +92,7 @@ public class AudioRecordActivity extends ActionBarActivity {
         mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
+        //mRecorder.set(mic,three_gpp,mfilename,amr_nb);
         try {
             mRecorder.prepare();
         } catch (IOException e) {
