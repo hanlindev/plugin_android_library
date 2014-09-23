@@ -54,7 +54,6 @@ public class AudioRecordDevice implements GeneralDevice {
         }
 
         mRecorder.start();
-
     }
 
     @Override
@@ -62,10 +61,6 @@ public class AudioRecordDevice implements GeneralDevice {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-    }
-
-    public void pauseMRecorder(){
-
     }
 
     @Override
@@ -83,7 +78,6 @@ public class AudioRecordDevice implements GeneralDevice {
             mRecorder.release();
             mRecorder = null;
         }
-
     }
 
     @Override
