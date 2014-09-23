@@ -1,6 +1,7 @@
 package com.sana.android.plugin.hardware;
 
 import android.media.MediaRecorder;
+import android.os.Environment;
 
 import com.sana.android.plugin.communication.MimeType;
 
@@ -14,6 +15,7 @@ public class CaptureSetting {
     private Integer outputFormat;
     private Integer videoEncoder;
     private Integer videoSource;
+    private static String outputFileName = null;
 
     public static CaptureSetting defaultSetting(Feature source, MimeType type
     ) {
@@ -29,6 +31,8 @@ public class CaptureSetting {
                 this.audioEncoder = MediaRecorder.AudioEncoder.AAC;
                 this.audioSource = MediaRecorder.AudioSource.MIC;
                 this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
+                this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+                this.outputFileName += "/audiorecord.3gp";
                 break;
             default:
                 break;
@@ -40,6 +44,8 @@ public class CaptureSetting {
         this.audioEncoder = MediaRecorder.AudioEncoder.AMR_NB;
         this.audioSource = MediaRecorder.AudioSource.MIC;
         this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
+        this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        this.outputFileName += "/audiorecord.3gp";
     }
 
     public Integer getAudioEncoder() {
@@ -51,6 +57,7 @@ public class CaptureSetting {
         return this;
     }
 
+    public String getOutputFileName() { return this.outputFileName; }
     public Integer getAudioSource() {
         return audioSource;
     }

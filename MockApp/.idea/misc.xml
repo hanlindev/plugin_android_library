@@ -3,7 +3,11 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+<<<<<<< HEAD
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="Android API 20 Platform" project-jdk-type="Android SDK">
+=======
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="Android API 17 Platform" project-jdk-type="Android SDK">
+>>>>>>> 1258319c692b2dc89a38dc7daccc351ddf6ad1f2
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
 </project>
