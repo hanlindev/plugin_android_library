@@ -95,7 +95,6 @@ public class AudioRecordActivity extends ActionBarActivity {
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-
         mRecorder.start();
     }
 

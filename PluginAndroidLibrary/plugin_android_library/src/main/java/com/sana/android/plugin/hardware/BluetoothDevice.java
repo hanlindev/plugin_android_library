@@ -15,7 +15,6 @@ import java.io.File;
  */
 public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice {
     private ContentResolver contentResolver;
-
     @Override
     //prepare is to store location of recorded audio?
     public DataWithEvent prepare() {
@@ -24,25 +23,5 @@ public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice 
         //InputStream is = new FileInputStream(initialFile);
         //BinaryDataWithPollingEvent pollingData = new BinaryDataWithPollingEvent(Feature.BLUETOOTH, CommManager.getInstance().getMimeType(), cm.getUri(), this, int uri_size);
         return null;
-    }
-
-    @Override
-    public void begin() {
-
-    }
-
-    @Override
-    public void stop() {
-
-    }
-
-    @Override
-    public void reset() {
-
-    }
-
-    @Override
-    public void setCaptureSetting(CaptureSetting setting) {
-
     }
 }

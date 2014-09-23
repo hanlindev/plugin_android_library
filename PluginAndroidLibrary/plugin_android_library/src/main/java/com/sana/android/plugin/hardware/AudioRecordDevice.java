@@ -8,14 +8,12 @@ import android.util.Log;
 import com.sana.android.plugin.data.DataWithEvent;
 import java.io.IOException;
 import java.io.File;
-
 /**
  * Created by Mia on 23/9/14.
  */
 public class AudioRecordDevice implements GeneralDevice {
     private ContentResolver resolver;
-    private static String mFileName = Environment.getExternalStorageDirectory().getAbsolutePath()
-            + "/audiorecordtest.3gp";
+    private static String mFileName = "";
     private MediaRecorder mRecorder = null;
     private MediaPlayer   mPlayer = null;
     private static final String LOG_TAG = "AudioRecord";
@@ -24,6 +22,8 @@ public class AudioRecordDevice implements GeneralDevice {
     private int outputFormat;
 
     public AudioRecordDevice(){
+        mFileName=Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/audiorecordtest.3gp";
         prepare();
     }
 
@@ -40,18 +40,15 @@ public class AudioRecordDevice implements GeneralDevice {
     @Override
     public void begin() {
         mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(audioSource);
-        mRecorder.setOutputFormat(outputFormat);
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(audioEncoder);
-
-        //mRecorder.set(mic,three_gpp,mfilename,amr_nb);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         try {
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-
         mRecorder.start();
     }
 
@@ -110,8 +107,5 @@ public class AudioRecordDevice implements GeneralDevice {
             mPlayer.stop();
         mPlayer.release();
         mPlayer = null;
-
     }
-
-
 }

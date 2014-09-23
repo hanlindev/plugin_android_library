@@ -16,7 +16,6 @@ public class BluetoothRecordingActivity extends Activity {
     private BluetoothDevice BD;
     private AudioManager mAudioManager;
     @Override
-
     public void onCreate(Bundle icicle) {
         BD = new BluetoothDevice();
         super.onCreate(icicle);
@@ -62,21 +61,17 @@ public class BluetoothRecordingActivity extends Activity {
 
     // Toggle recording
     private void onRecordPressed(boolean shouldStartRecording) {
-        if(shouldStartRecording) {
-            BD.reset();
+        if(shouldStartRecording)
             BD.begin();
-        }
-        else{
+        else
             BD.stop();
-        }
     }
     // Toggle playback
     private void onPlayPressed(boolean shouldStartPlaying) {
-        if (shouldStartPlaying) {
+        if (shouldStartPlaying)
             BD.startPlaying();
-        } else {
+        else
             BD.stopPlaying();
-        }
     }
 
     public void onPause() {
