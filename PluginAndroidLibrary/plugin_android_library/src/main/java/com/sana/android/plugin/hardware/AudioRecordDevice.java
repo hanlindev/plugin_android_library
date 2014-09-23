@@ -16,6 +16,7 @@ public class AudioRecordDevice implements GeneralDevice {
     private ContentResolver resolver;
     private static String mFileName = null;
     private MediaRecorder mRecorder = null;
+    private MediaPlayer   mPlayer = null;
     private static final String LOG_TAG = "AudioRecord";
     private int audioEncoder;
     private int audioSource;
@@ -91,4 +92,22 @@ public class AudioRecordDevice implements GeneralDevice {
         this.audioSource = setting.getAudioSource();
         this.outputFormat = setting.getOutputFormat();
     }
+
+    public void startPlaying() {
+        mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setDataSource(mFileName);
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+    }
+
+    public void stopPlaying() {
+        mPlayer.release();
+        mPlayer = null;
+    }
+
+
 }
