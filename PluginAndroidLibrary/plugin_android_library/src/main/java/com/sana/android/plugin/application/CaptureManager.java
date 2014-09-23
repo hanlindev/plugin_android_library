@@ -62,7 +62,7 @@ public class CaptureManager {
         }
         this.contentResolver = contentResolver;
         this.dataSource =
-                DeviceFactory.getDeviceInstance(source, type, setting);
+                DeviceFactory.getDeviceInstance(source, setting);
         this.listeners = new Vector<>();
     }
 

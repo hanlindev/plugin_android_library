@@ -9,70 +9,81 @@ import com.sana.android.plugin.communication.MimeType;
  * should return this instance. See the existing methods for reference.
  */
 public class CaptureSetting {
-    private MediaRecorder.AudioEncoder audioEncoder;
-    private MediaRecorder.AudioSource audioSource;
-    private MediaRecorder.OutputFormat outputFormat;
-    private MediaRecorder.VideoEncoder videoEncoder;
-    private MediaRecorder.VideoSource videoSource;
+    private Integer audioEncoder;
+    private Integer audioSource;
+    private Integer outputFormat;
+    private Integer videoEncoder;
+    private Integer videoSource;
 
     public static CaptureSetting defaultSetting(Feature source, MimeType type
     ) {
         CaptureSetting result = new CaptureSetting();
-        CaptureSetting.setDefaultForFeature(source);
-        CaptureSetting.setDefaultForType(type);
+        result.setDefaultForFeature(source);
+        result.setDefaultForType(type);
         return result;
     }
 
-    public static void setDefaultForFeature(Feature source) {
-        // TODO implement
+    public void setDefaultForFeature(Feature source) {
+        switch (source) {
+            case MICROPHONE:
+                this.audioEncoder = MediaRecorder.AudioEncoder.AAC;
+                this.audioSource = MediaRecorder.AudioSource.MIC;
+                this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
+                break;
+            default:
+                break;
+        }
     }
 
-    public static void setDefaultForType(MimeType type) {
-        // TODO implement
+    public void setDefaultForType(MimeType type) {
+        // placeholder
+        this.audioEncoder = MediaRecorder.AudioEncoder.AMR_NB;
+        this.audioSource = MediaRecorder.AudioSource.MIC;
+        this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
     }
 
 
-    public MediaRecorder.AudioEncoder getAudioEncoder() {
+    public Integer getAudioEncoder() {
         return audioEncoder;
     }
 
-    public CaptureSetting setAudioEncoder(MediaRecorder.AudioEncoder audioEncoder) {
+    public CaptureSetting setAudioEncoder(Integer audioEncoder) {
         this.audioEncoder = audioEncoder;
         return this;
     }
 
-    public MediaRecorder.AudioSource getAudioSource() {
+    public Integer getAudioSource() {
         return audioSource;
     }
 
-    public CaptureSetting setAudioSource(MediaRecorder.AudioSource audioSource) {
+    public CaptureSetting setAudioSource(Integer audioSource) {
         this.audioSource = audioSource;
         return this;
     }
 
-    public MediaRecorder.OutputFormat getOutputFormat() {
+    public Integer getOutputFormat() {
         return outputFormat;
     }
 
-    public CaptureSetting setOutputFormat(MediaRecorder.OutputFormat outputFormat) {
+    public CaptureSetting setOutputFormat(Integer outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }
 
-    public MediaRecorder.VideoEncoder getVideoEncoder() {
+    public Integer getVideoEncoder() {
         return videoEncoder;
     }
 
-    public CaptureSetting setVideoEncoder(MediaRecorder.VideoEncoder videoEncoder) {
+    public CaptureSetting setVideoEncoder(Integer videoEncoder) {
         this.videoEncoder = videoEncoder;
         return this;
     }
 
-    public MediaRecorder.VideoSource getVideoSource() {
+    public Integer getVideoSource() {
         return videoSource;
     }
 
-    public CaptureSetting setVideoSource(MediaRecorder.VideoSource videoSource) {
+    public CaptureSetting setVideoSource(Integer videoSource) {
         this.videoSource = videoSource;
         return this;
     }
