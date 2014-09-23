@@ -81,7 +81,8 @@ public class MockSana extends ActionBarActivity {
         }
         else if (type.startsWith("image/")) {
             //react when image is received
-            handleSendImage(data);
+            showToast("Binary data intent received.");
+//            handleSendImage(data);
         } else {
             showToast(String.format("Mimetype %s is not handled in MockSana", type));
         }
@@ -101,4 +102,12 @@ public class MockSana extends ActionBarActivity {
         LaunchIntent.setType("text/plain");
         startActivityForResult(LaunchIntent, 1);
     }
+
+    public void launchMockAppWithRequiredImage(View view) {
+        Intent LaunchIntent = new Intent();
+        LaunchIntent.setAction("sana.com.plugin.mockApp.PICTURE");
+        LaunchIntent.setType("image/jpg");
+        startActivityForResult(LaunchIntent, 1);
+    }
+
 }

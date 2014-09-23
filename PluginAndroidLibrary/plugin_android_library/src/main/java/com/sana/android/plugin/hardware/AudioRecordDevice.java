@@ -21,6 +21,15 @@ public class AudioRecordDevice implements GeneralDevice {
     private int audioSource;
     private int outputFormat;
 
+    public AudioRecordDevice(){
+        prepare();
+    }
+
+    public AudioRecordDevice(CaptureSetting setting){
+        setCaptureSetting(setting);
+        prepare();
+    }
+
     @Override
     public DataWithEvent prepare() {
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -66,6 +75,14 @@ public class AudioRecordDevice implements GeneralDevice {
         if(deleted){
             mFileName = null;
         }
+    }
+
+    public void pause(){
+        if (mRecorder != null) {
+            mRecorder.release();
+            mRecorder = null;
+        }
+
     }
 
     @Override
