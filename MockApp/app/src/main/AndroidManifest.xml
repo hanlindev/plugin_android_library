@@ -38,6 +38,14 @@
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockApp.PICTURE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/jpg" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".BluetoothRecordingActivity"
