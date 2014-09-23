@@ -1,5 +1,7 @@
 package com.sana.android.plugin.hardware;
 
+import com.sana.android.plugin.errors.UnsupportedDeviceError;
+
 /**
  * Created by Chen Xi on 9/2/2014.
  * A subset of features from PackageManager. We don't include everything from PM because
@@ -17,6 +19,10 @@ public enum Feature {
     WIFI_DIRECT("android.hardware.wifi.direct", "wifiDirect"),
     MICROPHONE("android.hardware.microphone", "microphone"),
     ACCELEROMETER("android.hardware.sensor.accelerometer", "accelerometer");
+
+    private static final String BLUETOOTH_CLASS_NAME = "BluetoothDevice";
+    private static final String BUILTIN_CLASS_NAME = "BuiltinDevice";
+    private static final String USB_CLASS_NAME = "UsbDevice";
 
     private String featureName;
     private String commonName;
@@ -42,5 +48,25 @@ public enum Feature {
             }
         }
         return null;
+    }
+
+    public String getDeviceClassName() {
+        String result = null;
+        switch (this) {
+            case BLUETOOTH:
+                result = BLUETOOTH_CLASS_NAME;
+                break;
+            case CAMERA_REAR:
+            case CAMERA_FRONT:
+            case MICROPHONE:
+                result = BUILTIN_CLASS_NAME;
+                break;
+            case USB_ACCESSORY:
+                result = USB_CLASS_NAME;
+                break;
+            default:
+                throw new UnsupportedDeviceError(this);
+        }
+        return result;
     }
 }

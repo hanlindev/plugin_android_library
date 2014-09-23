@@ -18,32 +18,27 @@ public class MockSana extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_sana);
-        // Get intent, action and MIME type
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/plain".equals(type)) {
-                handleSendText(intent); // Handle text being sent
-            } else if (type.startsWith("image/")) {
-                handleSendImage(intent); // Handle single image being sent
-            }
-        }
     }
 
     private void handleSendText(Intent intent) {
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (sharedText != null) {
-            // Update UI to reflect text being shared
-            Context context = getApplicationContext();
-            CharSequence text = sharedText;
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+            // show captured text on the screen
+            showToast(sharedText);
         }
+    }
 
+    /**
+     * Show toast on the screen, can be error message
+     * @param message
+     */
+    private void showToast(String message) {
+        Context context = getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_LONG;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 
     private void handleSendImage(Intent intent) {
@@ -76,6 +71,22 @@ public class MockSana extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("++++++++++++onActivityResult Called++++++++++++");
+        String type = data.getType();
+        if (type.equals("text/plain")) {
+            //react when plain text is received
+            handleSendText(data);
+        }
+        else if (type.startsWith("image/")) {
+            //react when image is received
+            handleSendImage(data);
+        } else {
+            showToast(String.format("Mimetype %s is not handled in MockSana", type));
+        }
+    }
+
     /*
         called when the user clicks the launch button
      */
@@ -85,9 +96,9 @@ public class MockSana extends ActionBarActivity {
     }
 
     public void launchMockAppWithRequiredText(View view) {
-        Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("sana.com.plugin.mockApp");
-        LaunchIntent.setAction(Intent.ACTION_SEND);
+        Intent LaunchIntent = new Intent();
+        LaunchIntent.setAction("sana.com.plugin.mockApp.HEART_BEAT");
         LaunchIntent.setType("text/plain");
-        startActivity(LaunchIntent);
+        startActivityForResult(LaunchIntent, 1);
     }
 }
