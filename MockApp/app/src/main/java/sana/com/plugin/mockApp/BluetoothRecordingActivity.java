@@ -7,13 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
+//import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
-
 import com.sana.android.plugin.hardware.BluetoothDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
 
@@ -26,11 +25,13 @@ public class BluetoothRecordingActivity extends Activity {
             + "/audiorecordtest.3gp";
     //private MediaRecorder mRecorder;
     private BluetoothDevice BD;// = new BluetoothDevice();
-    private MediaRecorder mRecorder ;// = BD.getMediaRecorder();
+    //private MediaRecorder mRecorder ;// = BD.getMediaRecorder();
     private MediaPlayer mPlayer;
     private AudioManager mAudioManager;
     @Override
+
     public void onCreate(Bundle icicle) {
+        BD = new BluetoothDevice();
         super.onCreate(icicle);
         setContentView(R.layout.activity_bluetooth_recording);
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
@@ -75,13 +76,15 @@ public class BluetoothRecordingActivity extends Activity {
     // Toggle recording
     private void onRecordPressed(boolean shouldStartRecording) {
         if(shouldStartRecording) {
-            startRecording();
+            //startRecording();
+            BD.begin();
         }
         else{
-            stopRecording();
+            //stopRecording();
+            BD.stop();
         }
     }
-
+    /*
     // Start recording with MediaRecorder
     private void startRecording() {
         CaptureSetting cs = new CaptureSetting();
@@ -108,7 +111,7 @@ public class BluetoothRecordingActivity extends Activity {
             mRecorder = null;
         }
     }
-
+    */
     // Toggle playback
     private void onPlayPressed(boolean shouldStartPlaying) {
         if (shouldStartPlaying) {
@@ -138,15 +141,16 @@ public class BluetoothRecordingActivity extends Activity {
             mPlayer = null;
         }
     }
-    // Release recording and playback resources, if necessary
-    @Override
+
     public void onPause() {
         super.onPause();
-        if (null != mRecorder) {
+        /*
+        if (mRecorder != null) {
             mRecorder.release();
             mRecorder = null;
         }
-        if (null != mPlayer) {
+        */
+        if (mPlayer != null) {
             mPlayer.release();
             mPlayer = null;
         }

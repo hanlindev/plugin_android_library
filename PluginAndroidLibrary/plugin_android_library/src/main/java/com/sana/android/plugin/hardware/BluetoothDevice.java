@@ -12,7 +12,7 @@ import java.io.InputStream;
 /**
  * Created by hanlin on 9/14/14.
  */
-public class BluetoothDevice implements GeneralDevice {
+public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice {
     private ContentResolver contentResolver;
 
     @Override

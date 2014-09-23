@@ -4,10 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
-
 import java.io.IOException;
-
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
 import android.media.MediaPlayer;

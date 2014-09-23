@@ -52,6 +52,9 @@ public class AudioRecordDevice implements GeneralDevice {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
+    }
+
+    public void pauseMRecorder(){
 
     }
 
@@ -63,7 +66,6 @@ public class AudioRecordDevice implements GeneralDevice {
         if(deleted){
             mFileName = null;
         }
-
     }
 
     @Override
@@ -71,6 +73,5 @@ public class AudioRecordDevice implements GeneralDevice {
         this.audioEncoder = setting.getAudioEncoder();
         this.audioSource = setting.getAudioSource();
         this.outputFormat = setting.getOutputFormat();
-
     }
 }
