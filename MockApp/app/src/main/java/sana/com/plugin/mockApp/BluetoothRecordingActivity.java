@@ -144,15 +144,17 @@ public class BluetoothRecordingActivity extends Activity {
 
     public void onPause() {
         super.onPause();
+        BD.pauseRecorder();
+        BD.pausePlayer();
         /*
         if (mRecorder != null) {
             mRecorder.release();
             mRecorder = null;
         }
-        */
         if (mPlayer != null) {
             mPlayer.release();
             mPlayer = null;
         }
+        */
     }
 }
