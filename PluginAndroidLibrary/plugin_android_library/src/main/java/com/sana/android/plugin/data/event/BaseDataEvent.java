@@ -71,4 +71,7 @@ public abstract class BaseDataEvent {
     public void removeAllListeners() {
         this.listeners.clear();
     }
+
+    public abstract void startEvent();
+    public abstract void stopEvent() throws InterruptedException;
 }

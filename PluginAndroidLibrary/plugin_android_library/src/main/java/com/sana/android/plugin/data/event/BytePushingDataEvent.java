@@ -2,6 +2,8 @@ package com.sana.android.plugin.data.event;
 
 import android.util.Log;
 
+import com.sana.android.plugin.errors.UnsupportedDeviceError;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
@@ -67,5 +69,16 @@ public class BytePushingDataEvent extends BaseDataEvent {
             this.incomingData.read(result, pointer, currentSize);
         }
         return ArrayUtils.toObject(result);
+    }
+
+    @Override
+    public void startEvent() {
+        // No thread is used in this event, don't need to do anything to start
+        // it.
+    }
+
+    @Override
+    public void stopEvent() throws InterruptedException {
+        // Don't need this either.
     }
 }

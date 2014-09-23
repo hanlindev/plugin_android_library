@@ -2,12 +2,15 @@ package com.sana.android.plugin.data.event;
 
 import android.util.Log;
 
+import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hanlin on 9/13/14.
@@ -16,6 +19,8 @@ import java.util.concurrent.Executors;
  */
 
 public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
+    private static final long TERMINATION_TIMEOUT = 5;
+    private static final TimeUnit TERMINATION_TIMEOUT_UNIT = TimeUnit.SECONDS;
     private static final String LOG_TAG = "IEL.BytePollingDataEvent";
     private static final String UNEXPECTED_END_STREAM_EXCEPTION_MSG =
             "Unexpected end of input stream encountered.";
@@ -36,21 +41,45 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
         this(sender, incomingDataChannel, BytePollingDataEvent.BUFFER_SIZE_SMALL);
     }
 
+    /**
+     * @param sender                The owner of the event.
+     * @param incomingDataChannel   The input stream where the data comes from.
+     * @param bufferSize            The size of the buffer. The event will only
+     *                              notify listeners when its buffer becomes
+     *                              full.
+     */
     public BytePollingDataEvent(
             Object sender, InputStream incomingDataChannel, int bufferSize) {
         super(sender);
         this.incomingDataChannel = incomingDataChannel;
         this.bufferSize = bufferSize;
+        this.buffer = new byte[bufferSize];
         this.pollingThreads = Executors.newSingleThreadExecutor();
         this.pointer = 0;
+    }
+
+    public void startEvent() {
         this.pollingThreads.submit(this);
     }
+
+    public void stopEvent() throws InterruptedException {
+        this.pollingThreads.shutdown();
+        this.pollingThreads.awaitTermination(
+                BytePollingDataEvent.TERMINATION_TIMEOUT,
+                BytePollingDataEvent.TERMINATION_TIMEOUT_UNIT
+        );
+    }
+
 
     @Override
     public void run() {
         int numBytesRead = 0;// A value of -1 indicates closed stream.
         while (numBytesRead >= 0) {
-            Log.d("!!!!!!!!!!!!", numBytesRead+"");
+            Log.d(
+                    BytePollingDataEvent.LOG_TAG,
+                    "Number of bytes read: " + numBytesRead
+            );
+
             try {
                 numBytesRead = this.incomingDataChannel.read(
                         this.buffer, this.pointer, this.bufferSize - this.pointer);
