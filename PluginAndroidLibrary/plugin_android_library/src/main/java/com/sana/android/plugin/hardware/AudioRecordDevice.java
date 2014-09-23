@@ -76,12 +76,19 @@ public class AudioRecordDevice implements GeneralDevice {
 
     }
 
-    public void pause(){
+    public void pauseRecorder(){
         if (mRecorder != null) {
             mRecorder.release();
             mRecorder = null;
         }
 
+    }
+
+    public void pausePlayer(){
+        if (mPlayer != null) {
+            mPlayer.release();
+            mPlayer = null;
+        }
     }
 
     @Override
