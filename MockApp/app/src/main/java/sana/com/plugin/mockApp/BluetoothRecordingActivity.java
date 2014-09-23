@@ -122,6 +122,8 @@ public class BluetoothRecordingActivity extends Activity {
     }
     // Playback audio using MediaPlayer
     private void startPlaying() {
+        BD.startPlaying();
+        /*
         mPlayer = new MediaPlayer();
         try {
             mPlayer.setDataSource(mFileName);
@@ -130,16 +132,20 @@ public class BluetoothRecordingActivity extends Activity {
         } catch (IOException e) {
             Log.e(TAG, "Couldn't prepare and start MediaPlayer");
         }
+        */
     }
 
     // Stop playback. Release resources
     private void stopPlaying() {
+        BD.stopPlaying();
+        /*
         if (null != mPlayer) {
             if (mPlayer.isPlaying())
                 mPlayer.stop();
             mPlayer.release();
             mPlayer = null;
         }
+        */
     }
 
     public void onPause() {

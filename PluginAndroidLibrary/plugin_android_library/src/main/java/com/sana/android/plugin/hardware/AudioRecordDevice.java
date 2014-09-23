@@ -106,8 +106,11 @@ public class AudioRecordDevice implements GeneralDevice {
     }
 
     public void stopPlaying() {
+        if (mPlayer.isPlaying())
+            mPlayer.stop();
         mPlayer.release();
         mPlayer = null;
+
     }
 
 

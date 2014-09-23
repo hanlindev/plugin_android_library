@@ -26,10 +26,7 @@ public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice 
 
     @Override
     public void begin() {
-    }
 
-    public MediaRecorder getMediaRecorder(){
-        return new MediaRecorder();
     }
 
     @Override
