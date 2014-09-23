@@ -12,20 +12,21 @@ import java.io.InputStream;
 /**
  * Created by hanlin on 9/14/14.
  */
-public class BluetoothDevice implements GeneralDevice {
+public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice {
     private ContentResolver contentResolver;
 
     @Override
     //prepare is to store location of recorded audio?
     public DataWithEvent prepare() {
-        CommManager cm = CommManager.getInstance();
+        //CommManager cm = CommManager.getInstance();
         //InputStream is =
-        //BinaryDataWithPollingEvent pollingData = new BinaryDataWithPollingEvent(Feature.BLUETOOTH, CommManager.getInstance().getMimeType(), cm.getUri(), this, )
+        //BinaryDataWithPollingEvent pollingData = new BinaryDataWithPollingEvent(Feature.BLUETOOTH, CommManager.getInstance().getMimeType(), cm.getUri(), this, int uri_size);
         return null;
     }
 
     @Override
     public void begin() {
+
     }
 
     @Override
