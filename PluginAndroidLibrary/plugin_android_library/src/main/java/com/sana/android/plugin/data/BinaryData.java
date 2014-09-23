@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.text.style.AlignmentSpan;
+import android.util.Log;
 
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.event.BaseDataEvent;
