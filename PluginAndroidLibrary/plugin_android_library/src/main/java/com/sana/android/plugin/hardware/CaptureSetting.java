@@ -42,7 +42,6 @@ public class CaptureSetting {
         this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
     }
 
-
     public Integer getAudioEncoder() {
         return audioEncoder;
     }
