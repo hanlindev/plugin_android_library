@@ -15,28 +15,28 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
+            android:launchMode="standard"
             android:name=".MockApp"
-            android:label="@string/app_name"
-            android:launchMode="standard" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>
 
-            <meta-data
-                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+            <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
                 android:resource="@xml/accessory_filter" />
+
+
 
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.HEART_BEAT" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/plain" />
+                <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity>
         <activity
@@ -50,10 +50,7 @@
         <activity
             android:name=".TakePhotoOrVideoActivity"
             android:label="@string/title_activity_take_photo_or_video" >
-        </activity>
-        <activity
-            android:name=".UsbAccessoryRecordActivity"
-            android:label="@string/title_activity_usb_accessory_record" >
+
         </activity>
     </application>
 

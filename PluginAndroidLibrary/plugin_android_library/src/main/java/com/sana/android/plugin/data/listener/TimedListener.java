@@ -30,6 +30,8 @@ public abstract class TimedListener implements Runnable, DataListener {
     private LinkedBlockingQueue<Object> buffer;
     private Object sender;
 
+    public TimedListener() {}
+
     /**
      * @param interval  Is the time interval in milliseconds.
      */

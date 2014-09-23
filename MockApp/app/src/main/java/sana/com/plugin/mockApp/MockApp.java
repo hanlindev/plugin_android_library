@@ -1,11 +1,26 @@
 package sana.com.plugin.mockApp;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.sana.android.plugin.*;
+import com.sana.android.plugin.data.*;
+import com.sana.android.plugin.data.listener.TimedListener;
+import com.sana.android.plugin.hardware.*;
+
+import java.util.concurrent.TimeUnit;
+
+
 import android.widget.EditText;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,12 +31,15 @@ import com.sana.android.plugin.application.CommManager;
 //import com.sana.android.plugin.hardware.BluetoothDevice;
 import android.bluetooth.BluetoothDevice;
 
+
 public class MockApp extends ActionBarActivity {
 
     private static final String BLUETOOTH_ERROR_TITLE = "Bluetooth not connected!";
     private static final String BUILTIN_ERROR_TITLE = "Bluetooth connected!";
     private static final String BLUETOOTH_ERROR_MESSAGE= "Please go to settings, turn on bluetooth and try to pair with a bluetooth mic";
     private static final String BUILTIN_ERROR_MESSAGE= "System detects a connected bluetooth device. Please use bluetooth mic to record.";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +161,12 @@ public class MockApp extends ActionBarActivity {
     public void takePhotoOrVideo(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, TakePhotoOrVideoActivity.class);
+        startActivity(intent);
+    }
+
+    // Called when accessory record button is clicked
+    public void accessoryRecord(View view) {
+        Intent intent = new Intent(this, UsbAccessoryRecordActivity.class);
         startActivity(intent);
     }
 }
