@@ -1,28 +1,22 @@
-package sana.com.plugin.mockApp;
+package com.sana.android.plugin.hardware;
 
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
+
+import com.sana.android.plugin.data.DataWithEvent;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.support.v7.app.ActionBarActivity;
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-
-public class TakePhotoOrVideoActivity extends ActionBarActivity {
+/**
+ * Created by Mia on 23/9/14.
+ */
+public class BuiltinCameraDevice implements GeneralDevice{
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
     private Uri fileUri;
@@ -30,10 +24,7 @@ public class TakePhotoOrVideoActivity extends ActionBarActivity {
     public static final int MEDIA_TYPE_VIDEO = 2;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_take_photo_or_video);
-
+    public DataWithEvent prepare() {
         // create Intent to take a picture and return control to the calling
         // application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -44,45 +35,31 @@ public class TakePhotoOrVideoActivity extends ActionBarActivity {
         // name
 
         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video
-        // image quality to
-        // high
+        // image quality to high
 
         // start the image capture Intent
         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
+        return null;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null) {
-            if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-                if (resultCode == RESULT_OK) {
-                    // Image captured and saved to fileUri specified in the
-                    // Intent
-                    Toast.makeText(this,
-                            "Image saved.\n",
-                            Toast.LENGTH_LONG).show();
-                } else if (resultCode == RESULT_CANCELED) {
-                    // User cancelled the image capture
-                } else {
-                    // Image capture failed, advise user
-                }
-            }
-            if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
-                if (resultCode == RESULT_OK) {
-                    // Video captured and saved to fileUri specified in the
-                    // Intent
-                    Toast.makeText(
-                            this,
-                            "Video saved.\n",
-                            Toast.LENGTH_LONG).show();
-                } else if (resultCode == RESULT_CANCELED) {
-                    // User cancelled the video capture
-                } else {
-                    // Video capture failed, advise user
-                }
-            }
-        }
+    public void begin() {
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
+
+    @Override
+    public void setCaptureSetting(CaptureSetting setting) {
+
     }
 
     /** Create a file Uri for saving an image or video */
@@ -127,26 +104,4 @@ public class TakePhotoOrVideoActivity extends ActionBarActivity {
 
         return mediaFile;
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.take_photo_or_video, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
-
-
-

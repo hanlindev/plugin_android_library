@@ -3,7 +3,6 @@ package com.sana.android.plugin.hardware;
 import android.content.ContentResolver;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.os.Environment;
 import android.util.Log;
 import com.sana.android.plugin.data.DataWithEvent;
 import java.io.IOException;
@@ -33,8 +32,6 @@ public class AudioRecordDevice implements GeneralDevice {
 
     @Override
     public DataWithEvent prepare() {
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecord.3gp";
         return null;
     }
 
@@ -54,7 +51,6 @@ public class AudioRecordDevice implements GeneralDevice {
         }
 
         mRecorder.start();
-
     }
 
     @Override
@@ -62,7 +58,6 @@ public class AudioRecordDevice implements GeneralDevice {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-
     }
 
     @Override
@@ -73,15 +68,20 @@ public class AudioRecordDevice implements GeneralDevice {
         if(deleted){
             mFileName = null;
         }
-
     }
 
-    public void pause(){
+    public void pauseRecorder(){
         if (mRecorder != null) {
             mRecorder.release();
             mRecorder = null;
         }
+    }
 
+    public void pausePlayer(){
+        if (mPlayer != null) {
+            mPlayer.release();
+            mPlayer = null;
+        }
     }
 
     @Override
@@ -89,7 +89,7 @@ public class AudioRecordDevice implements GeneralDevice {
         this.audioEncoder = setting.getAudioEncoder();
         this.audioSource = setting.getAudioSource();
         this.outputFormat = setting.getOutputFormat();
-
+        this.mFileName = setting.getOutputFileName();
     }
 
     public void startPlaying() {
@@ -104,8 +104,11 @@ public class AudioRecordDevice implements GeneralDevice {
     }
 
     public void stopPlaying() {
+        if (mPlayer.isPlaying())
+            mPlayer.stop();
         mPlayer.release();
         mPlayer = null;
+
     }
 
 
