@@ -18,14 +18,18 @@ public class BluetoothDevice implements GeneralDevice {
     @Override
     //prepare is to store location of recorded audio?
     public DataWithEvent prepare() {
-        CommManager cm = CommManager.getInstance();
+        //CommManager cm = CommManager.getInstance();
         //InputStream is =
-        //BinaryDataWithPollingEvent pollingData = new BinaryDataWithPollingEvent(Feature.BLUETOOTH, CommManager.getInstance().getMimeType(), cm.getUri(), this, )
+        //BinaryDataWithPollingEvent pollingData = new BinaryDataWithPollingEvent(Feature.BLUETOOTH, CommManager.getInstance().getMimeType(), cm.getUri(), this, int uri_size);
         return null;
     }
 
     @Override
     public void begin() {
+    }
+
+    public MediaRecorder getMediaRecorder(){
+        return new MediaRecorder();
     }
 
     @Override

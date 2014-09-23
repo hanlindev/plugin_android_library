@@ -9,62 +9,54 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.sana.android.plugin.hardware.BluetoothDevice;
+import com.sana.android.plugin.hardware.CaptureSetting;
 
 import java.io.IOException;
 
 
 public class BluetoothRecordingActivity extends Activity {
     private static final String TAG = "AudioRecordTest";
-    private static final String mFileName = Environment
-            .getExternalStorageDirectory().getAbsolutePath()
+    private static final String mFileName = Environment.getExternalStorageDirectory().getAbsolutePath()
             + "/audiorecordtest.3gp";
-    private MediaRecorder mRecorder;
+    //private MediaRecorder mRecorder;
+    private BluetoothDevice BD;// = new BluetoothDevice();
+    private MediaRecorder mRecorder ;// = BD.getMediaRecorder();
     private MediaPlayer mPlayer;
     private AudioManager mAudioManager;
-    private BluetoothDevice BD = new BluetoothDevice();
-
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_bluetooth_recording);
-
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
         final ToggleButton mPlayButton = (ToggleButton) findViewById(R.id.play_button);
+
         // Set up record Button
         mRecordButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-                // Set checked state
-                mPlayButton.setEnabled(!isChecked);
-                // Start/stop recording
-                onRecordPressed(isChecked);
+                mPlayButton.setEnabled(!isChecked); // Set checked state
+                onRecordPressed(isChecked); // Start/stop recording
             }
         });
+
         // Set up play Button
         mPlayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-                // Set checked state
-                mRecordButton.setEnabled(!isChecked);
-                // Start/stop playback
-                onPlayPressed(isChecked);
+                mRecordButton.setEnabled(!isChecked); // Set checked state
+                onPlayPressed(isChecked);  // Start/stop playback
             }
         });
 
         // Get AudioManager
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        //I am adding my own bluetooth code here
         registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -78,10 +70,6 @@ public class BluetoothRecordingActivity extends Activity {
         }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
         Log.d(TAG, "starting bluetooth");
         mAudioManager.startBluetoothSco();
-        // I finished adding my bluetooth code */
-        // Request audio focus
-        //mAudioManager.requestAudioFocus(afChangeListener,
-        //		AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
     // Toggle recording
@@ -95,14 +83,15 @@ public class BluetoothRecordingActivity extends Activity {
     }
 
     // Start recording with MediaRecorder
-    //original startRecording Class
     private void startRecording() {
+        CaptureSetting cs = new CaptureSetting();
+        //cs.setAudioSource(MediaRecorder.AudioSource.MIC);
+        //cs.setOutputFormat(MediaRecorder.);
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
         try {
             mRecorder.prepare();
         } catch (IOException e) {
@@ -113,8 +102,6 @@ public class BluetoothRecordingActivity extends Activity {
 
     // Stop recording. Release resources
     private void stopRecording() {
-
-        //BluetoothDevice bluetoothMic = new BluetoothDevice();
         if (null != mRecorder) {
             mRecorder.stop();
             mRecorder.release();
@@ -151,20 +138,6 @@ public class BluetoothRecordingActivity extends Activity {
             mPlayer = null;
         }
     }
-
-    // Listen for Audio Focus changes
-    AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
-        @Override
-        public void onAudioFocusChange(int focusChange) {
-            if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                mAudioManager.abandonAudioFocus(afChangeListener);
-                // Stop playback, if necessary
-                if (mPlayer.isPlaying())
-                    stopPlaying();
-            }
-        }
-    };
-
     // Release recording and playback resources, if necessary
     @Override
     public void onPause() {

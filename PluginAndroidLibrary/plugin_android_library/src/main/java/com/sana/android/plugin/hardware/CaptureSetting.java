@@ -31,7 +31,6 @@ public class CaptureSetting {
         // TODO implement
     }
 
-
     public MediaRecorder.AudioEncoder getAudioEncoder() {
         return audioEncoder;
     }
