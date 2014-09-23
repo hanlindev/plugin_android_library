@@ -3,6 +3,7 @@ package com.sana.android.plugin.hardware;
 import android.content.ContentResolver;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.Environment;
 import android.util.Log;
 import com.sana.android.plugin.data.DataWithEvent;
 import java.io.IOException;
@@ -13,7 +14,8 @@ import java.io.File;
  */
 public class AudioRecordDevice implements GeneralDevice {
     private ContentResolver resolver;
-    private static String mFileName = null;
+    private static String mFileName = Environment.getExternalStorageDirectory().getAbsolutePath()
+            + "/audiorecordtest.3gp";
     private MediaRecorder mRecorder = null;
     private MediaPlayer   mPlayer = null;
     private static final String LOG_TAG = "AudioRecord";

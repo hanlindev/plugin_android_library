@@ -38,7 +38,7 @@ public class BuiltinCameraDevice implements GeneralDevice{
         // image quality to high
 
         // start the image capture Intent
-        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        //startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
         return null;
     }
