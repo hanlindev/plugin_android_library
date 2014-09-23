@@ -23,12 +23,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Launch MockApp with Required Data"
+        android:text="Request Text from MockApp"
         android:id="@+id/button2"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="launchMockAppWithRequiredData"/>
+        android:onClick="launchMockAppWithRequiredText"/>
 
     <ImageView
         android:layout_width="wrap_content"

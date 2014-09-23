@@ -20,7 +20,25 @@ import com.sana.android.plugin.hardware.*;
 
 import java.util.concurrent.TimeUnit;
 
+
+import android.widget.EditText;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import com.sana.android.plugin.application.CommManager;
+//import com.sana.android.plugin.hardware.BluetoothDevice;
+import android.bluetooth.BluetoothDevice;
+
+
 public class MockApp extends ActionBarActivity {
+
+    private static final String BLUETOOTH_ERROR_TITLE = "Bluetooth not connected!";
+    private static final String BUILTIN_ERROR_TITLE = "Bluetooth connected!";
+    private static final String BLUETOOTH_ERROR_MESSAGE= "Please go to settings, turn on bluetooth and try to pair with a bluetooth mic";
+    private static final String BUILTIN_ERROR_MESSAGE= "System detects a connected bluetooth device. Please use bluetooth mic to record.";
+
 
     final Context context = this;
 
@@ -52,7 +70,7 @@ public class MockApp extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_app);
 
-        //11111111111111111111111111111111111111111111111111111111111//
+        //USB code//
 
         final UsbAccessoryDevice accessoryDevice = new UsbAccessoryDevice(this);
         final DataWithEvent dataEvent = accessoryDevice.prepare();
@@ -80,24 +98,13 @@ public class MockApp extends ActionBarActivity {
             }
         });
 
-        //22222222222222222222222222222222222222222222222222222222222222//
+        //End of USB code//
 
-        // Get intent, action and MIME type
+        // Get intent
         Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
-
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/plain".equals(type)) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, "Share text to.."));
-            }
-        }
+        CommManager cm = CommManager.getInstance();
+        cm.respondToIntent(intent);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,25 +125,96 @@ public class MockApp extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*
-        Called when the user clicks send text button
+    /**
+     * Called when the user clicks send text button
      */
     public void sendTextToSana(View view) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Hello, MockSana.");
-        sendIntent.setType("text/plain");
-        startActivity(Intent.createChooser(sendIntent, "Share text to.."));
+        CommManager cm = CommManager.getInstance();
+        cm.sendData(this, getSendText());
     }
 
-    /*
-        Called when the user clicks send binary data button
+    /**
+     * Capture plain text
+     */
+    private String getSendText() {
+        EditText editText = (EditText) findViewById(R.id.editText);
+        String message = editText.getText().toString();
+        return message;
+    }
+
+    /**
+     * Called when the user clicks send binary data button
      */
     public void sendBinaryToSana(View view) {
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        //shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
-        shareIntent.setType("image/jpeg");
-        startActivity(Intent.createChooser(shareIntent, "Share binary data to.."));
+        CommManager cm = CommManager.getInstance();
+        cm.sendData(this);
+    }
+
+    // called when the user clicks the record from bluetooth mic button
+    private static boolean bluetoothConnected = false;
+    private void testBluetoothMic(){
+        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+
+        final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                bluetoothConnected= BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)?true:false;
+                context.unregisterReceiver(this);
+            }
+        };
+        this.registerReceiver(mReceiver, filter1);
+        this.registerReceiver(mReceiver, filter2);
+        this.registerReceiver(mReceiver, filter3);
+    }
+    public void bluetoothRecord(View view){
+        testBluetoothMic();
+        if(bluetoothConnected){
+            Intent intent = new Intent(this, BluetoothRecordingActivity.class);
+            startActivity(intent);
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setTitle(BLUETOOTH_ERROR_TITLE)
+                    .setMessage(BLUETOOTH_ERROR_MESSAGE)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+    }
+
+    /** Called when the user clicks the record audio from mic button */
+    public void recordAudioFromMic(View view) {
+        // Do something in response to button
+        testBluetoothMic();
+        if(!bluetoothConnected) {
+            Intent intent = new Intent(this, AudioRecordActivity.class);
+            startActivity(intent);
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setTitle(BUILTIN_ERROR_TITLE)
+                    .setMessage(BUILTIN_ERROR_MESSAGE)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+    }
+
+    /** Called when the user clicks the take photo button */
+    public void takePhotoOrVideo(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, TakePhotoOrVideoActivity.class);
+        startActivity(intent);
     }
 }

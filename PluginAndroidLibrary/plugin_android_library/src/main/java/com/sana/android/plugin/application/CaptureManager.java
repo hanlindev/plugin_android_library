@@ -1,5 +1,7 @@
 package com.sana.android.plugin.application;
 
+import android.content.ContentResolver;
+
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.DataWithEvent;
 import com.sana.android.plugin.data.listener.DataListener;
@@ -29,9 +31,16 @@ public class CaptureManager {
     private GeneralDevice dataSource;
     private DataWithEvent data;
     private Vector<DataListener> listeners;
+    private ContentResolver contentResolver;
 
-    public CaptureManager(Feature source, MimeType type) {
-        this(source, type, CaptureSetting.defaultSetting(source, type));
+    public CaptureManager(
+            Feature source, MimeType type, ContentResolver contentResolver) {
+        this(
+                source,
+                type,
+                contentResolver,
+                CaptureSetting.defaultSetting(source, type)
+        );
     }
 
     /**
@@ -43,12 +52,17 @@ public class CaptureManager {
      * @param setting   The setting to be passed to the sensor.
      */
     public CaptureManager(
-            Feature source, MimeType type, CaptureSetting setting) {
+            Feature source,
+            MimeType type,
+            ContentResolver contentResolver,
+            CaptureSetting setting
+    ) {
         if (setting == null) {
             setting = CaptureSetting.defaultSetting(source, type);
         }
+        this.contentResolver = contentResolver;
         this.dataSource =
-                DeviceFactory.getDeviceInstance(source, type, setting);
+                DeviceFactory.getDeviceInstance(source, setting);
         this.listeners = new Vector<>();
     }
 
