@@ -40,65 +40,11 @@ public class MockApp extends ActionBarActivity {
     private static final String BUILTIN_ERROR_MESSAGE= "System detects a connected bluetooth device. Please use bluetooth mic to record.";
 
 
-    final Context context = this;
-
-    String message = "";
-
-    public class UsbListener extends TimedListener {
-
-        Object sender;
-
-        public UsbListener(Object sender, long interval, TimeUnit unit) {
-            super(sender, interval, unit);
-        }
-
-        @Override
-        public void setExpectedSender(Object sender) {
-            this.sender = sender;
-        }
-
-        @Override
-        public void processData(Object sender, Object[] data) {
-            Log.d("Herereerere","");
-            for (int i=0;i<data.length;i++)
-                message += data[i].toString();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_app);
-
-        //USB code//
-
-        final UsbAccessoryDevice accessoryDevice = new UsbAccessoryDevice(this);
-        final DataWithEvent dataEvent = accessoryDevice.prepare();
-        //accessoryDevice.begin();
-
-        UsbListener listener = new UsbListener(this, 1000, TimeUnit.MILLISECONDS);
-
-        if (dataEvent != null && dataEvent.getEvent()!= null)
-            dataEvent.getEvent().addListener(listener);
-
-        Button bt = (Button) findViewById(R.id.record_button);
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                alert.setTitle("recording...");
-                //accessoryDevice.begin();
-                alert.setNegativeButton("Stop", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        accessoryDevice.stop();
-                        Toast.makeText(context, "MESSAGE IS |" + message + "|", Toast.LENGTH_LONG).show();
-                    }
-                });
-                alert.show();
-            }
-        });
-
-        //End of USB code//
 
         // Get intent
         Intent intent = getIntent();
@@ -215,6 +161,12 @@ public class MockApp extends ActionBarActivity {
     public void takePhotoOrVideo(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, TakePhotoOrVideoActivity.class);
+        startActivity(intent);
+    }
+
+    // Called when accessory record button is clicked
+    public void accessoryRecord(View view) {
+        Intent intent = new Intent(this, UsbAccessoryRecordActivity.class);
         startActivity(intent);
     }
 }

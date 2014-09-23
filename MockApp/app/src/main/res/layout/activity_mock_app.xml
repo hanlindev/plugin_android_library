@@ -39,9 +39,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/record_from_usb_button"
-        android:id="@+id/record_button"
+        android:id="@+id/usb_accessory_button"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="accessoryRecord"/>
 
     <Button
         android:layout_width="wrap_content"
