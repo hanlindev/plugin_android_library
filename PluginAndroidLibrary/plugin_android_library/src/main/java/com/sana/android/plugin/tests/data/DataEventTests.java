@@ -14,6 +14,7 @@ import com.sana.android.plugin.data.listener.TimedListener;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,24 +37,18 @@ public class DataEventTests extends InstrumentationTestCase {
     private static final TimeUnit TEST_FAILURE_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
     private InputStream is;
-    private OutputStream os;
-    private LocalSocket outSocket;
     // This socket receives data from outSocket and send it back
-    private LocalSocket loopBackSocket;
     private Byte[] testData;
     private ArrayBlockingQueue<Byte> byteReceiver;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        this.outSocket= new LocalSocket();
-        this.is = this.outSocket.getInputStream();
-        this.os = this.outSocket.getOutputStream();
-        this.loopBackSocket = new LocalSocket();
-        this.outSocket.connect(this.loopBackSocket.getLocalSocketAddress());
-        this.loopBackSocket.connect(this.outSocket.getLocalSocketAddress());
 
         this.testData = this.getDataToBeWritten(DataEventTests.TEST_DATA_SIZE);
+        this.is = new ByteArrayInputStream(
+                ArrayUtils.toPrimitive(this.testData));
+
         this.byteReceiver = new ArrayBlockingQueue<Byte>(
                 DataEventTests.TEST_DATA_SIZE, true);
     }
@@ -91,10 +86,9 @@ public class DataEventTests extends InstrumentationTestCase {
                 this.getPollingEvent(), this.getTimedListener());
     }
 
-    public void testDataCunkListenerWithPushingEvent() throws IOException {
+    public void testDataChunkListenerWithPushingEvent() throws IOException {
         testEventAndListener(
-                this.getPushingEvent(), this.getDataChunkListener()
-        );
+                this.getPushingEvent(), this.getDataChunkListener());
     }
 
     public void testTimedListenerWithPushingEvent() throws IOException {
@@ -106,13 +100,8 @@ public class DataEventTests extends InstrumentationTestCase {
     public void testEventAndListener(BaseDataEvent event, DataListener listener
     ) throws IOException {
         event.addListener(listener);
-        this.writeOutTestData();
         this.verifyData();
         listener.stopListening();
-    }
-
-    private void writeOutTestData() throws IOException {
-        this.os.write(ArrayUtils.toPrimitive(this.testData));
     }
 
     private Byte[] getDataToBeWritten(int dataLength) {
