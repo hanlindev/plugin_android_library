@@ -43,6 +43,10 @@ public abstract class TimedListener implements Runnable, DataListener {
         this.buffer = new LinkedBlockingQueue<Object>();
     }
 
+    public void setExpectedSender(Object sender) {
+        this.sender = sender;
+    }
+
     public Object getExpectedSender() {
         return this.sender;
     }

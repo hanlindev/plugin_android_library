@@ -1,6 +1,7 @@
 package com.sana.android.plugin.application;
 
 import android.content.ContentResolver;
+import android.util.Log;
 
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.DataWithEvent;
@@ -21,12 +22,13 @@ import java.util.Vector;
  * @author Han Lin
  */
 public class CaptureManager {
+    private static final String LOG_TAG = "CaptureManager";
     private static final String RESET_NOT_CALLED_ERROR_MSG =
             "reset must be called before prepare";
     private static final String PREPARE_NOT_CALLED_ERROR_MSG =
             "prepare must be called before begin";
-    private static final String NULL_SETTING_EXCEPTION_MSG =
-            "Capture setting can't be null";
+    private static final String STOP_INTERRUPTED_EXCEPTION_MSG =
+            "Call to method - stop is interrupted.";
 
     private GeneralDevice dataSource;
     private DataWithEvent data;
@@ -119,6 +121,7 @@ public class CaptureManager {
             throw new InvalidInvocationError(
                     CaptureManager.PREPARE_NOT_CALLED_ERROR_MSG);
         }
+        this.data.getEvent().startEvent();
         this.dataSource.begin();
     }
 
@@ -131,6 +134,15 @@ public class CaptureManager {
      */
     public DataWithEvent stop() {
         this.dataSource.stop();
+        try {
+            this.data.getEvent().stopEvent();
+        } catch (InterruptedException e) {
+            Log.e(
+                    CaptureManager.LOG_TAG,
+                    CaptureManager.STOP_INTERRUPTED_EXCEPTION_MSG,
+                    e
+            );
+        }
         return data;
     }
 

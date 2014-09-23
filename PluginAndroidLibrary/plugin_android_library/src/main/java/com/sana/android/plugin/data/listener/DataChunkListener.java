@@ -49,6 +49,10 @@ public abstract class DataChunkListener
         this.receiverThread = Executors.newSingleThreadExecutor();
     }
 
+    public void setExpectedSender(Object sender) {
+        this.sender = sender;
+    }
+
     public Object getExpectedSender() {
         return this.sender;
     }
