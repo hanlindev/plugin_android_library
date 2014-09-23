@@ -2,13 +2,8 @@ package sana.com.plugin.mockApp;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-//import android.media.MediaRecorder;
-import android.os.Environment;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.CompoundButton;
@@ -16,17 +11,9 @@ import android.widget.ToggleButton;
 import com.sana.android.plugin.hardware.BluetoothDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
 
-import java.io.IOException;
-
-
 public class BluetoothRecordingActivity extends Activity {
     private static final String TAG = "AudioRecordTest";
-    private static final String mFileName = Environment.getExternalStorageDirectory().getAbsolutePath()
-            + "/audiorecordtest.3gp";
-    //private MediaRecorder mRecorder;
-    private BluetoothDevice BD;// = new BluetoothDevice();
-    //private MediaRecorder mRecorder ;// = BD.getMediaRecorder();
-    private MediaPlayer mPlayer;
+    private BluetoothDevice BD;
     private AudioManager mAudioManager;
     @Override
 
@@ -76,91 +63,25 @@ public class BluetoothRecordingActivity extends Activity {
     // Toggle recording
     private void onRecordPressed(boolean shouldStartRecording) {
         if(shouldStartRecording) {
-            //startRecording();
+            BD.reset();
             BD.begin();
         }
         else{
-            //stopRecording();
             BD.stop();
         }
     }
-    /*
-    // Start recording with MediaRecorder
-    private void startRecording() {
-        CaptureSetting cs = new CaptureSetting();
-        //cs.setAudioSource(MediaRecorder.AudioSource.MIC);
-        //cs.setOutputFormat(MediaRecorder.);
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e(TAG, "Couldn't prepare and start MediaRecorder");
-        }
-        mRecorder.start();
-    }
-
-    // Stop recording. Release resources
-    private void stopRecording() {
-        if (null != mRecorder) {
-            mRecorder.stop();
-            mRecorder.release();
-            mRecorder = null;
-        }
-    }
-    */
     // Toggle playback
     private void onPlayPressed(boolean shouldStartPlaying) {
         if (shouldStartPlaying) {
-            startPlaying();
+            BD.startPlaying();
         } else {
-            stopPlaying();
+            BD.stopPlaying();
         }
-    }
-    // Playback audio using MediaPlayer
-    private void startPlaying() {
-        BD.startPlaying();
-        /*
-        mPlayer = new MediaPlayer();
-        try {
-            mPlayer.setDataSource(mFileName);
-            mPlayer.prepare();
-            mPlayer.start();
-        } catch (IOException e) {
-            Log.e(TAG, "Couldn't prepare and start MediaPlayer");
-        }
-        */
-    }
-
-    // Stop playback. Release resources
-    private void stopPlaying() {
-        BD.stopPlaying();
-        /*
-        if (null != mPlayer) {
-            if (mPlayer.isPlaying())
-                mPlayer.stop();
-            mPlayer.release();
-            mPlayer = null;
-        }
-        */
     }
 
     public void onPause() {
         super.onPause();
         BD.pauseRecorder();
         BD.pausePlayer();
-        /*
-        if (mRecorder != null) {
-            mRecorder.release();
-            mRecorder = null;
-        }
-        if (mPlayer != null) {
-            mPlayer.release();
-            mPlayer = null;
-        }
-        */
     }
 }
