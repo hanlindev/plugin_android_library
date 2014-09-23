@@ -43,7 +43,7 @@ public class CaptureSetting {
     }
 
     public Integer getAudioEncoder() {
-        return audioEncoder;
+        return this. audioEncoder;
     }
 
     public CaptureSetting setAudioEncoder(Integer audioEncoder) {

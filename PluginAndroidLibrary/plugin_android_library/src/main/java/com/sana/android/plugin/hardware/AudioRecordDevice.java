@@ -54,7 +54,6 @@ public class AudioRecordDevice implements GeneralDevice {
         }
 
         mRecorder.start();
-
     }
 
     @Override
@@ -62,7 +61,6 @@ public class AudioRecordDevice implements GeneralDevice {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-
     }
 
     @Override
@@ -73,7 +71,6 @@ public class AudioRecordDevice implements GeneralDevice {
         if(deleted){
             mFileName = null;
         }
-
     }
 
     public void pauseRecorder(){
@@ -81,7 +78,6 @@ public class AudioRecordDevice implements GeneralDevice {
             mRecorder.release();
             mRecorder = null;
         }
-
     }
 
     public void pausePlayer(){
@@ -96,7 +92,6 @@ public class AudioRecordDevice implements GeneralDevice {
         this.audioEncoder = setting.getAudioEncoder();
         this.audioSource = setting.getAudioSource();
         this.outputFormat = setting.getOutputFormat();
-
     }
 
     public void startPlaying() {
@@ -111,8 +106,11 @@ public class AudioRecordDevice implements GeneralDevice {
     }
 
     public void stopPlaying() {
+        if (mPlayer.isPlaying())
+            mPlayer.stop();
         mPlayer.release();
         mPlayer = null;
+
     }
 
 
