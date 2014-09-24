@@ -24,7 +24,7 @@ public class MockEvent extends BaseDataEvent {
         for (Byte[] data: this.dataSet) {
             super.notifyListeners(data);
             try {
-                this.wait(MockEvent.WAIT_TIMEOUT);
+                Thread.sleep(MockEvent.WAIT_TIMEOUT);
             } catch (InterruptedException e) {
                 Log.e(
                         MockEvent.LOG_TAG,
