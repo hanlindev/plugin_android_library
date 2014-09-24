@@ -83,7 +83,7 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
             try {
                 numBytesRead = this.incomingDataChannel.read(
                         this.buffer, this.pointer, this.bufferSize - this.pointer);
-                this.pointer += numBytesRead;
+                this.pointer = (this.pointer + numBytesRead) % this.bufferSize;
                 if (this.pointer == 0) {
                     this.notifyListeners(ArrayUtils.toObject(this.buffer));
                 }
