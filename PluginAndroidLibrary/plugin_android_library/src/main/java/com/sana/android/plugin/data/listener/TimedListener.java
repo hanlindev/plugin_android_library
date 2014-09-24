@@ -72,6 +72,10 @@ public abstract class TimedListener implements Runnable, DataListener {
 
     @Override
     public synchronized void putData(Object[] data) {
+        Log.d(
+                TimedListener.LOG_TAG,
+                "Received data of length " + data.length
+        );
         for (Object element : data) {
             try {
                 this.buffer.put(element);

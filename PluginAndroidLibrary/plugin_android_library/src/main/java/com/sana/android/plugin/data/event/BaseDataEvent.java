@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
  * Created by hanlin on 9/12/14.
  */
 public abstract class BaseDataEvent {
+    private static final String LOG_TAG = "BaseDataEvent";
     private Vector<DataListener> listeners;
     private ExecutorService notificationThread;
     private Object sender;
@@ -31,12 +32,21 @@ public abstract class BaseDataEvent {
     }
 
     public void notifyListeners(final Object[] data) {
-        HashSet<DataListener> addedListeners = new HashSet<>();
+        Log.d(
+                BaseDataEvent.LOG_TAG,
+                "Notifying " + this.listeners.size() + " listeners"
+        );
+        HashSet<DataListener> addedListeners = new HashSet<DataListener>();
         for (final DataListener listener : this.listeners) {
             if (!addedListeners.contains(listener)) {
                 this.notificationThread.submit(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(
+                                BaseDataEvent.LOG_TAG,
+                                "Notifying listener - " + listener
+                        );
+
                         listener.putData(data);
                     }
                 });
@@ -63,7 +73,7 @@ public abstract class BaseDataEvent {
     }
 
     public void removeListener(DataListener listener) {
-        ArrayList<DataListener> removing = new ArrayList<>();
+        ArrayList<DataListener> removing = new ArrayList<DataListener>();
         removing.add(listener);
         this.listeners.removeAll(removing);
     }

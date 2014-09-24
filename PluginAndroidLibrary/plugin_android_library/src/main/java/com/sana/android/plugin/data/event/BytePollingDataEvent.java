@@ -70,26 +70,28 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
         );
     }
 
-
     @Override
     public void run() {
         int numBytesRead = 0;// A value of -1 indicates closed stream.
         while (numBytesRead >= 0) {
-            Log.d(
-                    BytePollingDataEvent.LOG_TAG,
-                    "Number of bytes read: " + numBytesRead
-            );
-
             try {
                 numBytesRead = this.incomingDataChannel.read(
                         this.buffer, this.pointer, this.bufferSize - this.pointer);
                 this.pointer = (this.pointer + numBytesRead) % this.bufferSize;
+                Log.d(
+                        BytePollingDataEvent.LOG_TAG,
+                        String.format(
+                                "Number of bytes read: %d and current" +
+                                        " pointer position: %d",
+                                numBytesRead,
+                                this.pointer
+                        )
+                );
+
                 if (this.pointer == 0) {
-                    this.notifyListeners(ArrayUtils.toObject(this.buffer));
+                    this.notifyListeners();
                 }
             } catch (IOException e) {
-                // TODO decide what to do when the input stream is shutdown
-                // unexpectedly. But I think we shouldn't fatal this.
                 Log.d(
                         BytePollingDataEvent.LOG_TAG,
                         BytePollingDataEvent.UNEXPECTED_END_STREAM_EXCEPTION_MSG,
@@ -98,5 +100,14 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
                 break;
             }
         }
+
+        // Notify the listeners of remaining bytes.
+        if (this.pointer > 0) {
+            this.notifyListeners();
+        }
+    }
+
+    private void notifyListeners() {
+        this.notifyListeners(ArrayUtils.toObject(this.buffer));
     }
 }
