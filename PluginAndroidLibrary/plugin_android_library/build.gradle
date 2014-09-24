@@ -22,6 +22,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
 }
 
 dependencies {
@@ -30,4 +35,5 @@ dependencies {
     compile 'commons-io:commons-io:+'
     compile 'org.apache.commons:commons-lang3:3.0'
 }
+
 
