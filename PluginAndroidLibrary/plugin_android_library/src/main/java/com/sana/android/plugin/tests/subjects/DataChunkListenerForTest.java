@@ -1,7 +1,7 @@
 package com.sana.android.plugin.tests.subjects;
 
 import com.sana.android.plugin.data.listener.DataChunkListener;
-import com.sana.android.plugin.tests.data.DataEventTests;
+import com.sana.android.plugin.tests.data.DataEventAndListenerTests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,10 +10,10 @@ import java.util.Arrays;
  * Created by DIdiHL on 9/24/2014.
  */
 public class DataChunkListenerForTest extends DataChunkListener {
-    private DataEventTests testCase;
+    private DataEventAndListenerTests testCase;
 
     public DataChunkListenerForTest(
-            DataEventTests testCase, int bufferSize) {
+            DataEventAndListenerTests testCase, int bufferSize) {
         super(testCase, bufferSize);
         this.testCase = testCase;
     }

@@ -3,12 +3,10 @@ package com.sana.android.plugin.tests.mocks;
 import android.util.Log;
 
 import com.sana.android.plugin.data.listener.DataListener;
-import com.sana.android.plugin.tests.data.DataEventTests;
+import com.sana.android.plugin.tests.data.DataEventAndListenerTests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 public class MockListener implements DataListener {
     private static final String LOG_TAG = "MockListener";
 
-    private DataEventTests dataEventTests;
-    public MockListener(DataEventTests dataEventTests) {
-        this.dataEventTests = dataEventTests;
+    private DataEventAndListenerTests dataEventAndListenerTests;
+    public MockListener(DataEventAndListenerTests dataEventAndListenerTests) {
+        this.dataEventAndListenerTests = dataEventAndListenerTests;
     }
 
     @Override
@@ -36,7 +34,7 @@ public class MockListener implements DataListener {
 
     @Override
     public Object getExpectedSender() {
-        return this.dataEventTests;
+        return this.dataEventAndListenerTests;
     }
 
     @Override
@@ -51,7 +49,7 @@ public class MockListener implements DataListener {
         );
 
         try {
-            this.dataEventTests.putData(new ArrayList<Object>(Arrays.asList(data)).toArray(new Byte[0]));
+            this.dataEventAndListenerTests.putData(new ArrayList<Object>(Arrays.asList(data)).toArray(new Byte[0]));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by hanlin on 9/19/14.
  */
-public class DataEventTests extends InstrumentationTestCase {
+public class DataEventAndListenerTests extends InstrumentationTestCase {
     private static final String LOG_TAG = "DataEventTests";
     private static final int TEST_DATA_SIZE = 8;// Bytes
     private static final int TEST_LISTENER_BUFFER_SIZE_SMALL = 8;
@@ -49,12 +49,12 @@ public class DataEventTests extends InstrumentationTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        this.testData = this.getDataToBeWritten(DataEventTests.TEST_DATA_SIZE);
+        this.testData = this.getDataToBeWritten(DataEventAndListenerTests.TEST_DATA_SIZE);
         this.is = new ByteArrayInputStream(
                 ArrayUtils.toPrimitive(this.testData));
 
         this.byteReceiver = new ArrayBlockingQueue<Byte>(
-                DataEventTests.TEST_DATA_SIZE, true);
+                DataEventAndListenerTests.TEST_DATA_SIZE, true);
     }
 
     private ArrayList<Byte[]> getTestDataSets() {
@@ -65,14 +65,14 @@ public class DataEventTests extends InstrumentationTestCase {
 
     private DataChunkListener getDataChunkListener() {
         return new DataChunkListenerForTest(
-                this, DataEventTests.TEST_LISTENER_BUFFER_SIZE_SMALL);
+                this, DataEventAndListenerTests.TEST_LISTENER_BUFFER_SIZE_SMALL);
     }
 
     private TimedListener getTimedListener() {
         return new TimedListenerForTest(
                 this,
-                DataEventTests.TEST_LISTENER_INTERVAL_SMALL,
-                DataEventTests.TEST_LISTENER_TIME_UNIT
+                DataEventAndListenerTests.TEST_LISTENER_INTERVAL_SMALL,
+                DataEventAndListenerTests.TEST_LISTENER_TIME_UNIT
         );
     }
 
@@ -124,7 +124,7 @@ public class DataEventTests extends InstrumentationTestCase {
                 fail("Exception thrown while reading data from input stream.");
             }
         }
-        Thread.sleep(DataEventTests.STOP_LISTENER_TIMEOUT);
+        Thread.sleep(DataEventAndListenerTests.STOP_LISTENER_TIMEOUT);
         listener.stopListening();
         this.verifyData();
     }
@@ -143,8 +143,8 @@ public class DataEventTests extends InstrumentationTestCase {
             int pointer = 0;
             while (pointer < receivedData.length) {
                 Byte currentByte = this.byteReceiver.poll(
-                        DataEventTests.TEST_FAILURE_TIMEOUT,
-                        DataEventTests.TEST_FAILURE_TIMEOUT_UNIT
+                        DataEventAndListenerTests.TEST_FAILURE_TIMEOUT,
+                        DataEventAndListenerTests.TEST_FAILURE_TIMEOUT_UNIT
                 );
                 receivedData[pointer++] = currentByte;
             }
@@ -160,7 +160,7 @@ public class DataEventTests extends InstrumentationTestCase {
 
     public void putData(Byte[] data) throws InterruptedException {
         Log.d(
-                DataEventTests.LOG_TAG,
+                DataEventAndListenerTests.LOG_TAG,
                 "Test case received " + data.length + " bytes."
         );
         for (Byte item: data) {
