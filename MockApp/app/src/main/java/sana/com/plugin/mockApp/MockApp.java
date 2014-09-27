@@ -167,4 +167,13 @@ public class MockApp extends ActionBarActivity {
         Intent intent = new Intent(this, UsbAccessoryRecordActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Called when start accelerometer button is clicked
+     * @param view
+     */
+    public void startAccelerometer(View view) {
+        Intent intent = new Intent(this, AccelerometerActivity.class);
+        startActivity(intent);
+    }
 }

@@ -4,7 +4,13 @@ package com.sana.android.plugin.communication;
  * Created by hanlin on 9/12/14.
  */
 public enum MimeType {
-    TEXT("text/plain");
+    TEXT_PLAIN("text/plain"),
+    TEXT_CSV("text/csv"),
+    IMAGE("image/jpeg"),
+    AUDIO("audio/3gpp"),
+    VIDEO("video/3gpp"),
+    JSON("application/json"),
+    XML("application/xml");
 
 
     private String value;
