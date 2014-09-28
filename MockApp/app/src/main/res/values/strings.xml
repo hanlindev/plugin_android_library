@@ -18,5 +18,8 @@
     <string name="title_activity_audio_record">AudioRecordActivity</string>
     <string name="title_activity_take_photo_or_video">TakePhotoOrVideoActivity</string>
     <string name="title_activity_usb_accessory_record">UsbAccessoryRecordActivity</string>
+    <string name="title_activity_accelerometer">AccelerometerActivity</string>
+    <color name="white">#FFFFFF</color>
+    <color name="blue">#CCFFFF</color>
 
 </resources>
