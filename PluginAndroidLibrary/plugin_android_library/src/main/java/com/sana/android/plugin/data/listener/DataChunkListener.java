@@ -18,9 +18,8 @@ import java.util.concurrent.TimeUnit;
  * @author Han Lin
  */
 public abstract class DataChunkListener
-    implements DataListener, Runnable {
-
-    private final static String LOG_TAG = "IEL.DataChunkListener";
+        implements DataListener, Runnable {
+    private final static String LOG_TAG = "DataChunkListener";
     private final static String SHUTDOWN_INTERRUPTED_MSG_EXCEPTION_MSG =
         "Listener shutdown interrupted.";
     private final static String FATAL_INTERRUPTION_MSG_FORMAT =
@@ -49,6 +48,10 @@ public abstract class DataChunkListener
         this.receiverThread = Executors.newSingleThreadExecutor();
     }
 
+    public void setExpectedSender(Object sender) {
+        this.sender = sender;
+    }
+
     public Object getExpectedSender() {
         return this.sender;
     }
@@ -62,9 +65,17 @@ public abstract class DataChunkListener
      */
     @Override
     public synchronized void putData(Object[] data) {
+        Log.d(
+                DataChunkListener.LOG_TAG,
+                "Received data of length " + data.length
+        );
         if (this.isListening) {
             try {
                 this.appendOperations.put(new DataAppender(this.buffer, data));
+                Log.d(
+                        DataChunkListener.LOG_TAG,
+                        "DataAppender created for " + data
+                );
             } catch (InterruptedException e) {
                 // This is designed to wait indefinitely before the new data
                 // are registered. If it is interrupted, we can assume
@@ -103,6 +114,10 @@ public abstract class DataChunkListener
      */
     @Override
     public void stopListening(long timeout, TimeUnit unit) {
+        Log.d(
+                DataChunkListener.LOG_TAG,
+                "Stopping listener - " + this
+        );
         this.isListening = false;
         this.receiverThread.shutdown();
         try {
@@ -117,6 +132,7 @@ public abstract class DataChunkListener
                     e
             );
         }
+        this.processRemainingData();
     }
 
     /**
@@ -130,6 +146,10 @@ public abstract class DataChunkListener
             DataAppender appendOperation = null;
             try {
                 appendOperation = this.appendOperations.take();
+                Log.d(
+                        DataChunkListener.LOG_TAG,
+                        "AppendOperation " + appendOperation + " taken"
+                );
                 this.processAppendOperation(appendOperation);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -146,7 +166,7 @@ public abstract class DataChunkListener
     }
 
     private void processRemainingData() {
-        DataAppender[] appenders = this.buffer.toArray(new DataAppender[0]);
+        DataAppender[] appenders = this.appendOperations.toArray(new DataAppender[0]);
         for (DataAppender appender : appenders) {
             this.processAppendOperation(appender);
         }

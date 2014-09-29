@@ -39,8 +39,6 @@ public class MockApp extends ActionBarActivity {
     private static final String BLUETOOTH_ERROR_MESSAGE= "Please go to settings, turn on bluetooth and try to pair with a bluetooth mic";
     private static final String BUILTIN_ERROR_MESSAGE= "System detects a connected bluetooth device. Please use bluetooth mic to record.";
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,6 +165,15 @@ public class MockApp extends ActionBarActivity {
     // Called when accessory record button is clicked
     public void accessoryRecord(View view) {
         Intent intent = new Intent(this, UsbAccessoryRecordActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Called when start accelerometer button is clicked
+     * @param view
+     */
+    public void startAccelerometer(View view) {
+        Intent intent = new Intent(this, AccelerometerActivity.class);
         startActivity(intent);
     }
 }

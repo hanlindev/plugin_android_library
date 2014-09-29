@@ -22,6 +22,16 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <!-- Providers below here are deprecated -->
+        <provider
+            android:name="org.sana.android.db.ImageProvider"
+            android:authorities="org.sana.provider.Image" />
+        <provider
+            android:name="org.sana.android.db.SoundProvider"
+            android:authorities="org.sana.provider.Sound" />
+        <provider
+            android:name="org.sana.android.db.BinaryProvider"
+            android:authorities="org.sana.provider.Binary" />
     </application>
 
 </manifest>

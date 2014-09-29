@@ -16,7 +16,7 @@ public class CommManager {
     private static CommManager sharedInstance;
 
     private CommManager() {
-        this.actionMap = new HashMap<>();
+        this.actionMap = new HashMap<String, IntentAction>();
     }
 
     public static CommManager getInstance() {
