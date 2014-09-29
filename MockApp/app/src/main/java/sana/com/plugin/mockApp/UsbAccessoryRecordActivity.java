@@ -67,6 +67,7 @@ public class UsbAccessoryRecordActivity extends ActionBarActivity {
         alert.setNegativeButton("Stop", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 accessoryDevice.stop();
+                message = accessoryDevice.getMessage();
                 Toast.makeText(context, "MESSAGE IS |" + message + "|", Toast.LENGTH_LONG).show();
                 }
             });

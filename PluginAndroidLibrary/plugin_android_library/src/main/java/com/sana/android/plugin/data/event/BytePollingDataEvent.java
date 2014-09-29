@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
@@ -58,6 +59,8 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
                 if (this.pointer == 0) {
                     this.notifyListeners(ArrayUtils.toObject(this.buffer));
                 }
+                //numBytesRead = this.incomingDataChannel.read(this.buffer);
+                Log.d("#####################", numBytesRead+"");
             } catch (IOException e) {
                 // TODO decide what to do when the input stream is shutdown
                 // unexpectedly. But I think we shouldn't fatal this.

@@ -11,6 +11,7 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
 import com.sana.android.plugin.data.DataWithEvent;
 
@@ -19,12 +20,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by quang on 9/16/14.
  */
-public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable {
+public class UsbAccessoryDevice extends UsbGeneralDevice implements Runnable {
 
     UsbAccessory accessory;
     ParcelFileDescriptor accessoryFileDescriptor;
@@ -32,6 +36,15 @@ public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable
     FileOutputStream accessoryOutput;
     CaptureSetting setting;
     BinaryDataWithPollingEvent event;
+
+    Thread thread;
+    ExecutorService es;
+
+    String message = "";
+
+    public String getMessage() {
+        return message;
+    }
 
     public UsbAccessoryDevice(Context context) {
         super(context);
@@ -85,9 +98,9 @@ public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable
         // TODO: disable USB operations in the app
         try
         {
-            if (accessoryFileDescriptor != null) {
-                accessoryFileDescriptor.close();
-                Log.d("closed accessory file descriptor", "");
+            if (accessoryInput != null) {
+                accessoryInput.close();
+                Log.d("closed accessory input stream", "");
             }
         }
         catch (IOException e)
@@ -128,10 +141,10 @@ public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable
 
         Toast.makeText(context, accessoryInput.toString(), Toast.LENGTH_LONG).show();
 
-        try {
+        /*try {
             event = new BinaryDataWithPollingEvent(
-                    null, // Feature.USB_ACCESSORY
-                    null, // MimeType.BINARY ?
+                    Feature.USB_ACCESSORY,
+                    MimeType.TEXT,
                     null,
                     this,
                     accessoryInput,
@@ -141,8 +154,16 @@ public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable
             Log.d("file not found", e.toString());
         } catch (URISyntaxException e) {
             Log.d("uri exception", e.toString());
-        }
-        return event;
+        }*/
+
+        thread = new Thread(null, this, "ASDF");
+        thread.run();
+        //es = Executors.newSingleThreadExecutor();
+        //es.submit(this);
+
+        //return event;
+
+        return null;
     }
 
     @Override
@@ -168,14 +189,21 @@ public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable
         this.setting = setting;
     }
 
-/*    @Override
+    @Override
     public void run() {
         byteStream = new byte[MAX_BYTE_ARRAY_LENGTH];
-
-        try {
-            accessoryInput.read(byteStream);
-        } catch (IOException e) {
-            Log.d("Exception in USB accessory input reading", e.toString());
+        int num = 0;
+        while (num >= 0) {
+            try {
+                num = accessoryInput.read(byteStream);
+                accessoryInput.close();
+                Log.d("num = ", num+"");
+            } catch (IOException e) {
+                Log.d("Exception in USB accessory input reading", e.toString());
+            }
+            for (int i = 0; i < byteStream.length; i++)
+                message += byteStream[i];
         }
-    }*/
+        Log.d("thread stopped","");
+    }
 }
