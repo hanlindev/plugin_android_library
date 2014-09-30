@@ -9,9 +9,7 @@ import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.FeatureChecker;
 
 public class BluetoothRecordingActivity extends Activity {
-    private static final String TAG = "AudioRecordTest";
     private BluetoothDevice BD;
-    private FeatureChecker fc = new FeatureChecker();
     @Override
     public void onCreate(Bundle icicle) {
         BD = new BluetoothDevice(this);
@@ -31,14 +29,13 @@ public class BluetoothRecordingActivity extends Activity {
 
         // Set up play Button
         mPlayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
                 mRecordButton.setEnabled(!isChecked); // Set checked state
                 onPlayPressed(isChecked);  // Start/stop playback
             }
         });
-
+        //startBluetoothMic
         BD.startBluetoothMic();
     }
 
@@ -59,7 +56,7 @@ public class BluetoothRecordingActivity extends Activity {
 
     public void onPause() {
         super.onPause();
-        BD.pausseRecorder();
+        BD.pauseRecorder();
         BD.pausePlayer();
     }
 }

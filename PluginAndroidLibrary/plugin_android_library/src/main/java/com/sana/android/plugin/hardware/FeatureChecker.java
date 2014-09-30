@@ -1,5 +1,11 @@
 package com.sana.android.plugin.hardware;
 
+import android.bluetooth.*;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 
 /**
@@ -7,9 +13,10 @@ import android.content.pm.PackageManager;
  */
 public class FeatureChecker {
     private PackageManager pm;
-
-    public  FeatureChecker(){
-
+    private static boolean bluetoothConnected = false;
+    private Context mContext;
+    public  FeatureChecker(Context mContext){
+        this.mContext = mContext;
     }
 
     public FeatureChecker(PackageManager pm) {
@@ -19,7 +26,31 @@ public class FeatureChecker {
         return this.packageManagerHasFeature(feature);
     }
 
-    // check current bluetooth Connectivity Status
+
+    // check current Connectivity Status
+    public boolean isConnected(Feature feature){
+        switch(feature){
+            case BLUETOOTH:
+                return checkBluetoothConnectivity();
+        }
+
+        return false;
+    }
+
+    // return true if there is a stable bluetooth connectivity
+    private boolean checkBluetoothConnectivity(){
+        IntentFilter filter1 = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
+        final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                bluetoothConnected= BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)?true:false;
+                context.unregisterReceiver(this);
+            }
+        };
+        mContext.registerReceiver(mReceiver, filter1);
+        return bluetoothConnected;
+    }
     // return true is there is a valid bluetooth connectivity
     // return false if there is no
 
