@@ -28,23 +28,14 @@ import java.util.concurrent.Executors;
 /**
  * Created by quang on 9/16/14.
  */
-public class UsbAccessoryDevice extends UsbGeneralDevice implements Runnable {
+public class UsbAccessoryDevice extends UsbGeneralDevice {
 
     UsbAccessory accessory;
     ParcelFileDescriptor accessoryFileDescriptor;
     FileInputStream accessoryInput;
     FileOutputStream accessoryOutput;
     CaptureSetting setting;
-    BinaryDataWithPollingEvent event;
-
-    Thread thread;
-    ExecutorService es;
-
-    String message = "";
-
-    public String getMessage() {
-        return message;
-    }
+    BinaryDataWithPollingEvent dataWithEvent;
 
     public UsbAccessoryDevice(Context context) {
         super(context);
@@ -75,7 +66,6 @@ public class UsbAccessoryDevice extends UsbGeneralDevice implements Runnable {
 
     private void openAccessory(UsbAccessory accessory)
     {
-        Log.d("openning", accessory.toString());
         accessoryFileDescriptor = usbManager.openAccessory(accessory);
         if (accessoryFileDescriptor != null)
         {
@@ -85,7 +75,6 @@ public class UsbAccessoryDevice extends UsbGeneralDevice implements Runnable {
             accessoryOutput = new FileOutputStream(fd);
 
             Log.d("accessory opened","");
-            // TODO: enable USB operations in the app
         }
         else
         {
@@ -128,57 +117,61 @@ public class UsbAccessoryDevice extends UsbGeneralDevice implements Runnable {
             Toast.makeText(context, "null accessory", Toast.LENGTH_LONG).show();
             return null;
         }
-        else openAccessory(accessory);
+
+        openAccessory(accessory);
 
         if (accessoryInput == null) {
-            Toast.makeText(context, "null input", Toast.LENGTH_LONG).show();
             return null;
         }
+
         if (!usbManager.hasPermission(accessory)) {
-            Toast.makeText(context, "no permission", Toast.LENGTH_LONG).show();
             return null;
         }
 
         Toast.makeText(context, accessoryInput.toString(), Toast.LENGTH_LONG).show();
 
-        /*try {
-            event = new BinaryDataWithPollingEvent(
+        try {
+            dataWithEvent = new BinaryDataWithPollingEvent(
                     Feature.USB_ACCESSORY,
-                    MimeType.TEXT,
+                    MimeType.TEXT_PLAIN,
                     null,
                     this,
                     accessoryInput,
-                    100000
+                    8
             );
         } catch (FileNotFoundException e) {
             Log.d("file not found", e.toString());
         } catch (URISyntaxException e) {
             Log.d("uri exception", e.toString());
-        }*/
+        }
 
-        thread = new Thread(null, this, "ASDF");
-        thread.run();
-        //es = Executors.newSingleThreadExecutor();
-        //es.submit(this);
+        return dataWithEvent;
 
-        //return event;
+        /*thread = new Thread(null, this, "ASDF");
+        thread.start();
 
-        return null;
+        return null;*/
     }
 
     @Override
     public void begin() {
-        if (accessory != null) {
-            openAccessory(accessory);
+        if (dataWithEvent != null) {
+            dataWithEvent.getEvent().startEvent();
         }
     }
 
     @Override
     public void stop() {
-        if (accessory != null) {
-            closeAccessory();
-            context.unregisterReceiver(usbBroadcastReceiver);
+        if (dataWithEvent != null && dataWithEvent.getEvent() != null) {
+            try {
+                dataWithEvent.getEvent().stopEvent();
+                Log.d("stopped event", "");
+            } catch (InterruptedException e) {
+                Log.d("Interrupt exception", e.toString());
+            }
         }
+        closeAccessory();
+        context.unregisterReceiver(usbBroadcastReceiver);
     }
 
     public void reset() {
@@ -189,10 +182,11 @@ public class UsbAccessoryDevice extends UsbGeneralDevice implements Runnable {
         this.setting = setting;
     }
 
-    @Override
+    /*@Override
     public void run() {
-        byteStream = new byte[MAX_BYTE_ARRAY_LENGTH];
+        byteStream = new byte[80];
         int num = 0;
+        String message = "";
         while (num >= 0) {
             try {
                 num = accessoryInput.read(byteStream);
@@ -203,7 +197,8 @@ public class UsbAccessoryDevice extends UsbGeneralDevice implements Runnable {
             }
             for (int i = 0; i < byteStream.length; i++)
                 message += byteStream[i];
+            Log.d("message = ", message);
         }
         Log.d("thread stopped","");
-    }
+    }*/
 }

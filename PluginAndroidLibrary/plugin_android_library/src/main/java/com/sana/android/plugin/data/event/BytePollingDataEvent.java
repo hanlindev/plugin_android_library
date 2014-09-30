@@ -75,6 +75,7 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
     public void run() {
         int numBytesRead = 0;// A value of -1 indicates closed stream.
         while (numBytesRead >= 0) {
+            Log.d("running thread","");
             try {
                 numBytesRead = this.incomingDataChannel.read(
                         this.buffer, this.pointer, this.bufferSize - this.pointer);
@@ -92,8 +93,6 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
                 if (this.pointer == 0) {
                     this.notifyListeners();
                 }
-                //numBytesRead = this.incomingDataChannel.read(this.buffer);
-                Log.d("#####################", numBytesRead+"");
             } catch (IOException e) {
                 Log.d(
                         BytePollingDataEvent.LOG_TAG,
@@ -106,6 +105,7 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
 
         // Notify the listeners of remaining bytes.
         if (this.pointer > 0) {
+            Log.d("NOTIFYING","");
             this.notifyListeners();
         }
     }
