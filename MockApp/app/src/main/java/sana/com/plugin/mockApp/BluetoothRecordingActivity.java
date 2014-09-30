@@ -1,23 +1,20 @@
 package sana.com.plugin.mockApp;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.*;
-import android.media.AudioManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 import com.sana.android.plugin.hardware.BluetoothDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
+import com.sana.android.plugin.hardware.FeatureChecker;
 
 public class BluetoothRecordingActivity extends Activity {
     private static final String TAG = "AudioRecordTest";
     private BluetoothDevice BD;
-    private AudioManager mAudioManager;
+    private FeatureChecker fc = new FeatureChecker();
     @Override
     public void onCreate(Bundle icicle) {
-        BD = new BluetoothDevice();
+        BD = new BluetoothDevice(this);
         super.onCreate(icicle);
         setContentView(R.layout.activity_bluetooth_recording);
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
@@ -42,21 +39,7 @@ public class BluetoothRecordingActivity extends Activity {
             }
         });
 
-        // Get AudioManager
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -1);
-                Log.d(TAG, "Audio SCO state: " + state);
-                if (AudioManager.SCO_AUDIO_STATE_CONNECTED == state) {
-                    // now the connection has be established to the bluetooth device
-                    unregisterReceiver(this);
-                }
-            }
-        }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
-        Log.d(TAG, "starting bluetooth");
-        mAudioManager.startBluetoothSco();
+        BD.startBluetoothMic();
     }
 
     // Toggle recording
@@ -76,7 +59,7 @@ public class BluetoothRecordingActivity extends Activity {
 
     public void onPause() {
         super.onPause();
-        BD.pauseRecorder();
+        BD.pausseRecorder();
         BD.pausePlayer();
     }
 }
