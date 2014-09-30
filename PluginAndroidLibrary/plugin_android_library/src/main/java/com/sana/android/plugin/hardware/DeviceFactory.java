@@ -40,9 +40,13 @@ public class DeviceFactory {
         GeneralDevice instance = null;
         try {
             instance = (GeneralDevice) deviceConstructor.newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            Log.e(LOG_TAG, UNEXPECTED_ERROR_MESSAGE);
+        } catch (Exception e) {
+            if (e instanceof InstantiationException ||
+                    e instanceof IllegalAccessException ||
+                    e instanceof InvocationTargetException) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, UNEXPECTED_ERROR_MESSAGE);
+            }
         }
         instance.setCaptureSetting(setting);
         return instance;

@@ -38,7 +38,6 @@
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.PICTURE" />
 
@@ -62,6 +61,11 @@
         <activity
             android:name=".UsbAccessoryRecordActivity"
             android:label="@string/title_activity_usb_accessory_record" >
+        </activity>
+        <activity
+            android:name=".AccelerometerActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_accelerometer" >
         </activity>
     </application>
 
