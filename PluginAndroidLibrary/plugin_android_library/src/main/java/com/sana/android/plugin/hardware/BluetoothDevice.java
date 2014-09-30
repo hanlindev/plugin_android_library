@@ -38,6 +38,7 @@ public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice 
         return null;
     }
 
+    //switch the current input channel to bluetooth mic
     public void startBluetoothMic(){
         mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
         mContext.getApplicationContext().registerReceiver(new BroadcastReceiver() {
@@ -54,4 +55,6 @@ public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice 
         Log.d(TAG, "starting bluetooth");
         mAudioManager.startBluetoothSco();
     }
+
+
 }

@@ -38,9 +38,10 @@ public class MockApp extends ActionBarActivity {
     private static final String BUILTIN_ERROR_TITLE = "Bluetooth connected!";
     private static final String BLUETOOTH_ERROR_MESSAGE= "Please go to settings, turn on bluetooth and try to pair with a bluetooth mic";
     private static final String BUILTIN_ERROR_MESSAGE= "System detects a connected bluetooth device. Please use bluetooth mic to record.";
-
+    private FeatureChecker fc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        fc = new FeatureChecker(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_app);
 
@@ -94,28 +95,8 @@ public class MockApp extends ActionBarActivity {
         cm.sendData(this);
     }
 
-    // called when the user clicks the record from bluetooth mic button
-    private static boolean bluetoothConnected = false;
-    private void testBluetoothMic(){
-        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-
-        final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                bluetoothConnected= BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)?true:false;
-                context.unregisterReceiver(this);
-            }
-        };
-        this.registerReceiver(mReceiver, filter1);
-        this.registerReceiver(mReceiver, filter2);
-        this.registerReceiver(mReceiver, filter3);
-    }
     public void bluetoothRecord(View view){
-        testBluetoothMic();
-        if(bluetoothConnected){
+        if(fc.isConnected(Feature.BLUETOOTH)){
             Intent intent = new Intent(this, BluetoothRecordingActivity.class);
             startActivity(intent);
         }
@@ -135,9 +116,7 @@ public class MockApp extends ActionBarActivity {
 
     /** Called when the user clicks the record audio from mic button */
     public void recordAudioFromMic(View view) {
-        // Do something in response to button
-        testBluetoothMic();
-        if(!bluetoothConnected) {
+        if(!fc.isConnected(Feature.BLUETOOTH)){
             Intent intent = new Intent(this, AudioRecordActivity.class);
             startActivity(intent);
         }
