@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class DataEventAndListenerTests extends InstrumentationTestCase {
     private static final String LOG_TAG = "DataEventTests";
-    private static final int TEST_DATA_SIZE = 8;// Bytes
+    private static final int TEST_DATA_SIZE = 17;// Bytes
     private static final int TEST_LISTENER_BUFFER_SIZE_SMALL = 8;
     private static final long TEST_LISTENER_INTERVAL_SMALL = 50;
     private static final TimeUnit TEST_LISTENER_TIME_UNIT =
@@ -152,6 +152,14 @@ public class DataEventAndListenerTests extends InstrumentationTestCase {
                     "Listener received wrong data from event.",
                     this.testData,
                     receivedData
+            );
+            Log.d(
+                    DataEventAndListenerTests.LOG_TAG,
+                    "Test Data: " + this.testData
+            );
+            Log.d(
+                    DataEventAndListenerTests.LOG_TAG,
+                    "Received Data: " + receivedData
             );
         } catch (InterruptedException e) {
             fail("The listener failed to receive any data from the event.");
