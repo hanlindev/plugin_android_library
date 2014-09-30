@@ -40,6 +40,13 @@
         android:layout_alignParentStart="true"
         android:onClick="launchMockAppWithRequiredImage"/>
 
+    <Button
+        android:layout_width="233dp"
+        android:layout_height="wrap_content"
+        android:text="Test"
+        android:id="@+id/button4"
+        android:onClick="testButton"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,5 +1,6 @@
 package sana.com.plugin.mockSana;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import org.sana.android.db.SanaDB;
 
 
 public class MockSana extends ActionBarActivity {
@@ -108,6 +111,18 @@ public class MockSana extends ActionBarActivity {
         LaunchIntent.setAction("sana.com.plugin.mockApp.PICTURE");
         LaunchIntent.setType("image/jpg");
         startActivityForResult(LaunchIntent, 1);
+    }
+
+    public void testButton(View view) {
+        ContentValues values = new ContentValues();
+        String procedureId = "testProcedure";
+        values.put(SanaDB.SoundSQLFormat.ENCOUNTER_ID,
+                procedureId);
+        values.put(SanaDB.SoundSQLFormat.ELEMENT_ID, "testElement");
+        Uri recording =
+                getApplicationContext().getContentResolver().insert(
+                        SanaDB.SoundSQLFormat.CONTENT_URI, values);
+            showToast(recording.toString());
     }
 
 }
