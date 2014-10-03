@@ -16,7 +16,7 @@ import java.util.Date;
 /**
  * Created by Mia on 23/9/14.
  */
-public class BuiltinCameraDevice implements GeneralDevice{
+public class BuiltinCameraDevice implements GeneralDevice extends ActionBarActivity {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
     private Uri fileUri;
@@ -38,7 +38,7 @@ public class BuiltinCameraDevice implements GeneralDevice{
         // image quality to high
 
         // start the image capture Intent
-        //startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
         return null;
     }
