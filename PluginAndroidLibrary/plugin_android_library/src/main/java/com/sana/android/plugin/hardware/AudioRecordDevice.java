@@ -108,4 +108,12 @@ public class AudioRecordDevice implements GeneralDevice {
         mPlayer.release();
         mPlayer = null;
     }
+
+    public MediaRecorder getmRecorder(){
+        return this.mRecorder;
+    }
+
+    public MediaPlayer getmPlayer(){
+        return this.mPlayer;
+    }
 }
