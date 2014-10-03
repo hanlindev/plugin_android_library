@@ -39,8 +39,6 @@ public class TakePhotoOrVideoActivity extends ActionBarActivity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
-
-
     private ImageView imgPreview;
     private VideoView videoPreview;
     private Button btnCapturePicture, btnRecordVideo;
