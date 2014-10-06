@@ -1,5 +1,6 @@
 package sana.com.plugin.mockSana;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +15,20 @@ import android.widget.Toast;
 
 import org.sana.android.db.SanaDB;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
+
+import static android.support.v4.content.FileProvider.getUriForFile;
+
 
 public class MockSana extends ActionBarActivity {
 
+    static final int BINARY_DATA_REQUEST = 0;
+    static final int TEXT_DATA_REQUEST = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +56,29 @@ public class MockSana extends ActionBarActivity {
         toast.show();
     }
 
-    private void handleSendImage(Intent intent) {
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+    private void handleSendBinary(Intent intent) {
+        Uri imageUri = (Uri) intent.getData();
         if (imageUri != null) {
             // Update UI to reflect image being shared
 //            setContentView(R.layout.main);
-            ImageView imgView = (ImageView) findViewById(R.id.imageView2);
-            imgView.setImageURI(imageUri);
+            InputStream is = null;
+            try {
+                is = getContentResolver().openInputStream(imageUri);
+            } catch (FileNotFoundException e) {
+                showToast("File not found");
+            }
+            byte[] data = new byte[11];
+            if (is != null) {
+                try {
+                    int count = is.read(data, 0, 11);
+                    is.close();
+                } catch (IOException e) {
+                    showToast("IO exception");
+                }
+            }
+            System.out.println(data);
         }
+        showToast("binary data recieved");
     }
 
 
@@ -76,18 +103,23 @@ public class MockSana extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("++++++++++++onActivityResult Called++++++++++++");
-        String type = data.getType();
-        if (type.equals("text/plain")) {
-            //react when plain text is received
-            handleSendText(data);
+        if (requestCode == BINARY_DATA_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                System.out.println("++++++++++++++++Binary data intent received.");
+                handleSendBinary(data);
+            }
         }
-        else if (type.startsWith("image/")) {
-            //react when image is received
-            showToast("Binary data intent received.");
-//            handleSendImage(data);
-        } else {
-            showToast(String.format("Mimetype %s is not handled in MockSana", type));
+        else if (requestCode == TEXT_DATA_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                String type = data.getType();
+                if (type.equals("text/plain")) {
+                    //react when plain text is received
+                    System.out.println("++++++++++++++++Text data intent received.");
+                    handleSendText(data);
+                } else {
+                    showToast(String.format("Mimetype %s is wrong, text/plain expected", type));
+                }
+            }
         }
     }
 
@@ -103,26 +135,44 @@ public class MockSana extends ActionBarActivity {
         Intent LaunchIntent = new Intent();
         LaunchIntent.setAction("sana.com.plugin.mockApp.HEART_BEAT");
         LaunchIntent.setType("text/plain");
-        startActivityForResult(LaunchIntent, 1);
+        startActivityForResult(LaunchIntent, TEXT_DATA_REQUEST);
     }
 
-    public void launchMockAppWithRequiredImage(View view) {
+    private String generateRandomFileName(String ext) {
+        String fileName = String.format("%s.%s", UUID.randomUUID().toString().substring(0, 8), ext);
+        return fileName;
+    }
+
+    public void launchMockAppWithRequiredBinary(View view) {
         Intent LaunchIntent = new Intent();
         LaunchIntent.setAction("sana.com.plugin.mockApp.PICTURE");
-        LaunchIntent.setType("image/jpg");
-        startActivityForResult(LaunchIntent, 1);
+        LaunchIntent.setType("image/jpeg");
+        Uri contentUri = getContentUri(generateRandomFileName("jpg"));
+        grantUriPermission("sana.com.plugin.mockApp", contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        LaunchIntent.setData(contentUri);
+        if (LaunchIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(LaunchIntent, BINARY_DATA_REQUEST);
+        } else {
+            showToast("No activity in MockApp handle this intent.");
+        }
     }
 
-    public void testButton(View view) {
-        ContentValues values = new ContentValues();
-        String procedureId = "testProcedure";
-        values.put(SanaDB.SoundSQLFormat.ENCOUNTER_ID,
-                procedureId);
-        values.put(SanaDB.SoundSQLFormat.ELEMENT_ID, "testElement");
-        Uri recording =
-                getApplicationContext().getContentResolver().insert(
-                        SanaDB.SoundSQLFormat.CONTENT_URI, values);
-            showToast(recording.toString());
+    public void readData(View view) {
+        Intent intent = new Intent("sana.com.plugin.mockSana.READING");
+        startActivity(intent);
+    }
+
+    private Uri getContentUri(String fileName) {
+        File imagePath = new File(this.getFilesDir(), "images");
+        File newFile = new File(imagePath, fileName);
+        try {
+            newFile.getParentFile().mkdirs();
+            newFile.createNewFile();
+        } catch (IOException e) {
+            System.out.println("++++++++++++++++ failed creating new file");
+        }
+        Uri contentUri = getUriForFile(this, "sana.com.plugin.mockSana.fileprovider", newFile);
+        return contentUri;
     }
 
 }
