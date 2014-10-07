@@ -5,9 +5,19 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.Log;
+
+import com.sana.android.plugin.application.CommManager;
+import com.sana.android.plugin.communication.MimeType;
+import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
 import com.sana.android.plugin.data.DataWithEvent;
+import com.sana.android.plugin.data.event.BytePollingDataEvent;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
 /**
  * Created by Mia on 23/9/14.
  */
@@ -24,7 +34,7 @@ public class AudioRecordDevice implements GeneralDevice {
     public AudioRecordDevice(){
         mFileName=Environment.getExternalStorageDirectory().getAbsolutePath()
                 + "/audiorecordtest.3gp";
-        prepare();
+//        prepare();
     }
 
     public AudioRecordDevice(CaptureSetting setting){
@@ -34,15 +44,29 @@ public class AudioRecordDevice implements GeneralDevice {
 
     @Override
     public DataWithEvent prepare() {
-        return null;
+        mRecorder = new MediaRecorder();
+        mRecorder.setOutputFile(CommManager.getInstance().getUri().toString());
+        try {
+            InputStream is = this.resolver.openInputStream(CommManager.getInstance().getUri());
+            DataWithEvent result = new BinaryDataWithPollingEvent(Feature.MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
+            return result;
+        } catch (FileNotFoundException e) {
+            // TODO handle more carefully
+            e.printStackTrace();
+            return null;
+        } catch (URISyntaxException e) {
+            // TODO handle more carefully
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public void begin() {
-        mRecorder = new MediaRecorder();
+//        mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName);
+//        mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         try {
             mRecorder.prepare();
@@ -88,6 +112,7 @@ public class AudioRecordDevice implements GeneralDevice {
         this.audioEncoder = setting.getAudioEncoder();
         this.audioSource = setting.getAudioSource();
         this.outputFormat = setting.getOutputFormat();
+        this.resolver = setting.getContentResolver();
         this.mFileName = setting.getOutputFileName();
     }
 
