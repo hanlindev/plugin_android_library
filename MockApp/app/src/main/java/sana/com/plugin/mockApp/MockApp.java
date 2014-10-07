@@ -18,6 +18,9 @@ import com.sana.android.plugin.data.*;
 import com.sana.android.plugin.data.listener.TimedListener;
 import com.sana.android.plugin.hardware.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
 
@@ -88,11 +91,47 @@ public class MockApp extends ActionBarActivity {
     }
 
     /**
+     * Show toast on the screen, can be error message
+     * @param message
+     */
+    private void showToast(String message) {
+        Context context = getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_LONG;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+
+    /**
      * Called when the user clicks send binary data button
      */
     public void sendBinaryToSana(View view) {
         CommManager cm = CommManager.getInstance();
+        writeDataToUri(cm);
+        System.out.println("Byte array write already");
         cm.sendData(this);
+        System.out.println("Intent send back already");
+    }
+
+    private void writeDataToUri(CommManager cm) {
+        OutputStream os = null;
+        try{
+            os = getContentResolver().openOutputStream(cm.getUri());
+            byte[] byteData = new byte[]{1,1,1,1,1,1,1,1,1,1,0};
+            try {
+                os.write(byteData);
+            } catch (IOException e) {
+                System.out.println("+++++++++++++++++++++++Fail write to file uri!");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("++++++++++++++++++++++++++++++File not found!");
+        } finally {
+            if (os != null) try {
+                os.close();
+            } catch (IOException e) {
+                showToast("IO exception");
+            }
+        }
     }
 
     public void bluetoothRecord(View view){
