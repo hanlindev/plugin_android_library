@@ -107,7 +107,7 @@ public class MockApp extends ActionBarActivity {
      */
     public void sendBinaryToSana(View view) {
         CommManager cm = CommManager.getInstance();
-        writeDataToUri(cm);
+//        writeDataToUri(cm);
         System.out.println("Byte array write already");
         cm.sendData(this);
         System.out.println("Intent send back already");
