@@ -29,6 +29,8 @@ public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice 
     public BluetoothDevice(Context mContext, CaptureSetting setting){
         this.mContext = mContext;
         setCaptureSetting(setting);
+        CommManager CM = CommManager.getInstance();
+        setting.setOutputFilename(CM.getUri().toString());
         prepare();
     }
 
