@@ -33,6 +33,8 @@ public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable
     CaptureSetting setting;
     BinaryDataWithPollingEvent event;
 
+    public UsbAccessoryDevice() {}
+
     public UsbAccessoryDevice(Context context) {
         super(context);
     }
