@@ -4,7 +4,7 @@
     <!--path-->
     <paths xmlns:android="http://schemas.android.com/apk/res/android">
         <files-path name= "images" path="images/"/>
-        <files-path name= "audio" path="sound/"/>
+        <files-path name= "audio" path="audio/"/>
         <files-path name= "videos" path="videos/"/>
     </paths>
 </PreferenceScreen>

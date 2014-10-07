@@ -20,5 +20,9 @@
     <string name="db_name">models.db</string>
     <string name="title_activity_reading">READING</string>
     <string name="title_activity_list">LIST</string>
+    <string name="title_activity_music_preview">MusicPreview</string>
+    <string name="title_activity_audio_preview">AudioPreview</string>
+    <string name="title_activity_video_preview">VideoPreview</string>
+    <string name="title_activity_image_preview">ImagePreview</string>
 
 </resources>
