@@ -45,6 +45,21 @@
 
                 <data android:mimeType="image/jpeg"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockApp.AUDIO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="audio/3gpp"/>
+                <data android:mimeType="video/3gpp"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockApp.VIDEO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="video/3gpp"/>
+            </intent-filter>
         </activity>
         <activity
             android:name=".BluetoothRecordingActivity"
