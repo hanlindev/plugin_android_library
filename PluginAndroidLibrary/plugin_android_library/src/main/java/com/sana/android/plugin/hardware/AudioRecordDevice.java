@@ -12,11 +12,19 @@ import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
 import com.sana.android.plugin.data.DataWithEvent;
 import com.sana.android.plugin.data.event.BytePollingDataEvent;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 
 /**
  * Created by Mia on 23/9/14.
@@ -45,9 +53,9 @@ public class AudioRecordDevice implements GeneralDevice {
     @Override
     public DataWithEvent prepare() {
         mRecorder = new MediaRecorder();
-        mRecorder.setOutputFile(CommManager.getInstance().getUri().toString());
+        mRecorder.setOutputFile(mFileName);
         try {
-            InputStream is = this.resolver.openInputStream(CommManager.getInstance().getUri());
+            InputStream is = new FileInputStream(mFileName);
             DataWithEvent result = new BinaryDataWithPollingEvent(Feature.MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
             return result;
         } catch (FileNotFoundException e) {
@@ -56,6 +64,9 @@ public class AudioRecordDevice implements GeneralDevice {
             return null;
         } catch (URISyntaxException e) {
             // TODO handle more carefully
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -81,6 +92,19 @@ public class AudioRecordDevice implements GeneralDevice {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
+        moveData();
+    }
+
+    private void moveData() {
+        try {
+            FileInputStream is = new FileInputStream(mFileName);
+            OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());
+            IOUtils.copy(is, os);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
