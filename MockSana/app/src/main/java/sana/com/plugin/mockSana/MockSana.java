@@ -193,6 +193,7 @@ public class MockSana extends ActionBarActivity {
         Uri contentUri = getContentUri(generateRandomFileName(ext), subfolder);
         System.out.println("---------------------------" + getContentResolver().getType(contentUri));
         grantUriPermission("sana.com.plugin.mockApp", contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        grantUriPermission("sana.com.plugin.mockApp", contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         LaunchIntent.setData(contentUri);
         if (LaunchIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(LaunchIntent, requestCode);
