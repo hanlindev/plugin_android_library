@@ -58,6 +58,12 @@ public class CaptureSetting {
     }
 
     public String getOutputFileName() { return this.outputFileName; }
+
+    public CaptureSetting setOutputFilename(String filename) {
+        this.outputFileName = filename;
+        return this;
+    }
+
     public Integer getAudioSource() {
         return audioSource;
     }
@@ -66,6 +72,8 @@ public class CaptureSetting {
         this.audioSource = audioSource;
         return this;
     }
+
+
 
     public Integer getOutputFormat() {
         return outputFormat;

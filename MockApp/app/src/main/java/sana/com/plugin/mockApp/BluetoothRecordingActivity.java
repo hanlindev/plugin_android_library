@@ -6,13 +6,18 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 import com.sana.android.plugin.hardware.BluetoothDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
+import com.sana.android.plugin.hardware.Feature;
 import com.sana.android.plugin.hardware.FeatureChecker;
 
 public class BluetoothRecordingActivity extends Activity {
     private BluetoothDevice BD;
+    private CaptureSetting cs;
     @Override
     public void onCreate(Bundle icicle) {
-        BD = new BluetoothDevice(this);
+        //using the default capture setting
+        cs = new CaptureSetting();
+        cs.setDefaultForFeature(Feature.MICROPHONE);
+        BD = new BluetoothDevice(this, cs);
         super.onCreate(icicle);
         setContentView(R.layout.activity_bluetooth_recording);
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);

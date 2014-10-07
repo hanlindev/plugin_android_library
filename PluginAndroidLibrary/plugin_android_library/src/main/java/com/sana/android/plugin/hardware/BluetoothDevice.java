@@ -26,13 +26,16 @@ public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice 
     private Context mContext;
     //prepare is to store location of recorded audio?
 
-    public BluetoothDevice(Context mContext){
+    public BluetoothDevice(Context mContext, CaptureSetting setting){
         this.mContext = mContext;
+        setCaptureSetting(setting);
+        prepare();
     }
 
     public BluetoothDevice(){
 
     }
+
     public DataWithEvent prepare() {
         //CommManager cm = CommManager.getInstance();
         //File initialFile = new File(super.mFileName);
