@@ -65,7 +65,7 @@ public class CaptureManager {
         this.contentResolver = contentResolver;
         this.dataSource =
                 DeviceFactory.getDeviceInstance(source, setting);
-        this.listeners = new Vector<>();
+        this.listeners = new Vector<DataListener>();
     }
 
     /**
@@ -89,7 +89,7 @@ public class CaptureManager {
      * @param listener
      */
     public void removeListener(DataListener listener) {
-        ArrayList<DataListener> removing = new ArrayList<>();
+        ArrayList<DataListener> removing = new ArrayList<DataListener>();
         removing.add(listener);
         this.listeners.removeAll(removing);
     }

@@ -33,7 +33,8 @@ public abstract class TimedListener implements Runnable, DataListener {
     public TimedListener() {}
 
     /**
-     * @param interval  Is the time interval in milliseconds.
+     * @param interval   Is the time interval's value
+     * @param unit        The time interval's unit.
      */
     public TimedListener(Object sender, long interval, TimeUnit unit) {
         this.sender = sender;
