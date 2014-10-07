@@ -30,6 +30,8 @@ import java.util.concurrent.Executors;
  */
 public class UsbAccessoryDevice extends UsbGeneralDevice {
 
+    private static final String LOG_TAG = "UsbAccessoryDevice";
+
     UsbAccessory accessory;
     ParcelFileDescriptor accessoryFileDescriptor;
     FileInputStream accessoryInput;
@@ -45,8 +47,6 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
 
         public void onReceive(Context context, Intent intent) {
 
-            Log.d("good, ", "very good");
-
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
@@ -57,7 +57,7 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
                         }
                     }
                     else {
-                        Log.d("debuggg: ", "permission denied for accessory " + accessory);
+                        Log.d(UsbAccessoryDevice.LOG_TAG, "Permission denied for accessory " + accessory);
                     }
                 }
             }
@@ -74,27 +74,26 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
             accessoryInput = new FileInputStream(fd);
             accessoryOutput = new FileOutputStream(fd);
 
-            Log.d("accessory opened","");
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory opened");
         }
         else
         {
-            Log.d("accessory open fail","");
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory open fail");
         }
     }
 
     private void closeAccessory()
     {
-        // TODO: disable USB operations in the app
         try
         {
             if (accessoryInput != null) {
                 accessoryInput.close();
-                Log.d("closed accessory input stream", "");
+                Log.d(UsbAccessoryDevice.LOG_TAG, "Closed accessory input stream");
             }
         }
         catch (IOException e)
         {
-            Log.d("exception closing", e.toString());
+            Log.d(UsbAccessoryDevice.LOG_TAG, "exception closing accessory: " + e.toString());
         }
         finally {
             accessoryFileDescriptor = null;
@@ -114,21 +113,23 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
         }
 
         if (accessory == null) {
-            Toast.makeText(context, "null accessory", Toast.LENGTH_LONG).show();
+            Log.d(UsbAccessoryDevice.LOG_TAG, "No accessories found");
             return null;
         }
 
         openAccessory(accessory);
 
         if (accessoryInput == null) {
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Input stream cannot be opened");
             return null;
         }
 
         if (!usbManager.hasPermission(accessory)) {
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Permission denied for accessory " + accessory);
             return null;
         }
 
-        Toast.makeText(context, accessoryInput.toString(), Toast.LENGTH_LONG).show();
+//        Toast.makeText(context, accessoryInput.toString(), Toast.LENGTH_LONG).show();
 
         try {
             dataWithEvent = new BinaryDataWithPollingEvent(
@@ -140,9 +141,9 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
                     8
             );
         } catch (FileNotFoundException e) {
-            Log.d("file not found", e.toString());
+            Log.d(UsbAccessoryDevice.LOG_TAG, "file not found: " + e.toString());
         } catch (URISyntaxException e) {
-            Log.d("uri exception", e.toString());
+            Log.d(UsbAccessoryDevice.LOG_TAG, "uri exception: " + e.toString());
         }
 
         return dataWithEvent;
@@ -165,9 +166,8 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
         if (dataWithEvent != null && dataWithEvent.getEvent() != null) {
             try {
                 dataWithEvent.getEvent().stopEvent();
-                Log.d("stopped event", "");
             } catch (InterruptedException e) {
-                Log.d("Interrupt exception", e.toString());
+                Log.d(UsbAccessoryDevice.LOG_TAG, "interrupted exception: " + e.toString());
             }
         }
         closeAccessory();

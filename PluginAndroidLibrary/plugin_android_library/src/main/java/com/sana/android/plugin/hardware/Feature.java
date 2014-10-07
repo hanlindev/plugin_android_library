@@ -16,6 +16,7 @@ public enum Feature {
     CAMERA_FRONT("android.hardware.camera.front", "frontCamera"),
     CONSUMER_IR("android.hardware.consumerir", "consumerIr"),
     USB_ACCESSORY("android.hardware.usb.accessory", "usbAccessory"),
+    USB_HOST("android.hardware.usb.host", "usbHost"),
     WIFI_DIRECT("android.hardware.wifi.direct", "wifiDirect"),
     MICROPHONE("android.hardware.microphone", "microphone"),
     ACCELEROMETER("android.hardware.sensor.accelerometer", "accelerometer");

@@ -147,6 +147,12 @@ public class MockApp extends ActionBarActivity {
         startActivity(intent);
     }
 
+    // Called when host record button is clicked
+    public void hostRecord(View view) {
+        Intent intent = new Intent(this, UsbHostRecordActivity.class);
+        startActivity(intent);
+    }
+
     /**
      * Called when start accelerometer button is clicked
      * @param view

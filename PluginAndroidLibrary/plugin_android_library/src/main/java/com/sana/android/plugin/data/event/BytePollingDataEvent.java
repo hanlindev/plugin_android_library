@@ -105,7 +105,6 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
 
         // Notify the listeners of remaining bytes.
         if (this.pointer > 0) {
-            Log.d("NOTIFYING","");
             this.notifyListeners();
         }
     }
