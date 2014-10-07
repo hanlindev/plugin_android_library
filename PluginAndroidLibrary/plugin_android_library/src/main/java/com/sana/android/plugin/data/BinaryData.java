@@ -48,9 +48,7 @@ public abstract class BinaryData implements DataWithEvent {
      *
      * @return The URI of the file.
      */
-    public Uri getUriToData() {
-        return this.uriToData;
-    }
+    public Uri getUriToData() { return this.uriToData; }
 
     /**
      * Get the data that was captured.

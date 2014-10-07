@@ -52,11 +52,10 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
                 synchronized (this) {
                     accessory = (UsbAccessory) intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        if(accessory != null){
+                        if (accessory != null) {
                             openAccessory(accessory);
                         }
-                    }
-                    else {
+                    } else {
                         Log.d(UsbAccessoryDevice.LOG_TAG, "Permission denied for accessory " + accessory);
                     }
                 }
@@ -64,38 +63,29 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
         }
     };
 
-    private void openAccessory(UsbAccessory accessory)
-    {
+    private void openAccessory(UsbAccessory accessory) {
         accessoryFileDescriptor = usbManager.openAccessory(accessory);
-        if (accessoryFileDescriptor != null)
-        {
+        if (accessoryFileDescriptor != null) {
             this.accessory = accessory;
             FileDescriptor fd = accessoryFileDescriptor.getFileDescriptor();
             accessoryInput = new FileInputStream(fd);
             accessoryOutput = new FileOutputStream(fd);
 
             Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory opened");
-        }
-        else
-        {
+        } else {
             Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory open fail");
         }
     }
 
-    private void closeAccessory()
-    {
-        try
-        {
+    private void closeAccessory() {
+        try {
             if (accessoryInput != null) {
                 accessoryInput.close();
                 Log.d(UsbAccessoryDevice.LOG_TAG, "Closed accessory input stream");
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Log.d(UsbAccessoryDevice.LOG_TAG, "exception closing accessory: " + e.toString());
-        }
-        finally {
+        } finally {
             accessoryFileDescriptor = null;
             accessory = null;
         }
@@ -129,8 +119,6 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
             return null;
         }
 
-//        Toast.makeText(context, accessoryInput.toString(), Toast.LENGTH_LONG).show();
-
         try {
             dataWithEvent = new BinaryDataWithPollingEvent(
                     Feature.USB_ACCESSORY,
@@ -147,11 +135,6 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
         }
 
         return dataWithEvent;
-
-        /*thread = new Thread(null, this, "ASDF");
-        thread.start();
-
-        return null;*/
     }
 
     @Override
@@ -181,24 +164,4 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
     public void setCaptureSetting(CaptureSetting setting) {
         this.setting = setting;
     }
-
-    /*@Override
-    public void run() {
-        byteStream = new byte[80];
-        int num = 0;
-        String message = "";
-        while (num >= 0) {
-            try {
-                num = accessoryInput.read(byteStream);
-                accessoryInput.close();
-                Log.d("num = ", num+"");
-            } catch (IOException e) {
-                Log.d("Exception in USB accessory input reading", e.toString());
-            }
-            for (int i = 0; i < byteStream.length; i++)
-                message += byteStream[i];
-            Log.d("message = ", message);
-        }
-        Log.d("thread stopped","");
-    }*/
 }

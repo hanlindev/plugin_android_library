@@ -54,13 +54,13 @@ public class UsbAccessoryRecordActivity extends ActionBarActivity {
         setContentView(R.layout.activity_usb_accessory_record);
 
         final UsbAccessoryDevice accessoryDevice = new UsbAccessoryDevice(this);
-        final DataWithEvent dataEvent = accessoryDevice.prepare();
+        final DataWithEvent dataWithEvent = accessoryDevice.prepare();
 
         UsbListener listener = new UsbListener(accessoryDevice, 1000, TimeUnit.MILLISECONDS);
         listener.startListening();
 
-        if (dataEvent != null && dataEvent.getEvent()!= null)
-            dataEvent.getEvent().addListener(listener);
+        if (dataWithEvent != null && dataWithEvent.getEvent()!= null)
+            dataWithEvent.getEvent().addListener(listener);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("recording...");
