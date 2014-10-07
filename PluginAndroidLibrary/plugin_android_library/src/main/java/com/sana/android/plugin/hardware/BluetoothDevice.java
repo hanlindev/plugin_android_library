@@ -28,6 +28,9 @@ public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice 
 
     public BluetoothDevice(Context mContext){
         this.mContext = mContext;
+    }
+
+    public BluetoothDevice(){
 
     }
     public DataWithEvent prepare() {

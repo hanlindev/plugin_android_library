@@ -24,14 +24,7 @@ import com.sana.android.plugin.hardware.AudioRecordDevice;
 
 public class AudioRecordActivity extends ActionBarActivity {
     private AudioRecordDevice audioRecord;
-    /*
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.audio_record, menu);
-            return true;
-        }
-    */
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -48,34 +41,18 @@ public class AudioRecordActivity extends ActionBarActivity {
 
     private void onRecord(boolean start) {
         if (start) {
-            startRecording();
+            audioRecord.begin();
         } else {
-            stopRecording();
+            audioRecord.stop();
         }
     }
 
     private void onPlay(boolean start) {
         if (start) {
-            startPlaying();
+            audioRecord.startPlaying();
         } else {
-            stopPlaying();
+            audioRecord.stopPlaying();
         }
-    }
-
-    private void startPlaying() {
-        audioRecord.startPlaying();
-    }
-
-    private void stopPlaying() {
-        audioRecord.stopPlaying();
-    }
-
-    private void startRecording() {
-        audioRecord.begin();
-    }
-
-    private void stopRecording() {
-        audioRecord.stop();
     }
 
     class RecordButton extends Button {
@@ -126,6 +103,7 @@ public class AudioRecordActivity extends ActionBarActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
+        audioRecord = new AudioRecordDevice();
         LinearLayout ll = new LinearLayout(this);
         mRecordButton = new RecordButton(this);
         ll.addView(mRecordButton,

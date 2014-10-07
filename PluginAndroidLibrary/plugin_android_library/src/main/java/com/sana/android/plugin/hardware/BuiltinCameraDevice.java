@@ -16,7 +16,10 @@ import java.util.Date;
 /**
  * Created by Mia on 23/9/14.
  */
-public class BuiltinCameraDevice implements GeneralDevice{
+public class BuiltinCameraDevice implements GeneralDevice  {
+
+
+
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
     private Uri fileUri;
@@ -38,7 +41,7 @@ public class BuiltinCameraDevice implements GeneralDevice{
         // image quality to high
 
         // start the image capture Intent
-        //startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+       // startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
         return null;
     }
@@ -62,12 +65,12 @@ public class BuiltinCameraDevice implements GeneralDevice{
 
     }
 
-    /** Create a file Uri for saving an image or video */
+    // Create a file Uri for saving an image or video
     private static Uri getOutputMediaFileUri(int type) {
         return Uri.fromFile(getOutputMediaFile(type));
     }
 
-    /** Create a File for saving an image or video */
+    // Create a File for saving an image or video
     @SuppressLint("SimpleDateFormat")
     private static File getOutputMediaFile(int type) {
         // To be safe, you should check that the SDCard is mounted
