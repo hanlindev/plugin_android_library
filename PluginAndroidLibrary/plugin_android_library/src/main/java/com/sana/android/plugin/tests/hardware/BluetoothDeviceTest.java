@@ -31,7 +31,6 @@ import com.sana.android.plugin.hardware.BluetoothDevice;
             }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
         }
 
-
         public void testPauseRecorder(){
             assertEquals(BD.getmRecorder(),null);
         }

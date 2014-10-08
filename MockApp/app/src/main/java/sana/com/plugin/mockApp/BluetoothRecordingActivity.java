@@ -14,11 +14,13 @@ import com.sana.android.plugin.hardware.FeatureChecker;
 
 public class BluetoothRecordingActivity extends Activity {
     private BluetoothDevice BD;
-    private CaptureManager cm;
-
+    private CaptureSetting cs;
     @Override
     public void onCreate(Bundle icicle) {
-//        BD = new BluetoothDevice(this);
+        //using the default capture setting
+        cs = new CaptureSetting();
+        cs.setDefaultForFeature(Feature.MICROPHONE);
+        BD = new BluetoothDevice(this, cs);
         super.onCreate(icicle);
         setContentView(R.layout.activity_bluetooth_recording);
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
@@ -42,16 +44,15 @@ public class BluetoothRecordingActivity extends Activity {
             }
         });
         //startBluetoothMic
-//        BD.startBluetoothMic();
-        this.cm = new CaptureManager(Feature.BLUETOOTH, MimeType.AUDIO, getContentResolver());
+        BD.startBluetoothMic();
     }
 
     // Toggle recording
     private void onRecordPressed(boolean shouldStartRecording) {
         if(shouldStartRecording)
-            cm.begin();
+            BD.begin();
         else
-            cm.stop();
+            BD.stop();
     }
     // Toggle playback
     private void onPlayPressed(boolean shouldStartPlaying) {
