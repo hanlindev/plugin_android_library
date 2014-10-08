@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
+
     private static final long TERMINATION_TIMEOUT = 5;
     private static final TimeUnit TERMINATION_TIMEOUT_UNIT = TimeUnit.SECONDS;
     private static final String LOG_TAG = "IEL.BytePollingDataEvent";
