@@ -63,6 +63,4 @@ public class BluetoothDevice extends AudioRecordDevice implements GeneralDevice 
         Log.d(TAG, "starting bluetooth");
         mAudioManager.startBluetoothSco();
     }
-
-
 }
