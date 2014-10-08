@@ -62,6 +62,7 @@ public class CaptureManager {
         if (setting == null) {
             setting = CaptureSetting.defaultSetting(source, type);
         }
+        setting.setContentResolver(contentResolver);
         this.contentResolver = contentResolver;
         this.dataSource =
                 DeviceFactory.getDeviceInstance(source, setting);

@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
+
+import com.sana.android.plugin.application.CaptureManager;
+import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.hardware.BluetoothDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.Feature;

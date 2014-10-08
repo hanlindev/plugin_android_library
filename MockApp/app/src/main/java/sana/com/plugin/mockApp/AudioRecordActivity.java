@@ -20,10 +20,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.sana.android.plugin.application.CaptureManager;
+import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.hardware.AudioRecordDevice;
+import com.sana.android.plugin.hardware.Feature;
 
 public class AudioRecordActivity extends ActionBarActivity {
-    private AudioRecordDevice audioRecord;
+//    private AudioRecordDevice audioRecord;
+    private CaptureManager cm;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -41,17 +45,17 @@ public class AudioRecordActivity extends ActionBarActivity {
 
     private void onRecord(boolean start) {
         if (start) {
-            audioRecord.begin();
+            cm.begin();
         } else {
-            audioRecord.stop();
+            cm.stop();
         }
     }
 
     private void onPlay(boolean start) {
         if (start) {
-            audioRecord.startPlaying();
+//            audioRecord.startPlaying();
         } else {
-            audioRecord.stopPlaying();
+//            audioRecord.stopPlaying();
         }
     }
 
@@ -103,7 +107,7 @@ public class AudioRecordActivity extends ActionBarActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        audioRecord = new AudioRecordDevice();
+//        audioRecord = new AudioRecordDevice();
         LinearLayout ll = new LinearLayout(this);
         mRecordButton = new RecordButton(this);
         ll.addView(mRecordButton,
@@ -117,14 +121,17 @@ public class AudioRecordActivity extends ActionBarActivity {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
+
+        cm = new CaptureManager(Feature.MICROPHONE, MimeType.AUDIO, getContentResolver());
+        cm.prepare();
         setContentView(ll);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        audioRecord.pauseRecorder();
-        audioRecord.pausePlayer();
+//        audioRecord.pauseRecorder();
+//        audioRecord.pausePlayer();
     }
 }
 

@@ -46,7 +46,7 @@ public class LIST extends ActionBarActivity implements AdapterView.OnItemClickLi
         files = imagePath.listFiles();
         List<String> list = new ArrayList<String>();
         for(int i = 0; i<files.length; i++){
-            list.add(files[i].getName());
+            list.add(files[i].getName() + ":" + files[i].length());
             if (files[i].lastModified() > lastModified) {
                 lastModified = files[i].lastModified();
                 lastModifiedIndex = i;
