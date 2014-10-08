@@ -1,7 +1,5 @@
 package sana.com.plugin.mockSana;
 
-import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,14 +8,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.Toast;
-
-import org.sana.android.db.SanaDB;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -27,13 +22,34 @@ import static android.support.v4.content.FileProvider.getUriForFile;
 
 public class MockSana extends ActionBarActivity {
 
-    static final int BINARY_DATA_REQUEST = 0;
+    static final int IMAGE_REQUEST = 0;
     static final int TEXT_DATA_REQUEST = 1;
+    static final int AUDIO_REQUEST = 2;
+    static final int VIDEO_REQUEST = 3;
+    static final String ERROR_MESSAGE_FORMAT = "Mimetype %s is wrong, %s expected";
+
+    private RadioButton textRadio;
+    private RadioButton imageRadio;
+    private RadioButton audioRadio;
+    private RadioButton videoRadio;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mock_sana);
 
+        File imagePath = new File(this.getFilesDir(), "images");
+        File audioPath = new File(this.getFilesDir(), "audio");
+        File videoPath = new File(this.getFilesDir(), "videos");
+
+        imagePath.mkdir();
+        audioPath.mkdir();
+        videoPath.mkdir();
+
+        textRadio = (RadioButton)findViewById(R.id.radioButton1);
+        imageRadio = (RadioButton)findViewById(R.id.radioButton2);
+        audioRadio = (RadioButton)findViewById(R.id.radioButton3);
+        videoRadio = (RadioButton)findViewById(R.id.radioButton4);
     }
 
     private void handleSendText(Intent intent) {
@@ -103,23 +119,35 @@ public class MockSana extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BINARY_DATA_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                System.out.println("++++++++++++++++Binary data intent received.");
-                handleSendBinary(data);
-            }
-        }
-        else if (requestCode == TEXT_DATA_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                String type = data.getType();
-                if (type.equals("text/plain")) {
+        switch (requestCode) {
+            case TEXT_DATA_REQUEST:
+                if (resultCode == RESULT_OK) {
                     //react when plain text is received
                     System.out.println("++++++++++++++++Text data intent received.");
                     handleSendText(data);
-                } else {
-                    showToast(String.format("Mimetype %s is wrong, text/plain expected", type));
                 }
-            }
+                break;
+            case IMAGE_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    System.out.println("++++++++++++++++Binary data intent received.");
+                    showToast("Image saved.");
+                }
+                break;
+            case AUDIO_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    System.out.println("++++++++++++++++Binary data intent received.");
+                    showToast("Audio saved.");
+                }
+                break;
+            case VIDEO_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    System.out.println("++++++++++++++++Binary data intent received.");
+                    showToast("Video saved.");
+                }
+                break;
+            default:
+                showToast("Unexpected intent!");
+                break;
         }
     }
 
@@ -127,11 +155,26 @@ public class MockSana extends ActionBarActivity {
         called when the user clicks the launch button
      */
     public void launchMockApp(View view) {
-        Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("sana.com.plugin.mockApp");
-        startActivity(LaunchIntent);
+        if (textRadio.isChecked()) {
+            launchMockAppWithRequiredText();
+        }
+        else if (imageRadio.isChecked()) {
+            createLaunchIntent("sana.com.plugin.mockApp.PICTURE", "image/jpeg" , "jpg", "images", IMAGE_REQUEST);
+        }
+        else if (audioRadio.isChecked()) {
+            System.out.println("++++++++++++++++++++++++audio intent launched");
+            createLaunchIntent("sana.com.plugin.mockApp.AUDIO", "audio/3gpp" , "3gp", "audio", AUDIO_REQUEST);
+        }
+        else if (videoRadio.isChecked()) {
+            createLaunchIntent("sana.com.plugin.mockApp.VIDEO", "video/3gpp" , "3gp", "videos", VIDEO_REQUEST);
+        }
+        else {
+            Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("sana.com.plugin.mockApp");
+            startActivity(LaunchIntent);
+        }
     }
 
-    public void launchMockAppWithRequiredText(View view) {
+    private void launchMockAppWithRequiredText() {
         Intent LaunchIntent = new Intent();
         LaunchIntent.setAction("sana.com.plugin.mockApp.HEART_BEAT");
         LaunchIntent.setType("text/plain");
@@ -143,15 +186,17 @@ public class MockSana extends ActionBarActivity {
         return fileName;
     }
 
-    public void launchMockAppWithRequiredBinary(View view) {
+    private void createLaunchIntent(String action, String type, String ext, String subfolder, int requestCode) {
         Intent LaunchIntent = new Intent();
-        LaunchIntent.setAction("sana.com.plugin.mockApp.PICTURE");
-        LaunchIntent.setType("image/jpeg");
-        Uri contentUri = getContentUri(generateRandomFileName("jpg"));
+        LaunchIntent.setAction(action);
+        LaunchIntent.setType(type);
+        Uri contentUri = getContentUri(generateRandomFileName(ext), subfolder);
+        System.out.println("---------------------------" + getContentResolver().getType(contentUri));
         grantUriPermission("sana.com.plugin.mockApp", contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        grantUriPermission("sana.com.plugin.mockApp", contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         LaunchIntent.setData(contentUri);
         if (LaunchIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(LaunchIntent, BINARY_DATA_REQUEST);
+            startActivityForResult(LaunchIntent, requestCode);
         } else {
             showToast("No activity in MockApp handle this intent.");
         }
@@ -162,8 +207,8 @@ public class MockSana extends ActionBarActivity {
         startActivity(intent);
     }
 
-    private Uri getContentUri(String fileName) {
-        File imagePath = new File(this.getFilesDir(), "images");
+    private Uri getContentUri(String fileName, String folder) {
+        File imagePath = new File(this.getFilesDir(), folder);
         File newFile = new File(imagePath, fileName);
         try {
             newFile.getParentFile().mkdirs();

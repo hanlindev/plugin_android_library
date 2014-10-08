@@ -10,26 +10,52 @@ import com.sana.android.plugin.errors.UnsupportedDeviceError;
  * @see android.content.pm.PackageManager
  */
 public enum Feature {
-    BLUETOOTH("android.hardware.bluetooth", "bluetooth"),
-    BLUETOOTH_LE("android.hardware.bluetooth_le", "bluetoothLe"),
-    CAMERA_REAR("android.hardware.camera", "rearCamera"),
-    CAMERA_FRONT("android.hardware.camera.front", "frontCamera"),
+    BLUETOOTH("android.hardware.bluetooth", "bluetooth", BluetoothDevice.class),
+    BLUETOOTH_LE(
+            "android.hardware.bluetooth_le",
+            "bluetoothLe",
+            BluetoothDevice.class
+    ),
+    CAMERA_REAR(
+            "android.hardware.camera",
+            "rearCamera",
+            BuiltinCameraDevice.class
+    ),
+    CAMERA_FRONT(
+            "android.hardware.camera.front",
+            "frontCamera",
+            BuiltinCameraDevice.class
+    ),
     CONSUMER_IR("android.hardware.consumerir", "consumerIr"),
-    USB_ACCESSORY("android.hardware.usb.accessory", "usbAccessory"),
-    USB_HOST("android.hardware.usb.host", "usbHost"),
+    USB_ACCESSORY(
+            "android.hardware.usb.accessory",
+            "usbAccessory",
+            UsbAccessoryDevice.class
+    ),
+    USB_HOST(
+            "android.hardware.usb.host",
+            "usbHost",
+            UsbHostDevice.class
+    ),
     WIFI_DIRECT("android.hardware.wifi.direct", "wifiDirect"),
-    MICROPHONE("android.hardware.microphone", "microphone"),
+    MICROPHONE(
+            "android.hardware.microphone",
+            "microphone",
+            BuiltinAudioDevice.class
+    ),
     ACCELEROMETER("android.hardware.sensor.accelerometer", "accelerometer");
-
-    private static final String BLUETOOTH_CLASS_NAME = "BluetoothDevice";
-    private static final String BUILTIN_CLASS_NAME = "BuiltinDevice";
-    private static final String USB_CLASS_NAME = "UsbDevice";
 
     private String featureName;
     private String commonName;
+    private Class deviceClass;
+
     private Feature(String featureName, String commonName) {
+        this(featureName, commonName, null);
+    }
+    private Feature(String featureName, String commonName, Class deviceClass) {
         this.featureName = featureName;
         this.commonName = commonName;
+        this.deviceClass = deviceClass;
     }
 
     public String toString() {
@@ -51,23 +77,15 @@ public enum Feature {
         return null;
     }
 
-    public String getDeviceClassName() {
-        String result = null;
-        switch (this) {
-            case BLUETOOTH:
-                result = BLUETOOTH_CLASS_NAME;
-                break;
-            case CAMERA_REAR:
-            case CAMERA_FRONT:
-            case MICROPHONE:
-                result = BUILTIN_CLASS_NAME;
-                break;
-            case USB_ACCESSORY:
-                result = USB_CLASS_NAME;
-                break;
-            default:
-                throw new UnsupportedDeviceError(this);
+    public Class getDeviceClass() {
+        if (!this.isDeviceClassImplemented()){
+            throw new UnsupportedDeviceError(this);
+        } else {
+            return this.deviceClass;
         }
-        return result;
+    }
+
+    public boolean isDeviceClassImplemented() {
+        return this.deviceClass != null;
     }
 }

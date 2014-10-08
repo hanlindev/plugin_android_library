@@ -65,6 +65,34 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".AudioPreview"
+            android:label="@string/title_activity_audio_preview" >
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockSana.AudioPreview" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideoPreview"
+            android:label="@string/title_activity_video_preview" >
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockSana.VideoPreview" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ImagePreview"
+            android:label="@string/title_activity_image_preview" >
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockSana.ImagePreview" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

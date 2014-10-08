@@ -37,7 +37,6 @@ public class AccelerometerDataEvent extends BaseDataEvent implements SensorEvent
                         )
                 );
             }
-
             this.x = event.values[INDEX_X];
             this.y = event.values[INDEX_Y];
             this.z = event.values[INDEX_Z];
