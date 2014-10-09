@@ -11,6 +11,7 @@ import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.DeviceFactory;
 import com.sana.android.plugin.hardware.Feature;
 import com.sana.android.plugin.hardware.GeneralDevice;
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -34,7 +35,7 @@ public class CaptureManager {
     private DataWithEvent data;
     private Vector<DataListener> listeners;
     private ContentResolver contentResolver;
-
+    private Context mContext;
     public CaptureManager(
             Feature source, MimeType type, ContentResolver contentResolver) {
         this(
@@ -43,6 +44,28 @@ public class CaptureManager {
                 contentResolver,
                 CaptureSetting.defaultSetting(source, type)
         );
+    }
+
+    /**
+     * Create a CaptureManager that receives data of the specified MIME type and
+     * from the given Feature. The
+     *
+     * @param source    The device feature from which data will come from.
+     * @param type      The MIME type of the data intended to be captured.
+     * @param mContext The current context of the bluetooth activity
+     */
+    public CaptureManager(
+            Feature source,
+            MimeType type,
+            ContentResolver contentResolver,
+            Context mContext
+    ) {
+        CaptureSetting setting = CaptureSetting.defaultSetting(source, type);
+        this.mContext = mContext;
+        this.contentResolver = contentResolver;
+        this.dataSource =
+                DeviceFactory.getDeviceInstance(source, setting, mContext);
+        this.listeners = new Vector<DataListener>();
     }
 
     /**
@@ -68,6 +91,8 @@ public class CaptureManager {
                 DeviceFactory.getDeviceInstance(source, setting);
         this.listeners = new Vector<DataListener>();
     }
+
+
 
     /**
      * Add a listener to the sensing device. Call this method if you wish

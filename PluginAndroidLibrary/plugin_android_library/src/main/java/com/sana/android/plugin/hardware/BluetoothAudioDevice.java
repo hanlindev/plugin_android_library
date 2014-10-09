@@ -1,7 +1,11 @@
 package com.sana.android.plugin.hardware;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.media.MediaPlayer;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.Log;
@@ -14,49 +18,48 @@ import com.sana.android.plugin.data.event.BytePollingDataEvent;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.File;
 import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.File;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 
 /**
- * Created by Mia on 23/9/14.
+ * Created by hanlin on 9/14/14.
  */
-public class AudioRecordDevice implements GeneralDevice {
+public class BluetoothAudioDevice implements GeneralDevice {
     private ContentResolver resolver;
-    private static String mFileName = "";
+    private static final String TAG = "BluetoothAudioRecordTest";
+    private static final String LOG_TAG = "Is it here?";
+    private AudioManager mAudioManager;
     private MediaRecorder mRecorder = null;
-    private MediaPlayer   mPlayer = null;
-    private static final String LOG_TAG = "AudioRecord";
+    private static String mFileName = "";
+    private Context mContext;
     private int audioEncoder;
     private int audioSource;
     private int outputFormat;
+    //prepare is to store location of recorded audio?
 
-    public AudioRecordDevice(){
-        mFileName=Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/audiorecordtest.3gp";
-//        prepare();
+
+    public BluetoothAudioDevice(Context mContext){
+        this.mFileName=Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/bluetoothtest.3gp";
+        this.mContext = mContext;
     }
-/*
-    public AudioRecordDevice(CaptureSetting setting){
-        setCaptureSetting(setting);
-        prepare();
+
+    public BluetoothAudioDevice(){
+
     }
-*/
-    @Override
+
     public DataWithEvent prepare() {
         mRecorder = new MediaRecorder();
         mRecorder.setOutputFile(mFileName);
+        startBluetoothMic();
         try {
             InputStream is = new FileInputStream(mFileName);
-            DataWithEvent result = new BinaryDataWithPollingEvent(Feature.MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
+            DataWithEvent result = new BinaryDataWithPollingEvent(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
             return result;
         } catch (FileNotFoundException e) {
             // TODO handle more carefully
@@ -98,7 +101,9 @@ public class AudioRecordDevice implements GeneralDevice {
     private void moveData() {
         try {
             FileInputStream is = new FileInputStream(mFileName);
+            Log.d(TAG, "Inputstream" + IOUtils.toString(is, "UTF-8"));
             OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());
+            Log.d(TAG, "Outputstream" + os.toString());
             IOUtils.copy(is, os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -117,21 +122,6 @@ public class AudioRecordDevice implements GeneralDevice {
         }
     }
 
-    public void pauseRecorder(){
-        if (mRecorder != null) {
-            mRecorder.release();
-            mRecorder = null;
-        }
-    }
-
-    public void pausePlayer(){
-        if (mPlayer != null) {
-            mPlayer.release();
-            mPlayer = null;
-        }
-    }
-
-    @Override
     public void setCaptureSetting(CaptureSetting setting) {
         this.audioEncoder = setting.getAudioEncoder();
         this.audioSource = setting.getAudioSource();
@@ -140,31 +130,21 @@ public class AudioRecordDevice implements GeneralDevice {
         this.mFileName = setting.getOutputFileName();
     }
 
-    public void startPlaying() {
-        mPlayer = new MediaPlayer();
-        try {
-            mPlayer.setDataSource(mFileName);
-            mPlayer.prepare();
-            mPlayer.start();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
-        }
+    //switch the current input channel to bluetooth mic
+    public void startBluetoothMic(){
+        mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
+        mContext.getApplicationContext().registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -1);
+                Log.d(TAG, "Audio SCO state: " + state);
+                if (AudioManager.SCO_AUDIO_STATE_CONNECTED == state) {
+                    // now the connection has be established to the bluetooth device
+                    mContext.getApplicationContext().unregisterReceiver(this);
+                }
+            }
+        }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
+        Log.d(TAG, "starting bluetooth");
+        mAudioManager.startBluetoothSco();
     }
-
-    public void stopPlaying() {
-        if (mPlayer.isPlaying())
-            mPlayer.stop();
-        mPlayer.release();
-        mPlayer = null;
-    }
-
-    public MediaRecorder getmRecorder(){
-        return this.mRecorder;
-    }
-
-    public MediaPlayer getmPlayer(){
-        return this.mPlayer;
-    }
-
-    //public void startBluetoothMic(){}
 }

@@ -8,14 +8,15 @@ import android.media.AudioManager;
 import android.test.*;
 import android.util.Log;
 
-import com.sana.android.plugin.hardware.BluetoothDevice;
+import com.sana.android.plugin.hardware.BluetoothAudioDevice;
+import com.sana.android.plugin.hardware.CaptureSetting;
 
 /**
  * Created by zhaoyue on 3/10/14.
  */
     public class BluetoothDeviceTest extends InstrumentationTestCase {
 
-        private BluetoothDevice BD = new BluetoothDevice();
+        private BluetoothAudioDevice BD = new BluetoothAudioDevice();
         private Context mContext;
         private static final String TAG = "BluetoothDeviceTest";
 
@@ -29,14 +30,6 @@ import com.sana.android.plugin.hardware.BluetoothDevice;
                     assertEquals(AudioManager.SCO_AUDIO_STATE_CONNECTED, currentState);
                 }
             }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
-        }
-
-        public void testPauseRecorder(){
-            assertEquals(BD.getmRecorder(),null);
-        }
-
-        public void testPausePlayer(){
-            assertEquals(BD.getmPlayer(),null);
         }
 
         public void testBegin(){
@@ -58,4 +51,5 @@ import com.sana.android.plugin.hardware.BluetoothDevice;
         public void testStopPlaying(){
 
         }
+
     }

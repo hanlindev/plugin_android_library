@@ -7,7 +7,7 @@ public class BuiltinAudioDevice extends AudioRecordDevice {
     public BuiltinAudioDevice(){
        super();
     }
-    public BuiltinAudioDevice(CaptureSetting setting){
-        super(setting);
-    }
+    //public BuiltinAudioDevice(CaptureSetting setting){
+        //super(setting);
+    //}
 }
