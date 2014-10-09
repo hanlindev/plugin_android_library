@@ -36,6 +36,13 @@ public class CaptureSetting {
                 this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
                 this.outputFileName += "/audiorecord.3gp";
                 break;
+            case BLUETOOTH_MICROPHONE:
+                this.audioEncoder = MediaRecorder.AudioEncoder.AAC;
+                this.audioSource = MediaRecorder.AudioSource.MIC;
+                this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
+                this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+                this.outputFileName += "/audiorecord.3gp";
+                break;
             default:
                 break;
         }

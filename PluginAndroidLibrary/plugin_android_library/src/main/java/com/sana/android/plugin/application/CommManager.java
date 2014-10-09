@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
+import android.os.Bundle;
 import com.sana.android.plugin.communication.IntentAction;
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.hardware.Feature;
@@ -57,7 +58,9 @@ public class CommManager {
     }
 
     public Uri getUri() {
-        return this.intent.getData();
+        //Intent intent = this.intent;
+        return this.getIntent().getData();
+        //return this.intent.getData();
     }
 
     /*

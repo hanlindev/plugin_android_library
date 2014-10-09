@@ -35,7 +35,6 @@ public class CaptureManager {
     private DataWithEvent data;
     private Vector<DataListener> listeners;
     private ContentResolver contentResolver;
-    private Context mContext;
     public CaptureManager(
             Feature source, MimeType type, ContentResolver contentResolver) {
         this(
@@ -61,7 +60,6 @@ public class CaptureManager {
             Context mContext
     ) {
         CaptureSetting setting = CaptureSetting.defaultSetting(source, type);
-        this.mContext = mContext;
         this.contentResolver = contentResolver;
         this.dataSource =
                 DeviceFactory.getDeviceInstance(source, setting, mContext);

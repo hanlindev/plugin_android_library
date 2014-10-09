@@ -1,5 +1,6 @@
 package sana.com.plugin.mockApp;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.CompoundButton;
@@ -8,6 +9,7 @@ import android.widget.ToggleButton;
 import com.sana.android.plugin.application.CaptureManager;
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.hardware.Feature;
+import android.content.Intent;
 
 public class BluetoothRecordingActivity extends Activity {
     private CaptureManager cm;
@@ -17,7 +19,6 @@ public class BluetoothRecordingActivity extends Activity {
         //cs = new CaptureSetting();
         //cs.setDefaultForFeature(Feature.MICROPHONE);
         //BD = new BluetoothDevice(this, cs);
-
         super.onCreate(icicle);
         setContentView(R.layout.activity_bluetooth_recording);
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
@@ -33,7 +34,6 @@ public class BluetoothRecordingActivity extends Activity {
         });
         cm = new CaptureManager(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO, getContentResolver(),this);
         cm.prepare();
-
         // Set up play Button
         /*
         mPlayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -51,6 +51,11 @@ public class BluetoothRecordingActivity extends Activity {
             cm.begin();
         else
             cm.stop();
+    }
+
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
     // Toggle playback
     /*

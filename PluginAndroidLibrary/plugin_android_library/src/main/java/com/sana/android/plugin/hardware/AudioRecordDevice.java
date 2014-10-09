@@ -44,12 +44,7 @@ public class AudioRecordDevice implements GeneralDevice {
                 + "/audiorecordtest.3gp";
 //        prepare();
     }
-/*
-    public AudioRecordDevice(CaptureSetting setting){
-        setCaptureSetting(setting);
-        prepare();
-    }
-*/
+
     @Override
     public DataWithEvent prepare() {
         mRecorder = new MediaRecorder();
@@ -99,6 +94,7 @@ public class AudioRecordDevice implements GeneralDevice {
         try {
             FileInputStream is = new FileInputStream(mFileName);
             OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());
+            Log.e(LOG_TAG, CommManager.getInstance().getUri().toString());
             IOUtils.copy(is, os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -159,12 +155,11 @@ public class AudioRecordDevice implements GeneralDevice {
     }
 
     public MediaRecorder getmRecorder(){
-        return this.mRecorder;
+        return mRecorder;
     }
 
     public MediaPlayer getmPlayer(){
-        return this.mPlayer;
+        return mPlayer;
     }
-
     //public void startBluetoothMic(){}
 }
