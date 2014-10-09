@@ -51,11 +51,12 @@ public class AudioRecordActivity extends ActionBarActivity {
         }
     }
 
+//
     private void onPlay(boolean start) {
         if (start) {
-//            audioRecord.startPlaying();
+ //           audioRecord.startPlaying();
         } else {
-//            audioRecord.stopPlaying();
+   //         audioRecord.stopPlaying();
         }
     }
 

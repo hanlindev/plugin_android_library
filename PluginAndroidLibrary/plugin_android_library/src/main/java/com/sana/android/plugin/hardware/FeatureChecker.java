@@ -13,10 +13,11 @@ import android.content.pm.PackageManager;
  */
 public class FeatureChecker {
     private PackageManager pm;
-    private static boolean bluetoothConnected = false;
+    private static boolean bluetoothConnected;
     private Context mContext;
     public  FeatureChecker(Context mContext){
         this.mContext = mContext;
+        this.bluetoothConnected = false;
     }
 
     public FeatureChecker(PackageManager pm) {

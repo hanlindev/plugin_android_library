@@ -1,6 +1,7 @@
 package com.sana.android.plugin.hardware;
 
 import android.util.Log;
+import android.content.Context;
 
 import com.sana.android.plugin.communication.MimeType;
 
@@ -52,6 +53,51 @@ public class DeviceFactory {
         GeneralDevice instance = null;
         try {
             instance = (GeneralDevice) deviceConstructor.newInstance();
+        } catch (Exception e) {
+            if (e instanceof InstantiationException ||
+                    e instanceof IllegalAccessException ||
+                    e instanceof InvocationTargetException) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, UNEXPECTED_ERROR_MESSAGE);
+            }
+        }
+        instance.setCaptureSetting(setting);
+        return instance;
+    }
+
+    /**
+     * Attempt to create the device class instance of the provided feature.
+     * If such class is not implemented, return null.
+     *
+     * @param feature    The feature for which the device class is created.
+     * @param setting    The setting to be supplied to the device instance.
+     * @param mContext   The Context used for bluetooth status
+     * @return The device class instance or null if it is not implemented.
+     */
+    public static GeneralDevice getDeviceInstance(
+            Feature feature, CaptureSetting setting, Context mContext) {
+        if (!feature.isDeviceClassImplemented()) {
+            return null;
+        }
+
+        Class deviceClass = feature.getDeviceClass();
+        Constructor deviceConstructor = null;
+        try {
+            deviceConstructor = deviceClass.getConstructor(Context.class);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            Log.e(
+                    LOG_TAG,
+                    String.format(
+                            NO_SUCH_METHOD_FORMAT,
+                            deviceClass.getName()
+                    )
+            );
+        }
+        GeneralDevice instance = null;
+        try {
+
+            instance = (GeneralDevice) deviceConstructor.newInstance(mContext);
         } catch (Exception e) {
             if (e instanceof InstantiationException ||
                     e instanceof IllegalAccessException ||
