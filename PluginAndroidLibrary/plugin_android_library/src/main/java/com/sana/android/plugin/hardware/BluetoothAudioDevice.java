@@ -101,9 +101,9 @@ public class BluetoothAudioDevice implements GeneralDevice {
     private void moveData() {
         try {
             FileInputStream is = new FileInputStream(mFileName);
-            Log.d(TAG, "Inputstream" + IOUtils.toString(is, "UTF-8"));
+            //Log.d(TAG, "Inputstream" + IOUtils.toString(is, "UTF-8"));
             OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());
-            Log.d(TAG, "Outputstream" + os.toString());
+            //Log.d(TAG, "Outputstream" + os.toString());
             IOUtils.copy(is, os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -107,8 +107,6 @@ public class AudioRecordActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-//        audioRecord = new AudioRecordDevice();
         LinearLayout ll = new LinearLayout(this);
         mRecordButton = new RecordButton(this);
         ll.addView(mRecordButton,
