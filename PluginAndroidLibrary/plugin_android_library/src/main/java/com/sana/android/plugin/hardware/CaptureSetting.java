@@ -1,6 +1,7 @@
 package com.sana.android.plugin.hardware;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Environment;
 
@@ -17,6 +18,7 @@ public class CaptureSetting {
     private Integer videoEncoder;
     private Integer videoSource;
     private ContentResolver contentResolver;
+    private Context applicationContext;
     private static String outputFileName = null;
 
     public static CaptureSetting defaultSetting(Feature source, MimeType type
@@ -120,4 +122,12 @@ public class CaptureSetting {
         return this;
     }
 
+    public Context getApplicationContext() {
+        return this.applicationContext;
+    }
+
+    public CaptureSetting setApplicationContext(Context applicationContext) {
+        this.applicationContext = applicationContext;
+        return this;
+    }
 }

@@ -34,7 +34,6 @@ public class CaptureManager {
     private GeneralDevice dataSource;
     private DataWithEvent data;
     private Vector<DataListener> listeners;
-    private ContentResolver contentResolver;
     public CaptureManager(
             Feature source, MimeType type, ContentResolver contentResolver) {
         this(
@@ -43,27 +42,6 @@ public class CaptureManager {
                 contentResolver,
                 CaptureSetting.defaultSetting(source, type)
         );
-    }
-
-    /**
-     * Create a CaptureManager that receives data of the specified MIME type and
-     * from the given Feature. The
-     *
-     * @param source    The device feature from which data will come from.
-     * @param type      The MIME type of the data intended to be captured.
-     * @param mContext The current context of the bluetooth activity
-     */
-    public CaptureManager(
-            Feature source,
-            MimeType type,
-            ContentResolver contentResolver,
-            Context mContext
-    ) {
-        CaptureSetting setting = CaptureSetting.defaultSetting(source, type);
-        this.contentResolver = contentResolver;
-        this.dataSource =
-                DeviceFactory.getDeviceInstance(source, setting, mContext);
-        this.listeners = new Vector<DataListener>();
     }
 
     /**
@@ -84,7 +62,6 @@ public class CaptureManager {
             setting = CaptureSetting.defaultSetting(source, type);
         }
         setting.setContentResolver(contentResolver);
-        this.contentResolver = contentResolver;
         this.dataSource =
                 DeviceFactory.getDeviceInstance(source, setting);
         this.listeners = new Vector<DataListener>();

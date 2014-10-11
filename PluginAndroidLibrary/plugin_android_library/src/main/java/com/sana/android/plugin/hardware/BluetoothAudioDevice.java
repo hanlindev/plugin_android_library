@@ -42,15 +42,9 @@ public class BluetoothAudioDevice implements GeneralDevice {
     private int outputFormat;
     //prepare is to store location of recorded audio?
 
-
-    public BluetoothAudioDevice(Context mContext){
+    public BluetoothAudioDevice(){
         this.mFileName=Environment.getExternalStorageDirectory().getAbsolutePath()
                 + "/bluetoothtest.3gp";
-        this.mContext = mContext;
-    }
-
-    public BluetoothAudioDevice(){
-
     }
 
     public DataWithEvent prepare() {
@@ -127,6 +121,7 @@ public class BluetoothAudioDevice implements GeneralDevice {
         this.audioSource = setting.getAudioSource();
         this.outputFormat = setting.getOutputFormat();
         this.resolver = setting.getContentResolver();
+        this.mContext = setting.getApplicationContext();
         this.mFileName = setting.getOutputFileName();
     }
 
