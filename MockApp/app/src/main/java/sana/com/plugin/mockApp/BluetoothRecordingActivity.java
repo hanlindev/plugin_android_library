@@ -8,6 +8,7 @@ import android.widget.ToggleButton;
 
 import com.sana.android.plugin.application.CaptureManager;
 import com.sana.android.plugin.communication.MimeType;
+import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.Feature;
 import android.content.Intent;
 
@@ -32,7 +33,9 @@ public class BluetoothRecordingActivity extends Activity {
                 onRecordPressed(isChecked); // Start/stop recording
             }
         });
-        cm = new CaptureManager(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO, getContentResolver(),this);
+        CaptureSetting defaultSetting = CaptureSetting.defaultSetting(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO)
+                .setApplicationContext(getApplicationContext());
+        cm = new CaptureManager(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO, getContentResolver(), defaultSetting);
         cm.prepare();
         // Set up play Button
         /*
