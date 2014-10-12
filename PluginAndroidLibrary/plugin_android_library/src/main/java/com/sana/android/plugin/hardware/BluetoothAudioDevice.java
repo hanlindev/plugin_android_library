@@ -76,6 +76,7 @@ public class BluetoothAudioDevice implements GeneralDevice {
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 //        mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        startBluetoothMic();
         try {
             mRecorder.prepare();
         } catch (IOException e) {

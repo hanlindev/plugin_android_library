@@ -32,7 +32,6 @@ public class MockSana extends ActionBarActivity {
     private RadioButton imageRadio;
     private RadioButton audioRadio;
     private RadioButton videoRadio;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +95,6 @@ public class MockSana extends ActionBarActivity {
         }
         showToast("binary data recieved");
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
