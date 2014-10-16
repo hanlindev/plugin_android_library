@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -55,7 +56,9 @@ public class MockSana extends ActionBarActivity {
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (sharedText != null) {
             // show captured text on the screen
-            showToast(sharedText);
+//            showToast("Heart rate is: " + sharedText);
+            TextView heartRateView = (TextView)findViewById(R.id.textView3);
+            heartRateView.setText("Heart rate is: " + sharedText);
         }
     }
 
@@ -174,7 +177,7 @@ public class MockSana extends ActionBarActivity {
 
     private void launchMockAppWithRequiredText() {
         Intent LaunchIntent = new Intent();
-        LaunchIntent.setAction("sana.com.plugin.mockApp.HEART_BEAT");
+        LaunchIntent.setAction("com.jwetherell.heart_rate_monitor.HEART_BEAT");
         LaunchIntent.setType("text/plain");
         startActivityForResult(LaunchIntent, TEXT_DATA_REQUEST);
     }
