@@ -2,6 +2,7 @@ package com.sana.android.plugin.hardware;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.hardware.SensorManager;
 import android.media.MediaRecorder;
 import android.os.Environment;
 
@@ -19,6 +20,7 @@ public class CaptureSetting {
     private Integer videoSource;
     private ContentResolver contentResolver;
     private Context applicationContext;
+    private SensorManager sensorManager;
     private static String outputFileName = null;
 
     public static CaptureSetting defaultSetting(Feature source, MimeType type
@@ -51,12 +53,15 @@ public class CaptureSetting {
     }
 
     public void setDefaultForType(MimeType type) {
-        // placeholder
-        this.audioEncoder = MediaRecorder.AudioEncoder.AMR_NB;
-        this.audioSource = MediaRecorder.AudioSource.MIC;
-        this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
-        this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        this.outputFileName += "/audiorecord.3gp";
+        switch (type) {
+            case AUDIO:
+                this.audioEncoder = MediaRecorder.AudioEncoder.AMR_NB;
+                this.audioSource = MediaRecorder.AudioSource.MIC;
+                this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
+                this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+                this.outputFileName += "/audiorecord.3gp";
+                break;
+        }
     }
 
     public Integer getAudioEncoder() {
@@ -128,6 +133,15 @@ public class CaptureSetting {
 
     public CaptureSetting setApplicationContext(Context applicationContext) {
         this.applicationContext = applicationContext;
+        return this;
+    }
+
+    public SensorManager getSensorManager() {
+        return this.sensorManager;
+    }
+
+    public CaptureSetting setSensorManager(SensorManager sensorManager) {
+        this.sensorManager = sensorManager;
         return this;
     }
 }

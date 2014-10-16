@@ -93,4 +93,7 @@ public abstract class BinaryData implements DataWithEvent {
 
     @Override
     public abstract BaseDataEvent getEvent();
+
+    @Override
+    public abstract void dispose() throws Exception;
 }

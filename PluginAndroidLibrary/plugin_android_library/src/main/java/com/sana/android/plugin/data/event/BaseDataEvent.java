@@ -32,21 +32,12 @@ public abstract class BaseDataEvent {
     }
 
     public void notifyListeners(final Object[] data) {
-        Log.d(
-                BaseDataEvent.LOG_TAG,
-                "Notifying " + this.listeners.size() + " listeners"
-        );
         HashSet<DataListener> addedListeners = new HashSet<DataListener>();
         for (final DataListener listener : this.listeners) {
             if (!addedListeners.contains(listener)) {
                 this.notificationThread.submit(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(
-                                BaseDataEvent.LOG_TAG,
-                                "Notifying listener - " + listener
-                        );
-
                         listener.putData(data);
                     }
                 });

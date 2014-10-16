@@ -7,27 +7,60 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.sana.android.plugin.application.CaptureManager;
+import com.sana.android.plugin.communication.MimeType;
+import com.sana.android.plugin.data.event.AccelerometerDataEvent;
+import com.sana.android.plugin.data.listener.TimedListener;
+import com.sana.android.plugin.hardware.CaptureSetting;
+import com.sana.android.plugin.hardware.Feature;
 
-public class AccelerometerActivity extends ActionBarActivity implements SensorEventListener {
+import java.util.concurrent.TimeUnit;
 
-    private SensorManager senSensorManager;
-    private Sensor senAccelerometer;
-    private long lastUpdate = 0;
-    private float last_x, last_y, last_z;
-    private static final int SHAKE_THRESHOLD = 600;
+
+public class AccelerometerActivity extends ActionBarActivity{
+    private class AccelerometerEventListener extends TimedListener {
+        public AccelerometerEventListener(Object sender) {
+            super(sender, 1, TimeUnit.SECONDS);
+        }
+
+        @Override
+        public void processData(Object sender, Object[] data) {
+            if (data.length > 0) {
+                Log.d(AccelerometerEventListener.class.getName(), "Received data from event hahaha");
+                AccelerometerDataEvent.AccelerometerData latest = (AccelerometerDataEvent.AccelerometerData) data[data.length - 1];
+                setScreenValues(latest.getX(), latest.getY(), latest.getZ());
+            }
+        }
+    }
+
+    private CaptureManager cm;
+    private AccelerometerEventListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accelerometer);
 
-        senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL);
+        CaptureSetting newSetting = CaptureSetting.defaultSetting(Feature.ACCELEROMETER, MimeType.TEXT_PLAIN)
+                .setSensorManager((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+        cm = new CaptureManager(Feature.ACCELEROMETER, MimeType.TEXT_PLAIN, getContentResolver(), newSetting);
+        listener = new AccelerometerEventListener(cm);
+        cm.addListener(listener);
+        cm.prepare();
+        listener.startListening();
+        cm.begin();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        cm.stop();
+        listener.stopListening();
     }
 
 
@@ -50,56 +83,27 @@ public class AccelerometerActivity extends ActionBarActivity implements SensorEv
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        Sensor mySensor = sensorEvent.sensor;
-
-        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float x = sensorEvent.values[0];
-            float y = sensorEvent.values[1];
-            float z = sensorEvent.values[2];
-
-//            setScreenValues(x, y, z);
-            long curTime = System.currentTimeMillis();
-
-            if ((curTime - lastUpdate) > 100) {
-                long diffTime = (curTime - lastUpdate);
-                lastUpdate = curTime;
-
-                setScreenValues(x, y, z);
-//                float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000;
+//    @Override
+//    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 //
-//                if (speed > SHAKE_THRESHOLD) {
-//                    setScreenValues(x, y, z);
-//                }
-
-                last_x = x;
-                last_y = y;
-                last_z = z;
-            }
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
+//    }
 
     protected void onPause() {
         super.onPause();
-        senSensorManager.unregisterListener(this);
+        cm.removeListener(listener);
     }
 
     protected void onResume() {
         super.onResume();
-        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        cm.addListener(listener);
     }
 
     private void setScreenValues(float x, float y, float z) {
-        TextView textX = (TextView)findViewById(R.id.textView2);
-        TextView textY = (TextView)findViewById(R.id.textView3);
-        TextView textZ = (TextView)findViewById(R.id.textView4);
+        TextView textX = (TextView)findViewById(R.id.textViewX);
+        TextView textY = (TextView)findViewById(R.id.textViewY);
+        TextView textZ = (TextView)findViewById(R.id.textViewZ);
 
+        Log.d("AcceleromterActivity", "Changing test" + x + ", " + y + ", " + z);
         textX.setText(x+", ");
         textY.setText(y+", ");
         textZ.setText(z+"");

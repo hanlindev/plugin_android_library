@@ -9,6 +9,7 @@ import com.sana.android.plugin.hardware.Feature;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.URISyntaxException;
 
 /**
@@ -35,4 +36,9 @@ public class BinaryDataWithPollingEvent extends BinaryData {
 
     @Override
     public BytePollingDataEvent getEvent() { return this.event; }
+
+    @Override
+    public void dispose() throws InterruptedException {
+        this.event.stopEvent();
+    }
 }
