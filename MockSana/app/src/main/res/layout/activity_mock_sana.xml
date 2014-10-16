@@ -25,7 +25,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Text"
+            android:text="Heart rate"
             android:id="@+id/radioButton1"
             android:checked="false" />
 
@@ -67,6 +67,12 @@
         android:text="Read data"
         android:id="@+id/button4"
         android:onClick="readData"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/textView3" />
 
 
 </LinearLayout>
