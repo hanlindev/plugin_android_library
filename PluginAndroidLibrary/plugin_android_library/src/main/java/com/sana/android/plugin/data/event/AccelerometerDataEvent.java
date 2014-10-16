@@ -64,6 +64,7 @@ public class AccelerometerDataEvent extends BaseDataEvent implements SensorEvent
     public AccelerometerDataEvent(Object sender) {
         super(sender);
         this.notificationMasterThread = Executors.newSingleThreadExecutor();
+        queuedData = new LinkedBlockingQueue<AccelerometerData>();
     }
 
     @Override

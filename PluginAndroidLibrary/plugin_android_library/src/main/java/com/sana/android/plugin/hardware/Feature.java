@@ -45,7 +45,7 @@ public enum Feature {
             "microphone",
             BluetoothAudioDevice.class
     ),
-    ACCELEROMETER("android.hardware.sensor.accelerometer", "accelerometer");
+    ACCELEROMETER("android.hardware.sensor.accelerometer", "accelerometer", BuiltinAccelerometerDevice.class);
 
     private String featureName;
     private String commonName;

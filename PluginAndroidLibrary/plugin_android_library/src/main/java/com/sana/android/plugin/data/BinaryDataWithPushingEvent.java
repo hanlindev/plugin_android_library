@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 /**
  * Created by hanlin on 9/13/14.
  */
-public abstract class BinaryDataWithPushingEvent extends BinaryData {
+public class BinaryDataWithPushingEvent extends BinaryData {
     private InputStream inStream;
     private BytePushingDataEvent event;
     private Object sender;
@@ -36,5 +36,10 @@ public abstract class BinaryDataWithPushingEvent extends BinaryData {
     @Override
     public BytePushingDataEvent getEvent() {
         return this.event;
+    }
+
+    @Override
+    public void dispose() throws InterruptedException {
+        this.event.stopEvent();
     }
 }
