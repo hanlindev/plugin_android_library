@@ -53,7 +53,6 @@ public class MockApp extends ActionBarActivity {
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -152,6 +151,13 @@ public class MockApp extends ActionBarActivity {
                     .show();
         }
     }
+
+    /*
+    protected void onPause() {
+        super.onPause();
+        fc.unregister();
+    }
+    */
 
     /** Called when the user clicks the record audio from mic button */
     public void recordAudioFromMic(View view) {

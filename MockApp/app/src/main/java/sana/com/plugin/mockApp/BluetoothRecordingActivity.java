@@ -55,11 +55,6 @@ public class BluetoothRecordingActivity extends Activity {
         else
             cm.stop();
     }
-
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-    }
     // Toggle playback
     /*
     private void onPlayPressed(boolean shouldStartPlaying) {
