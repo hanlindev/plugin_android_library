@@ -172,7 +172,12 @@ public class MockApp extends ActionBarActivity {
                     .show();
         }
     }
-
+    /** Called when the user clicks the record Uncompressed audio from mic button */
+    public void recordUncompressedAudioFromMic(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, UncompressedAudioRecordActivity.class);
+        startActivity(intent);
+    }
     /** Called when the user clicks the take photo button */
     public void takePhotoOrVideo(View view) {
         // Do something in response to button
