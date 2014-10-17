@@ -20,6 +20,7 @@
             android:launchMode="standard" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -29,26 +30,35 @@
             <meta-data
                 android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
                 android:resource="@xml/accessory_filter" />
+
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.HEART_BEAT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.PICTURE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/jpeg"/>
+
+                <data android:mimeType="image/jpeg" />
             </intent-filter>
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.AUDIO" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="audio/3gpp"/>
-                <data android:mimeType="video/3gpp"/>
+
+                <data android:mimeType="audio/3gpp" />
+                <data android:mimeType="video/3gpp" />
             </intent-filter>
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.VIDEO" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="video/3gpp"/>
+
+                <data android:mimeType="video/3gpp" />
             </intent-filter>
         </activity>
         <activity
@@ -69,8 +79,12 @@
         </activity>
         <activity
             android:name=".AccelerometerActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_accelerometer" >
+            android:label="@string/title_activity_accelerometer"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".UncompressedAudioRecordActivity"
+            android:label="@string/title_activity_uncompressed_audio_record" >
         </activity>
     </application>
 
