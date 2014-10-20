@@ -51,6 +51,7 @@ public class TakePhotoOrVideoActivity extends ActionBarActivity {
 
         /**
          * Capture image button click event
+         *
          * */
         btnCapturePicture.setOnClickListener(new View.OnClickListener() {
 
@@ -79,11 +80,8 @@ public class TakePhotoOrVideoActivity extends ActionBarActivity {
  */
     private void captureImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
         // start the image capture Intent
         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
