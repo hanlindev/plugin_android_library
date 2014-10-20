@@ -5,6 +5,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,17 +31,34 @@ public class AccelerometerActivity extends ActionBarActivity{
         }
 
         @Override
-        public void processData(Object sender, Object[] data) {
+        public synchronized void processData(Object sender, Object[] data) {
             if (data.length > 0) {
                 Log.d(AccelerometerEventListener.class.getName(), "Received data from event hahaha");
-                AccelerometerDataEvent.AccelerometerData latest = (AccelerometerDataEvent.AccelerometerData) data[data.length - 1];
-                setScreenValues(latest.getX(), latest.getY(), latest.getZ());
+                Message msg = handler.obtainMessage();
+                msg.obj = data[data.length - 1];
+                handler.sendMessage(msg);
             }
         }
     }
 
     private CaptureManager cm;
     private AccelerometerEventListener listener;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            TextView textX = (TextView)findViewById(R.id.textViewX);
+            TextView textY = (TextView)findViewById(R.id.textViewY);
+            TextView textZ = (TextView)findViewById(R.id.textViewZ);
+
+            AccelerometerDataEvent.AccelerometerData data = (AccelerometerDataEvent.AccelerometerData) msg.obj;
+            double x = data.getX();
+            double y = data.getY();
+            double z = data.getZ();
+            textX.setText(x + ", ");
+            textY.setText(y+", ");
+            textZ.setText(z+"");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +102,6 @@ public class AccelerometerActivity extends ActionBarActivity{
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//
-//    }
-
     protected void onPause() {
         super.onPause();
         cm.removeListener(listener);
@@ -96,16 +110,5 @@ public class AccelerometerActivity extends ActionBarActivity{
     protected void onResume() {
         super.onResume();
         cm.addListener(listener);
-    }
-
-    private void setScreenValues(float x, float y, float z) {
-        TextView textX = (TextView)findViewById(R.id.textViewX);
-        TextView textY = (TextView)findViewById(R.id.textViewY);
-        TextView textZ = (TextView)findViewById(R.id.textViewZ);
-
-        Log.d("AcceleromterActivity", "Changing test" + x + ", " + y + ", " + z);
-        textX.setText(x+", ");
-        textY.setText(y+", ");
-        textZ.setText(z+"");
     }
 }
