@@ -16,6 +16,8 @@ public abstract class TimedListener implements Runnable, DataListener {
             "TimedListener";
     private final static String SHUTDOWN_INTERRUPTED_EXCEPTION_MSG =
             "Timed listener shutdown interrupted.";
+    private final static String SHUTDOWN_TIMEOUT_MSG =
+            "Timeout happened while shutting down the listener.";
     private final static String FATAL_INTERRUPTION_MSG_FORMAT =
             "Unable to carry out critical operation - %s";
     private final static String PUT_BYTE_OPERATION_NAME =
@@ -111,10 +113,12 @@ public abstract class TimedListener implements Runnable, DataListener {
         this.scheduledThread.shutdown();
         try {
             if (!this.scheduledThread.awaitTermination(timeout,unit)) {
-                // TODO decide what to do when shutdown times out.
+                Log.d(
+                        TimedListener.LOG_TAG,
+                        TimedListener.SHUTDOWN_TIMEOUT_MSG
+                );
             }
         } catch (InterruptedException e) {
-            // TODO decide what to do when shutdown is interrupted.
             Log.d(
                     TimedListener.LOG_TAG,
                     TimedListener.SHUTDOWN_INTERRUPTED_EXCEPTION_MSG,

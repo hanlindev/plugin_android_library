@@ -53,6 +53,11 @@ public class AccelerometerDataEvent extends BaseDataEvent implements SensorEvent
         public float getZ() {
             return this.z;
         }
+
+        @Override
+        public String toString() {
+            return String.format("(%f, %f, %f)", x, y, z);
+        }
     }
 
     private static final long SHUTDOWN_TIMEOUT = 5;
@@ -61,19 +66,24 @@ public class AccelerometerDataEvent extends BaseDataEvent implements SensorEvent
     private ExecutorService notificationMasterThread;
     private LinkedBlockingQueue<AccelerometerData> queuedData;
 
+    private boolean running;
+
     public AccelerometerDataEvent(Object sender) {
         super(sender);
         this.notificationMasterThread = Executors.newSingleThreadExecutor();
         queuedData = new LinkedBlockingQueue<AccelerometerData>();
+        this.running = false;
     }
 
     @Override
     public void startEvent() {
+        this.running = true;
         this.notificationMasterThread.submit(this);
     }
 
     @Override
     public void stopEvent() throws InterruptedException {
+        this.running = false;
         this.notificationMasterThread.shutdown();
     }
 
@@ -89,9 +99,13 @@ public class AccelerometerDataEvent extends BaseDataEvent implements SensorEvent
 
     @Override
     public void run() {
-        while (true) {
-            AccelerometerData newData = this.queuedData.poll();
-            this.notifyListeners(new AccelerometerData[] {newData});
+        while (this.running) {
+            int count = this.queuedData.size();
+            AccelerometerData[] newData = new AccelerometerData[count];
+            for (int i = 0; i < count; ++i) {
+                newData[i] = this.queuedData.poll();
+            }
+            this.notifyListeners(newData);
         }
     }
 }

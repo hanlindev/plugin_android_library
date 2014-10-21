@@ -39,6 +39,11 @@ public enum Feature {
             "microphone",
             BuiltinAudioDevice.class
     ),
+    MICROPHONE_UNCOMPRESSED(
+            "android.hardware.microphone",
+            "microphone",
+            AudioRecordUncompressedDevice.class
+    ),
     // special catered for bluetooth microphone
     BLUETOOTH_MICROPHONE(
             "android.hardware.microphone",

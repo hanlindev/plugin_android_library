@@ -6,6 +6,7 @@ import com.sana.android.plugin.data.listener.DataListener;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -32,16 +33,19 @@ public abstract class BaseDataEvent {
     }
 
     public void notifyListeners(final Object[] data) {
-        HashSet<DataListener> addedListeners = new HashSet<DataListener>();
-        for (final DataListener listener : this.listeners) {
-            if (!addedListeners.contains(listener)) {
-                this.notificationThread.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.putData(data);
-                    }
-                });
-                addedListeners.add(listener);
+        if (data.length > 0) {
+            System.out.println(Arrays.toString(data));//fd
+            HashSet<DataListener> addedListeners = new HashSet<DataListener>();
+            for (final DataListener listener : this.listeners) {
+                if (!addedListeners.contains(listener)) {
+                    this.notificationThread.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.putData(data);
+                        }
+                    });
+                    addedListeners.add(listener);
+                }
             }
         }
     }
