@@ -32,12 +32,13 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
     private static String mFileName = "";
     private static final String LOG_TAG = "UncompressedAudioRecord";
     private static final int RECORDER_BPP = 16;
-    private static final String AUDIO_RECORDER_FILE_EXT_WAV = ".wav";
-    private static final String AUDIO_RECORDER_FOLDER = "UncompressedAudioRecorder";
-    private static final String AUDIO_RECORDER_TEMP_FILE = "record_temp.raw";
-    private static final int RECORDER_SAMPLERATE = 44100;
-    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
-    private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+    private String AUDIO_RECORDER_FILE_EXT;
+    private String AUDIO_RECORDER_FOLDER;
+    private String AUDIO_RECORDER_TEMP_FILE;
+    private int RECORDER_SAMPLERATE;
+    private int RECORDER_CHANNELS;
+    private int RECORDER_AUDIO_ENCODING;
+    private int audioSource;
 
     private AudioRecord recorder = null;
     private int bufferSize = 0;
@@ -52,13 +53,13 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
             file.mkdirs();
         }
 
-        mFileName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT_WAV;
+        mFileName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT;
     }
 
     @Override
     public DataWithEvent prepare() {
         bufferSize = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE,RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING);
-        recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
+        recorder = new AudioRecord(audioSource,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING, bufferSize);
         try {
             InputStream is = new FileInputStream(mFileName);
@@ -146,6 +147,14 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
         //this.outputFormat = setting.getOutputFormat();
         this.resolver = setting.getContentResolver();
         this.mFileName = setting.getOutputFileName();
+        //this.RECORDER_BPP = 16;
+        this.AUDIO_RECORDER_FILE_EXT = setting.getAudioFileExtention();
+        this.AUDIO_RECORDER_FOLDER = setting.getOutputFolderName();
+        this.AUDIO_RECORDER_TEMP_FILE = setting.getAudioTempFileName();
+        this.RECORDER_SAMPLERATE = setting.getRecorderSampleRate();
+        this.RECORDER_CHANNELS = setting.getRecorderChannels();
+        this.RECORDER_AUDIO_ENCODING = setting.getAudioEncoder();
+        this.audioSource = setting.getAudioSource();
     }
 
     private void deleteTempFile() {

@@ -3,6 +3,7 @@ package com.sana.android.plugin.hardware;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.hardware.SensorManager;
+import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.os.Environment;
 
@@ -22,12 +23,17 @@ public class CaptureSetting {
     private Context applicationContext;
     private SensorManager sensorManager;
     private static String outputFileName = null;
+    private String audioFileExtention = null;
+    private String audioTempFileName = null;
+    private Integer recorderSampleRate;
+    private Integer recorderChannels;
+    private String outputFolderName = null;
 
     public static CaptureSetting defaultSetting(Feature source, MimeType type
     ) {
         CaptureSetting result = new CaptureSetting();
-        result.setDefaultForFeature(source);
         result.setDefaultForType(type);
+        result.setDefaultForFeature(source);
         return result;
     }
 
@@ -39,6 +45,15 @@ public class CaptureSetting {
                 this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
                 this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
                 this.outputFileName += "/audiorecord.3gp";
+                break;
+            case MICROPHONE_UNCOMPRESSED:
+                this.audioSource = MediaRecorder.AudioSource.MIC;
+                this.audioFileExtention = ".wav";
+                this.outputFolderName = "UncompressedAudioRecorder";
+                this.audioTempFileName = "record_temp.raw";
+                this.recorderSampleRate = 44100;
+                this.recorderChannels = AudioFormat.CHANNEL_IN_STEREO;
+                this.audioEncoder = AudioFormat.ENCODING_PCM_16BIT;
                 break;
             case BLUETOOTH_MICROPHONE:
                 this.audioEncoder = MediaRecorder.AudioEncoder.AAC;
@@ -72,6 +87,17 @@ public class CaptureSetting {
         this.audioEncoder = audioEncoder;
         return this;
     }
+
+    public Integer getRecorderSampleRate() { return this.recorderSampleRate; }
+
+    public Integer getRecorderChannels() {return this.recorderChannels; }
+
+    public String getAudioFileExtention() { return this.audioFileExtention; }
+
+    public String getOutputFolderName() { return this.outputFolderName; }
+
+    public String getAudioTempFileName() { return this.audioTempFileName; }
+
 
     public String getOutputFileName() { return this.outputFileName; }
 
