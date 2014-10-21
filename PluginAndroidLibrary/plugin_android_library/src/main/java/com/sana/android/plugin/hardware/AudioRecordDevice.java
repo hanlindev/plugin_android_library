@@ -70,10 +70,10 @@ public class AudioRecordDevice implements GeneralDevice {
     @Override
     public void begin() {
 //        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setAudioSource(audioSource);
+        mRecorder.setOutputFormat(outputFormat);
 //        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setAudioEncoder(audioEncoder);
         try {
             mRecorder.prepare();
         } catch (IOException e) {
