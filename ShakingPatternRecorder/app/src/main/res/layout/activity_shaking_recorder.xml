@@ -1,65 +1,83 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".ShakingRecorder">
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/button"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="42dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/button2"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="36dp" />
+    tools:context=".ShakingRecorder"
+    android:background="#ffeaedf0">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="100dp"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/button"
         android:layout_centerHorizontal="true"
-        android:textAlignment="center">
+        android:layout_above="@+id/relativeLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Instruction"
+            android:id="@+id/instruction"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="400dp"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/relativeLayout">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="x = "
-            android:id="@+id/textView2"
+            android:id="@+id/textViewX"
             android:textSize="24dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="y = "
-            android:id="@+id/textView3"
+            android:id="@+id/textViewY"
             android:textSize="24dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@+id/textViewX"
+            android:layout_alignRight="@+id/textViewX"
+            android:layout_alignEnd="@+id/textViewX" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="z = "
-            android:id="@+id/textView4"
+            android:id="@+id/textViewZ"
             android:textSize="24dp"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@+id/textViewY"
+            android:layout_alignLeft="@+id/textViewY"
+            android:layout_alignStart="@+id/textViewY" />
+
+        <plugin.com.sana.shakingpatternrecorder.ProgressWheel
+            android:id="@+id/startButton"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            ProgressWheel:text="Touch To Start"
+            ProgressWheel:textSize="20sp"
+            ProgressWheel:rimColor="#FF595960"
+            ProgressWheel:rimWidth="8dp"
+            android:layout_below="@+id/textViewZ"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 
 </RelativeLayout>
