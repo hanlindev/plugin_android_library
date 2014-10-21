@@ -1,7 +1,9 @@
 package plugin.com.sana.shakingpatternrecorder;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Message;
@@ -66,13 +68,13 @@ public class ShakingRecorder extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shaking_recorder);
 
-
         // receive launch intent from sana
         Intent intent = getIntent();
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
 
         // Prepare CaptureManager
+        isRecording = false;
         CaptureSetting newSetting = CaptureSetting.defaultSetting(Feature.ACCELEROMETER, MimeType.TEXT_PLAIN)
                 .setSensorManager((SensorManager) getSystemService(Context.SENSOR_SERVICE));
         captureManager = new CaptureManager(Feature.ACCELEROMETER, MimeType.TEXT_PLAIN, getContentResolver(), newSetting);
@@ -99,5 +101,37 @@ public class ShakingRecorder extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        captureManager.stop();
+        listener.stopListening();
+    }
+
+    protected void onPause() {
+        super.onPause();
+        captureManager.removeListener(listener);
+    }
+
+    protected void onResume() {
+        super.onResume();
+        captureManager.addListener(listener);
+    }
+
+    /**
+     * Called when start recording button is clicked
+     * @param view
+     */
+    public void recordFromAccelerometer(View view) {
+        if (!isRecording) {
+            ProgressWheel start = (ProgressWheel)findViewById(R.id.startButton);
+            start.setText("Recording");
+            start.invalidate();
+            isRecording = true;
+            listener.startListening();
+            captureManager.begin();
+        }
     }
 }
