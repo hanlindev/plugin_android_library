@@ -2,16 +2,20 @@ package com.example.heartbeataudiodetector;
 
 import java.io.IOException;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -24,14 +28,16 @@ public class RecordHeartbeat extends Activity {
     private static final String mFileName = Environment
             .getExternalStorageDirectory().getAbsolutePath()
             + "/audiorecordtest.3gp";
-    private MediaRecorder mRecorder;
-    private MediaPlayer mPlayer;
+    private static MediaRecorder mRecorder;
+    private static MediaPlayer mPlayer;
     private static final String TAG = "Heartbeat";
-    private static final long DEFAULT_CLIP_TIME = 1000;
+    private static final long DEFAULT_CLIP_TIME = 500;
     private long clipTime = DEFAULT_CLIP_TIME;
-    private AmplitudeClipListener clipListener;
-
-    private boolean continueRecording;
+    //private AmplitudeClipListener clipListener;
+    private static int heartbeatCount;
+    private static Thread calculateThread;
+    private static boolean continueRecording;
+    private static boolean shouldRun;
 
     /**
      * how much louder is required to hear a clap 10000, 18000, 25000 are good
@@ -51,8 +57,6 @@ public class RecordHeartbeat extends Activity {
      */
     public static final int AMPLITUDE_DIFF_HIGH = 25000;
 
-    private static final int DEFAULT_AMPLITUDE_DIFF = AMPLITUDE_DIFF_MED;
-    private AudioManager mAudioManager;
     //private BluetoothDevice BD = new BluetoothDevice();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +89,7 @@ public class RecordHeartbeat extends Activity {
                 onPlayPressed(isChecked);
             }
         });
-
+        heartbeatCount = 0;
 
     }
 
@@ -102,11 +106,10 @@ public class RecordHeartbeat extends Activity {
     // Start recording with MediaRecorder
     //original startRecording Class
     private void startRecording() {
-        boolean clapDetected = false;
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(mFileName);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {
@@ -115,41 +118,38 @@ public class RecordHeartbeat extends Activity {
             Log.e(TAG, "Couldn't prepare and start MediaRecorder");
         }
         mRecorder.start();
-        int startAmplitude = mRecorder.getMaxAmplitude();
-        Log.d(TAG, "starting amplitude: " + startAmplitude);
 
         continueRecording = true;
-        int heartbeatCount=0;
-        do
-        {
-            amplitudeThreshold = 10000;
-            Log.d(TAG, "waiting while recording...");
-            waitSome();
-            int finishAmplitude = mRecorder.getMaxAmplitude();
-            if (clipListener != null)
-            {
-                clipListener.heard(finishAmplitude);
+        calculateThread = new Thread(new Runnable() {
+            public void run() {
+                int startAmplitude = mRecorder.getMaxAmplitude();
+                Log.d(TAG, "starting amplitude: " + startAmplitude);
+                heartbeatCount = 0;
+                do {
+                    amplitudeThreshold = 5000;
+                    Log.d(TAG, "waiting while recording...");
+                    waitSome();
+                    int finishAmplitude = mRecorder.getMaxAmplitude();
+                    int ampDifference = finishAmplitude - startAmplitude;
+                    if (ampDifference >= amplitudeThreshold) {
+                        Log.d(TAG, "heard a heartbeat!");
+                        heartbeatCount++;
+                    }
+                    System.out.println(heartbeatCount);
+                    Log.d(TAG, "finishing amplitude: " + finishAmplitude + " diff: "
+                            + ampDifference);
+                } while (continueRecording);
             }
-
-            int ampDifference = finishAmplitude - startAmplitude;
-            if (ampDifference >= amplitudeThreshold)
-            {
-                Log.d(TAG, "heard a heartbeat!");
-                heartbeatCount++;
-            }
-            Log.d(TAG, "finishing amplitude: " + finishAmplitude + " diff: "
-                    + ampDifference);
-        } while (continueRecording && heartbeatCount < 5);
-
-        //Log.d(TAG, "stopped recording");
+        });
+        calculateThread.start();
+        Log.d(TAG, "stopped recording");
         System.out.println(heartbeatCount);
         //return clapDetected;
     }
 
     private void waitSome()
     {
-        try
-        {
+        try{
             // wait a while
             Thread.sleep(clipTime);
         } catch (InterruptedException e)
@@ -160,13 +160,13 @@ public class RecordHeartbeat extends Activity {
 
     // Stop recording. Release resources
     private void stopRecording() {
-
-        //BluetoothDevice bluetoothMic = new BluetoothDevice();
-        if (null != mRecorder) {
-            mRecorder.stop();
-            mRecorder.release();
-            mRecorder = null;
-        }
+        continueRecording =false;
+        calculateThread.interrupt();
+            if (null != mRecorder) {
+                mRecorder.stop();
+                mRecorder.release();
+                mRecorder = null;
+            }
     }
 
     // Toggle playback
