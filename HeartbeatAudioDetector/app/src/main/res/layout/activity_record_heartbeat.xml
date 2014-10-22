@@ -13,13 +13,4 @@
         android:textOn="@string/stop_recording_string"
         android:textOff="@string/start_recording_string"/>
 
-    <ToggleButton
-        android:id="@+id/play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dip"
-        android:layout_weight="1"
-        android:textOff="@string/start_playback_string"
-        android:textOn="@string/stop_playback_string"/>
-
 </LinearLayout>

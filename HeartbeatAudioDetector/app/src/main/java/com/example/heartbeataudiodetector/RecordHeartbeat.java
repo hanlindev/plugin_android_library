@@ -3,14 +3,7 @@ package com.example.heartbeataudiodetector;
 import java.io.IOException;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.media.AudioManager;
-import android.media.AudioManager.OnAudioFocusChangeListener;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +13,7 @@ import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
+import java.text.DecimalFormat;
 //import com.sana.android.plugin.hardware.BluetoothDevice;
 
 
@@ -29,16 +23,14 @@ public class RecordHeartbeat extends Activity {
             .getExternalStorageDirectory().getAbsolutePath()
             + "/audiorecordtest.3gp";
     private static MediaRecorder mRecorder;
-    private static MediaPlayer mPlayer;
     private static final String TAG = "Heartbeat";
-    private static final long DEFAULT_CLIP_TIME = 500;
+    private static final long DEFAULT_CLIP_TIME = 300;
     private long clipTime = DEFAULT_CLIP_TIME;
-    //private AmplitudeClipListener clipListener;
     private static int heartbeatCount;
     private static Thread calculateThread;
     private static boolean continueRecording;
-    private static boolean shouldRun;
-
+    private static long startTime;
+    private static long duration;
     /**
      * how much louder is required to hear a clap 10000, 18000, 25000 are good
      * values
@@ -56,37 +48,20 @@ public class RecordHeartbeat extends Activity {
      * likely to be this loud
      */
     public static final int AMPLITUDE_DIFF_HIGH = 25000;
-
-    //private BluetoothDevice BD = new BluetoothDevice();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_heartbeat);
 
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
-        final ToggleButton mPlayButton = (ToggleButton) findViewById(R.id.play_button);
 
         // Set up record Button
         mRecordButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-                // Set checked state
-                mPlayButton.setEnabled(!isChecked);
                 // Start/stop recording
                 onRecordPressed(isChecked);
-            }
-        });
-
-        // Set up play Button
-        mPlayButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                // Set checked state
-                mRecordButton.setEnabled(!isChecked);
-                // Start/stop playback
-                onPlayPressed(isChecked);
             }
         });
         heartbeatCount = 0;
@@ -118,6 +93,8 @@ public class RecordHeartbeat extends Activity {
             Log.e(TAG, "Couldn't prepare and start MediaRecorder");
         }
         mRecorder.start();
+        startTime = System.nanoTime();
+        // ... do recording ...
 
         continueRecording = true;
         calculateThread = new Thread(new Runnable() {
@@ -144,7 +121,6 @@ public class RecordHeartbeat extends Activity {
         calculateThread.start();
         Log.d(TAG, "stopped recording");
         System.out.println(heartbeatCount);
-        //return clapDetected;
     }
 
     private void waitSome()
@@ -164,53 +140,29 @@ public class RecordHeartbeat extends Activity {
         calculateThread.interrupt();
             if (null != mRecorder) {
                 mRecorder.stop();
+                duration = System.nanoTime() - startTime;
                 mRecorder.release();
                 mRecorder = null;
+                DecimalFormat df = new DecimalFormat("#.##");
+                new AlertDialog.Builder(this)
+                        .setTitle("Recording Finished")
+                        .setMessage("Your heartbeat is "+df.format(60*heartbeatCount/(duration/1000000000.0))+" beats/min.")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
             }
-    }
-
-    // Toggle playback
-    private void onPlayPressed(boolean shouldStartPlaying) {
-        if (shouldStartPlaying) {
-            startPlaying();
-        } else {
-            stopPlaying();
-        }
-    }
-    // Playback audio using MediaPlayer
-    private void startPlaying() {
-        mPlayer = new MediaPlayer();
-        try {
-            mPlayer.setDataSource(mFileName);
-            mPlayer.prepare();
-            mPlayer.start();
-        } catch (IOException e) {
-            Log.e(TAG, "Couldn't prepare and start MediaPlayer");
-        }
-    }
-
-    // Stop playback. Release resources
-    private void stopPlaying() {
-        if (null != mPlayer) {
-            if (mPlayer.isPlaying())
-                mPlayer.stop();
-            mPlayer.release();
-            mPlayer = null;
-        }
     }
     // Release recording and playback resources, if necessary
     @Override
     public void onPause() {
         super.onPause();
-
         if (null != mRecorder) {
             mRecorder.release();
             mRecorder = null;
-        }
-
-        if (null != mPlayer) {
-            mPlayer.release();
-            mPlayer = null;
         }
     }
 }
