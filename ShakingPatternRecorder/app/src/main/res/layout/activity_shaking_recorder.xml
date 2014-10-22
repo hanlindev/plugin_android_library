@@ -25,6 +25,15 @@
             android:id="@+id/instruction"
             android:layout_gravity="center_horizontal" />
 
+        <Button
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:background="@drawable/send_button_shape"
+            android:text="Send"
+            android:id="@+id/sendButton"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#FFFF" />
+
     </LinearLayout>
 
     <RelativeLayout
@@ -33,8 +42,8 @@
         android:layout_height="400dp"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/relativeLayout">
+        android:id="@+id/relativeLayout"
+        android:layout_alignParentBottom="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -77,7 +86,8 @@
             ProgressWheel:rimColor="#FF595960"
             ProgressWheel:rimWidth="8dp"
             android:layout_below="@+id/textViewZ"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:onClick="recordFromAccelerometer"/>
     </RelativeLayout>
 
 </RelativeLayout>
