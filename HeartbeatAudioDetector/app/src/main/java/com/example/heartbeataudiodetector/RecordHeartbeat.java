@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
+import java.text.DecimalFormat;
 //import com.sana.android.plugin.hardware.BluetoothDevice;
 
 
@@ -23,11 +24,13 @@ public class RecordHeartbeat extends Activity {
             + "/audiorecordtest.3gp";
     private static MediaRecorder mRecorder;
     private static final String TAG = "Heartbeat";
-    private static final long DEFAULT_CLIP_TIME = 500;
+    private static final long DEFAULT_CLIP_TIME = 300;
     private long clipTime = DEFAULT_CLIP_TIME;
     private static int heartbeatCount;
     private static Thread calculateThread;
     private static boolean continueRecording;
+    private static long startTime;
+    private static long duration;
     /**
      * how much louder is required to hear a clap 10000, 18000, 25000 are good
      * values
@@ -90,6 +93,8 @@ public class RecordHeartbeat extends Activity {
             Log.e(TAG, "Couldn't prepare and start MediaRecorder");
         }
         mRecorder.start();
+        startTime = System.nanoTime();
+        // ... do recording ...
 
         continueRecording = true;
         calculateThread = new Thread(new Runnable() {
@@ -135,11 +140,13 @@ public class RecordHeartbeat extends Activity {
         calculateThread.interrupt();
             if (null != mRecorder) {
                 mRecorder.stop();
+                duration = System.nanoTime() - startTime;
                 mRecorder.release();
                 mRecorder = null;
+                DecimalFormat df = new DecimalFormat("#.##");
                 new AlertDialog.Builder(this)
                         .setTitle("Recording Finished")
-                        .setMessage("Your heartbeat is "+heartbeatCount+" beats/min. ")
+                        .setMessage("Your heartbeat is "+df.format(60*heartbeatCount/(duration/1000000000.0))+" beats/min.")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // continue with delete
@@ -149,12 +156,10 @@ public class RecordHeartbeat extends Activity {
                         .show();
             }
     }
-
     // Release recording and playback resources, if necessary
     @Override
     public void onPause() {
         super.onPause();
-
         if (null != mRecorder) {
             mRecorder.release();
             mRecorder = null;
