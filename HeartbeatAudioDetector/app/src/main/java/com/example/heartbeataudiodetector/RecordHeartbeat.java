@@ -14,6 +14,14 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
 import java.text.DecimalFormat;
+
+import com.sana.android.plugin.application.CaptureManager;
+import com.sana.android.plugin.application.CommManager;
+import com.sana.android.plugin.communication.MimeType;
+import com.sana.android.plugin.data.event.AccelerometerDataEvent;
+import com.sana.android.plugin.data.listener.TimedListener;
+import com.sana.android.plugin.hardware.CaptureSetting;
+import com.sana.android.plugin.hardware.Feature;
 //import com.sana.android.plugin.hardware.BluetoothDevice;
 
 
