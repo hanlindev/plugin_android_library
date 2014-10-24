@@ -98,6 +98,13 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
         recordingThread.start();
     }
 
+    public boolean isRecordingThreadRunning(){
+        if(recordingThread.isAlive())
+            return true;
+        else
+            return false;
+    }
+
     @Override
     public void stop() {
         if(null != recorder){
@@ -107,7 +114,9 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
             recorder.release();
 
             recorder = null;
+          //  recordingThread.
             recordingThread = null;
+
         }
 
         copyWaveFile(getTempFilename(),mFileName);

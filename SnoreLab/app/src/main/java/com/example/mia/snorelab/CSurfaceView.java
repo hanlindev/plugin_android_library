@@ -265,7 +265,7 @@ public class CSurfaceView extends SurfaceView implements SurfaceHolder.Callback 
                 // print the maximum intensity
                 paint.setColor(Color.BLACK);
                 paint.setTextSize(30);
-                canvas.drawText("max Intensity = " + String.valueOf(mxIntensity), 100, height-30, paint);
+       //         canvas.drawText("max Intensity = " + String.valueOf(mxIntensity), 100, height-30, paint);
 
                 // display the signal in temporal domain
                 int xStart = 0;
