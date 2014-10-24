@@ -24,10 +24,21 @@ tools:context=".MainActivity" >
     android:id="@+id/btn_CaptureSound"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    android:layout_marginRight="16dp"
     android:onClick="captureSound"
-    android:text="@string/capture_sound" />
+    android:background="@drawable/custom_button_lblue"
+    android:text="Capture Snoring"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true" />
+    <Button
+        android:id="@+id/btn_WakeUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="16dp"
+        android:onClick="wakeUp"
+        android:background="@drawable/custom_button_lblue"
+        android:text="Wake Up" />
 
 </RelativeLayout>
