@@ -38,11 +38,20 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/record_from_usb_button"
+        android:text="@string/record_from_accessory_button"
         android:id="@+id/usb_accessory_button"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:onClick="accessoryRecord"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/record_from_host_button"
+        android:id="@+id/usb_host_button"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="hostRecord"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -87,7 +96,6 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
         android:onClick="recordUncompressedAudioFromMic"
         android:text="Record Uncompressed Audio From Mic" />
 

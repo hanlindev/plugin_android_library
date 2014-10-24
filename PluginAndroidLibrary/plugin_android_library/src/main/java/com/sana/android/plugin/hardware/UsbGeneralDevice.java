@@ -18,7 +18,7 @@ public abstract class UsbGeneralDevice implements GeneralDevice {
     byte[] byteStream;
 
     final int MAX_BYTE_ARRAY_LENGTH = 1000000;
-    final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
+    final String ACTION_USB_PERMISSION = "com.sana.android.plugin.hardware.USB_PERMISSION";
 
     public UsbGeneralDevice() {}
     public UsbGeneralDevice(Context context) {

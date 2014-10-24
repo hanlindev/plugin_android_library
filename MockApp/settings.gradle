@@ -1,3 +1,3 @@
-include ':app'
+include ':app', ':reaction'
 include ':PluginAndroidLibrary:plugin_android_library'
 project (':PluginAndroidLibrary:plugin_android_library').projectDir = new File(settingsDir, '../PluginAndroidLibrary/plugin_android_library')
