@@ -1,5 +1,6 @@
 package com.sana.android.plugin.data;
 
+import android.content.Context;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.net.Uri;

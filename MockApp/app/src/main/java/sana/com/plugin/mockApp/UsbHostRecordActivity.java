@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sana.android.plugin.data.DataWithEvent;
@@ -24,7 +26,7 @@ public class UsbHostRecordActivity extends ActionBarActivity {
 
     private String message = "";
 
-    public class UsbListener extends TimedListener {
+    private class UsbListener extends TimedListener {
 
         Object sender;
 
@@ -39,13 +41,13 @@ public class UsbHostRecordActivity extends ActionBarActivity {
 
         @Override
         public void processData(Object sender, Object[] data) {
+            // Check if the sender matched
+            if (this.sender != sender) return;
+
             for (int i=0;i<data.length;i++)
-                message += data[i].toString();
-            Log.d("Message = ", message);
-            Log.d("length = ", data.length+"");
+                message += (char)Integer.parseInt(data[i].toString());
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +57,13 @@ public class UsbHostRecordActivity extends ActionBarActivity {
         final UsbHostDevice device = new UsbHostDevice(this);
         final DataWithEvent dataWithEvent = device.prepare();
 
-        UsbListener listener = new UsbListener(device, 1000, TimeUnit.MILLISECONDS);
+
+        UsbListener listener = new UsbListener(device, 100, TimeUnit.MILLISECONDS);
         listener.startListening();
 
-        if (dataWithEvent != null && dataWithEvent.getEvent()!= null)
+        if (dataWithEvent != null && dataWithEvent.getEvent()!= null) {
             dataWithEvent.getEvent().addListener(listener);
+        }
 
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("recording...");
@@ -67,13 +71,15 @@ public class UsbHostRecordActivity extends ActionBarActivity {
         alert.setNegativeButton("Stop", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 device.stop();
-                Toast.makeText(context, "MESSAGE IS |" + message + "|", Toast.LENGTH_LONG).show();
             }
         });
         alert.show();
-
     }
 
+    public void displayMessage(View view) {
+        TextView tv = (TextView) findViewById(R.id.caption);
+        tv.setText(message);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -3,9 +3,11 @@ package com.sana.android.plugin.data.event;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
+import android.util.Log;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,11 +16,13 @@ import java.util.concurrent.Executors;
  */
 public class UsbHostDeviceDataEvent extends BaseDataEvent implements Runnable {
 
+    private static final String LOG_TAG = "UsbHostDeviceDataEvent";
+
     private ExecutorService notificationMasterThread;
     private UsbDeviceConnection connection;
     private UsbEndpoint endpoint;
-    private int bufferSize;
     private byte[] buffer;
+    private int bufferSize;
     private int timeout;
 
     public UsbHostDeviceDataEvent(
@@ -48,8 +52,28 @@ public class UsbHostDeviceDataEvent extends BaseDataEvent implements Runnable {
 
     @Override
     public void run() {
-        buffer = new byte[bufferSize];
-        connection.bulkTransfer(endpoint, buffer, buffer.length, timeout);
-        notifyListeners(ArrayUtils.toObject(buffer));
+        byte[] buffer = new byte[bufferSize];
+        int pointer = 0;
+
+        Log.d(UsbHostDeviceDataEvent.LOG_TAG, "Listening for endpoint = " + endpoint + " at connection = " + connection);
+
+        while (true) {
+            byte[] temp = new byte[1000000];
+            final int numBytesRead = connection.bulkTransfer(endpoint, temp, temp.length, 0);
+            if (numBytesRead > 0) {
+                Log.d(UsbHostDeviceDataEvent.LOG_TAG, "Number of bytes read: " + numBytesRead);
+                for (int i = 0; i < numBytesRead && pointer < bufferSize; i++, pointer++)
+                    buffer[pointer] = temp[i];
+                if (pointer >= bufferSize) {
+                    notifyListeners(ArrayUtils.toObject(buffer));
+                    pointer = 0;
+                }
+            } else if (numBytesRead < 0) {
+                Log.d(UsbHostDeviceDataEvent.LOG_TAG, "No more data to be read from the connection");
+                buffer = ArrayUtils.subarray(buffer, 0, pointer);
+                notifyListeners(ArrayUtils.toObject(buffer));
+                break;
+            }
+        }
     }
 }

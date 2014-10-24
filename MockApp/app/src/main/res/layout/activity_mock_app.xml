@@ -92,5 +92,4 @@
         android:onClick="startAccelerometer"
         android:id="@+id/button" />
 
-
 </LinearLayout>

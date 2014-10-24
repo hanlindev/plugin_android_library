@@ -38,11 +38,18 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
     FileOutputStream accessoryOutput;
     CaptureSetting setting;
     BinaryDataWithPollingEvent dataWithEvent;
+    private int bufferSize;
 
     public UsbAccessoryDevice() {}
 
     public UsbAccessoryDevice(Context context) {
         super(context);
+        this.bufferSize = 8;
+    }
+
+    public UsbAccessoryDevice(Context context, int bufferSize) {
+        super(context);
+        this.bufferSize = bufferSize;
     }
 
     private final BroadcastReceiver usbBroadcastReceiver = new BroadcastReceiver() {
@@ -128,7 +135,7 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
                     null,
                     this,
                     accessoryInput,
-                    8
+                    bufferSize
             );
         } catch (FileNotFoundException e) {
             Log.d(UsbAccessoryDevice.LOG_TAG, "file not found: " + e.toString());

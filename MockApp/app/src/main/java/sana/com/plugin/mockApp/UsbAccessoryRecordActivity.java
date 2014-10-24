@@ -53,10 +53,10 @@ public class UsbAccessoryRecordActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usb_accessory_record);
 
-        final UsbAccessoryDevice accessoryDevice = new UsbAccessoryDevice(this);
+        final UsbAccessoryDevice accessoryDevice = new UsbAccessoryDevice(this, 8);
         final DataWithEvent dataWithEvent = accessoryDevice.prepare();
 
-        UsbListener listener = new UsbListener(accessoryDevice, 1000, TimeUnit.MILLISECONDS);
+        UsbListener listener = new UsbListener(accessoryDevice, 10, TimeUnit.MILLISECONDS);
         listener.startListening();
 
         if (dataWithEvent != null && dataWithEvent.getEvent()!= null)

@@ -32,6 +32,14 @@
                 android:resource="@xml/accessory_filter" />
 
             <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+
+            <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.HEART_BEAT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -43,22 +51,22 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="image/jpeg"/>
+                <data android:mimeType="image/jpeg" />
             </intent-filter>
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.AUDIO" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="audio/3gpp"/>
-                <data android:mimeType="video/3gpp"/>
+                <data android:mimeType="audio/3gpp" />
+                <data android:mimeType="video/3gpp" />
             </intent-filter>
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.VIDEO" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="video/3gpp"/>
+                <data android:mimeType="video/3gpp" />
             </intent-filter>
         </activity>
         <activity
