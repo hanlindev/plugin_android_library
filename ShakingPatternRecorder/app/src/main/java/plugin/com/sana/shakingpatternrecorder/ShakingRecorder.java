@@ -1,19 +1,17 @@
 package plugin.com.sana.shakingpatternrecorder;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sana.android.plugin.application.CaptureManager;
 import com.sana.android.plugin.application.CommManager;
@@ -22,44 +20,73 @@ import com.sana.android.plugin.data.event.AccelerometerDataEvent;
 import com.sana.android.plugin.data.listener.TimedListener;
 import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.Feature;
+import com.sana.android.plugin.data.event.AccelerometerDataEvent.AccelerometerData;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 
 public class ShakingRecorder extends ActionBarActivity {
     private class AccelerometerEventListener extends TimedListener {
         public AccelerometerEventListener(Object sender) {
-            super(sender, 1, TimeUnit.SECONDS);
+            super(sender, RECORDING_INTERVAL, RECORDING_INTERVAL_UNIT);
         }
 
         @Override
         public synchronized void processData(Object sender, Object[] data) {
             if (data.length > 0) {
-                Log.d(AccelerometerEventListener.class.getName(), "Received data from event hahaha");
-                Message msg = handler.obtainMessage();
-                msg.obj = data[data.length - 1];
-                handler.sendMessage(msg);
+                if (recordings.size() < NUM_RECORDINGS_NEEDED) {
+                    Message msg = handler.obtainMessage();
+                    msg.obj = data;
+                    handler.sendMessage(msg);
+                }
             }
         }
     }
 
+    private static final int NUM_RECORDINGS_NEEDED = 5000;
+    private static final int PROGRESS_BOUNDARY = NUM_RECORDINGS_NEEDED / 360 + 1;
+    private static final long RECORDING_INTERVAL = 1;
+    private static final TimeUnit RECORDING_INTERVAL_UNIT = TimeUnit.MILLISECONDS;
+
     private CaptureManager captureManager;
     private AccelerometerEventListener listener;
     private boolean isRecording;
+    private LinkedList<AccelerometerData> recordings;
+    private ProgressWheel progressWheel;
+    private int progress;
+    private VerticalPager verticalPager;
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            TextView textX = (TextView)findViewById(R.id.textViewX);
-            TextView textY = (TextView)findViewById(R.id.textViewY);
-            TextView textZ = (TextView)findViewById(R.id.textViewZ);
+            Object[] data = (Object[]) msg.obj;
+            AccelerometerData[] castData = Arrays.copyOf(data, data.length, AccelerometerData[].class);
+            recordings.addAll(Arrays.asList(castData));
 
-            AccelerometerDataEvent.AccelerometerData data = (AccelerometerDataEvent.AccelerometerData) msg.obj;
-            double x = data.getX();
-            double y = data.getY();
-            double z = data.getZ();
-            textX.setText(x + ", ");
-            textY.setText(y+", ");
-            textZ.setText(z+"");
+            updateUi();
+
+            if (recordings.size() >= NUM_RECORDINGS_NEEDED) {
+                if (progress < 360) {
+                    progressWheel.setProgress(360);
+                }
+                progressWheel.setText("Done");
+                listener.stopListening();
+                captureManager.stop();
+                verticalPager.scrollDown();
+            }
+        }
+
+        private void updateUi() {
+            TextView readingCount = (TextView) findViewById(R.id.readingCount);
+            readingCount.setText("Readings: " + recordings.size());
+
+            if (recordings.size() / PROGRESS_BOUNDARY > progress) {
+                progress = recordings.size() / PROGRESS_BOUNDARY;
+                progressWheel.incrementProgress();
+            }
         }
     };
 
@@ -67,11 +94,17 @@ public class ShakingRecorder extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shaking_recorder);
+        progressWheel = (ProgressWheel) findViewById(R.id.startButton);
+        verticalPager = (VerticalPager) findViewById(R.id.verticalPager);
 
         // receive launch intent from sana
         Intent intent = getIntent();
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
+
+        // Prepare data
+        recordings = new LinkedList<AccelerometerData>();
+        progress = 0;
 
         // Prepare CaptureManager
         isRecording = false;
@@ -133,5 +166,23 @@ public class ShakingRecorder extends ActionBarActivity {
             listener.startListening();
             captureManager.begin();
         }
+    }
+
+    public void sendDataToSana(View view) {
+        if (recordings.size() >= NUM_RECORDINGS_NEEDED) {
+            CommManager cm = CommManager.getInstance();
+            cm.sendData(this, getDataString());
+        } else {
+            Toast errorToast = Toast.makeText(
+                    getApplicationContext(),
+                    "Please finish recording before sending data",
+                    Toast.LENGTH_SHORT
+            );
+            errorToast.show();
+        }
+    }
+
+    private String getDataString() {
+        return Arrays.toString(recordings.toArray());
     }
 }

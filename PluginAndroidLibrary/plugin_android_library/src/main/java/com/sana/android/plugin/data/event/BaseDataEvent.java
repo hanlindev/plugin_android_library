@@ -34,7 +34,6 @@ public abstract class BaseDataEvent {
 
     public void notifyListeners(final Object[] data) {
         if (data.length > 0) {
-            System.out.println(Arrays.toString(data));//fd
             HashSet<DataListener> addedListeners = new HashSet<DataListener>();
             for (final DataListener listener : this.listeners) {
                 if (!addedListeners.contains(listener)) {

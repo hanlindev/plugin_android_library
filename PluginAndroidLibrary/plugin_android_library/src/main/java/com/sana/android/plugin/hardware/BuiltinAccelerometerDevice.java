@@ -30,7 +30,7 @@ public class BuiltinAccelerometerDevice implements GeneralDevice {
         setting.getSensorManager().registerListener(
                 (AccelerometerDataEvent) savedData.getEvent(),
                 senAccelerometer ,
-                SensorManager.SENSOR_DELAY_NORMAL
+                SensorManager.SENSOR_DELAY_FASTEST
         );
         return savedData;
     }
