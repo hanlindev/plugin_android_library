@@ -1,5 +1,6 @@
 package sana.com.plugin.mockApp;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.CompoundButton;
@@ -7,20 +8,18 @@ import android.widget.ToggleButton;
 
 import com.sana.android.plugin.application.CaptureManager;
 import com.sana.android.plugin.communication.MimeType;
-import com.sana.android.plugin.hardware.BluetoothDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.Feature;
-import com.sana.android.plugin.hardware.FeatureChecker;
+import android.content.Intent;
 
 public class BluetoothRecordingActivity extends Activity {
-    private BluetoothDevice BD;
-    private CaptureSetting cs;
+    private CaptureManager cm;
     @Override
     public void onCreate(Bundle icicle) {
         //using the default capture setting
-        cs = new CaptureSetting();
-        cs.setDefaultForFeature(Feature.MICROPHONE);
-        BD = new BluetoothDevice(this, cs);
+        //cs = new CaptureSetting();
+        //cs.setDefaultForFeature(Feature.MICROPHONE);
+        //BD = new BluetoothDevice(this, cs);
         super.onCreate(icicle);
         setContentView(R.layout.activity_bluetooth_recording);
         final ToggleButton mRecordButton = (ToggleButton) findViewById(R.id.record_button);
@@ -34,37 +33,42 @@ public class BluetoothRecordingActivity extends Activity {
                 onRecordPressed(isChecked); // Start/stop recording
             }
         });
-
+        CaptureSetting defaultSetting = CaptureSetting.defaultSetting(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO)
+                .setApplicationContext(getApplicationContext());
+        cm = new CaptureManager(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO, getContentResolver(), defaultSetting);
+        cm.prepare();
         // Set up play Button
+        /*
         mPlayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
                 mRecordButton.setEnabled(!isChecked); // Set checked state
                 onPlayPressed(isChecked);  // Start/stop playback
             }
-        });
-        //startBluetoothMic
-        BD.startBluetoothMic();
+        });*/
     }
 
     // Toggle recording
     private void onRecordPressed(boolean shouldStartRecording) {
         if(shouldStartRecording)
-            BD.begin();
+            cm.begin();
         else
-            BD.stop();
+            cm.stop();
     }
     // Toggle playback
+    /*
     private void onPlayPressed(boolean shouldStartPlaying) {
         if (shouldStartPlaying)
             BD.startPlaying();
         else
             BD.stopPlaying();
     }
-
+    */
+    /*
     public void onPause() {
         super.onPause();
         BD.pauseRecorder();
         BD.pausePlayer();
     }
+    */
 }

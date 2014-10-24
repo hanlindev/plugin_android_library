@@ -45,11 +45,6 @@ public class AudioRecordDevice implements GeneralDevice {
 //        prepare();
     }
 
-    public AudioRecordDevice(CaptureSetting setting){
-        setCaptureSetting(setting);
-        prepare();
-    }
-
     @Override
     public DataWithEvent prepare() {
         mRecorder = new MediaRecorder();
@@ -75,10 +70,10 @@ public class AudioRecordDevice implements GeneralDevice {
     @Override
     public void begin() {
 //        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setAudioSource(audioSource);
+        mRecorder.setOutputFormat(outputFormat);
 //        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setAudioEncoder(audioEncoder);
         try {
             mRecorder.prepare();
         } catch (IOException e) {
@@ -97,8 +92,13 @@ public class AudioRecordDevice implements GeneralDevice {
 
     private void moveData() {
         try {
+            Log.d(
+                    "AudioRecordDevice",
+                    CommManager.getInstance().getUri().toString()
+            );
             FileInputStream is = new FileInputStream(mFileName);
             OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());
+            Log.e(LOG_TAG, CommManager.getInstance().getUri().toString());
             IOUtils.copy(is, os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -159,10 +159,11 @@ public class AudioRecordDevice implements GeneralDevice {
     }
 
     public MediaRecorder getmRecorder(){
-        return this.mRecorder;
+        return mRecorder;
     }
 
     public MediaPlayer getmPlayer(){
-        return this.mPlayer;
+        return mPlayer;
     }
+    //public void startBluetoothMic(){}
 }

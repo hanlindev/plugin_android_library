@@ -53,7 +53,6 @@ public class MockApp extends ActionBarActivity {
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -153,6 +152,13 @@ public class MockApp extends ActionBarActivity {
         }
     }
 
+    /*
+    protected void onPause() {
+        super.onPause();
+        fc.unregister();
+    }
+    */
+
     /** Called when the user clicks the record audio from mic button */
     public void recordAudioFromMic(View view) {
         if(!fc.isConnected(Feature.BLUETOOTH)){
@@ -172,7 +178,12 @@ public class MockApp extends ActionBarActivity {
                     .show();
         }
     }
-
+    /** Called when the user clicks the record Uncompressed audio from mic button */
+    public void recordUncompressedAudioFromMic(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, UncompressedAudioRecordActivity.class);
+        startActivity(intent);
+    }
     /** Called when the user clicks the take photo button */
     public void takePhotoOrVideo(View view) {
         // Do something in response to button

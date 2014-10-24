@@ -10,11 +10,11 @@ import com.sana.android.plugin.errors.UnsupportedDeviceError;
  * @see android.content.pm.PackageManager
  */
 public enum Feature {
-    BLUETOOTH("android.hardware.bluetooth", "bluetooth", BluetoothDevice.class),
+    BLUETOOTH("android.hardware.bluetooth", "bluetooth", BluetoothAudioDevice.class),
     BLUETOOTH_LE(
             "android.hardware.bluetooth_le",
             "bluetoothLe",
-            BluetoothDevice.class
+            BluetoothAudioDevice.class
     ),
     CAMERA_REAR(
             "android.hardware.camera",
@@ -43,7 +43,18 @@ public enum Feature {
             "microphone",
             BuiltinAudioDevice.class
     ),
-    ACCELEROMETER("android.hardware.sensor.accelerometer", "accelerometer");
+    MICROPHONE_UNCOMPRESSED(
+            "android.hardware.microphone",
+            "microphone",
+            AudioRecordUncompressedDevice.class
+    ),
+    // special catered for bluetooth microphone
+    BLUETOOTH_MICROPHONE(
+            "android.hardware.microphone",
+            "microphone",
+            BluetoothAudioDevice.class
+    ),
+    ACCELEROMETER("android.hardware.sensor.accelerometer", "accelerometer", BuiltinAccelerometerDevice.class);
 
     private String featureName;
     private String commonName;

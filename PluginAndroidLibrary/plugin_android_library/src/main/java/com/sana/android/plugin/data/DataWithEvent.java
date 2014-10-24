@@ -7,4 +7,5 @@ import com.sana.android.plugin.data.event.BaseDataEvent;
  */
 public interface DataWithEvent {
     public BaseDataEvent getEvent();
+    public void dispose() throws Exception;
 }

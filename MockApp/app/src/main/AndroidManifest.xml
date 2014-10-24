@@ -94,6 +94,10 @@
             android:name=".UsbHostRecordActivity"
             android:label="@string/title_activity_usb_host_record" >
         </activity>
+        <activity
+            android:name=".UncompressedAudioRecordActivity"
+            android:label="@string/title_activity_uncompressed_audio_record" >
+        </activity>
     </application>
 
 </manifest>

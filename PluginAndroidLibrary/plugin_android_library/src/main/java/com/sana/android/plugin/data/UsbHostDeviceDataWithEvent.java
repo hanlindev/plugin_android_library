@@ -42,4 +42,9 @@ public class UsbHostDeviceDataWithEvent extends BinaryData {
 
     @Override
     public UsbHostDeviceDataEvent getEvent() { return this.event; }
+
+    @Override
+    public void dispose() throws InterruptedException {
+        this.event.stopEvent();
+    }
 }

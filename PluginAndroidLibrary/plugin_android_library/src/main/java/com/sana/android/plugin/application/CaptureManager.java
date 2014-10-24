@@ -11,6 +11,7 @@ import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.DeviceFactory;
 import com.sana.android.plugin.hardware.Feature;
 import com.sana.android.plugin.hardware.GeneralDevice;
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -33,8 +34,6 @@ public class CaptureManager {
     private GeneralDevice dataSource;
     private DataWithEvent data;
     private Vector<DataListener> listeners;
-    private ContentResolver contentResolver;
-
     public CaptureManager(
             Feature source, MimeType type, ContentResolver contentResolver) {
         this(
@@ -63,11 +62,12 @@ public class CaptureManager {
             setting = CaptureSetting.defaultSetting(source, type);
         }
         setting.setContentResolver(contentResolver);
-        this.contentResolver = contentResolver;
         this.dataSource =
                 DeviceFactory.getDeviceInstance(source, setting);
         this.listeners = new Vector<DataListener>();
     }
+
+
 
     /**
      * Add a listener to the sensing device. Call this method if you wish

@@ -51,11 +51,12 @@ public class AudioRecordActivity extends ActionBarActivity {
         }
     }
 
+//
     private void onPlay(boolean start) {
         if (start) {
-//            audioRecord.startPlaying();
+ //           audioRecord.startPlaying();
         } else {
-//            audioRecord.stopPlaying();
+   //         audioRecord.stopPlaying();
         }
     }
 
@@ -106,8 +107,6 @@ public class AudioRecordActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-//        audioRecord = new AudioRecordDevice();
         LinearLayout ll = new LinearLayout(this);
         mRecordButton = new RecordButton(this);
         ll.addView(mRecordButton,
