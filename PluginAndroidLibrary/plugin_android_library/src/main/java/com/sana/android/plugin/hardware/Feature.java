@@ -32,7 +32,11 @@ public enum Feature {
             "usbAccessory",
             UsbAccessoryDevice.class
     ),
-    USB_HOST("android.hardware.usb.host", "usbHost", UsbHostDevice.class),
+    USB_HOST(
+            "android.hardware.usb.host",
+            "usbHost",
+            UsbHostDevice.class
+    ),
     WIFI_DIRECT("android.hardware.wifi.direct", "wifiDirect"),
     MICROPHONE(
             "android.hardware.microphone",

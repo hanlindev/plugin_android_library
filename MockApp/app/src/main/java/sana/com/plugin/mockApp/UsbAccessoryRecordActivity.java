@@ -41,9 +41,10 @@ public class UsbAccessoryRecordActivity extends ActionBarActivity {
 
         @Override
         public void processData(Object sender, Object[] data) {
-            Log.d("Herereerere", "");
             for (int i=0;i<data.length;i++)
                 message += data[i].toString();
+            Log.d("Message = ", message);
+            Log.d("length = ", data.length+"");
         }
     }
 
@@ -52,24 +53,24 @@ public class UsbAccessoryRecordActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usb_accessory_record);
 
-        final UsbAccessoryDevice accessoryDevice = new UsbAccessoryDevice(this);
-        final DataWithEvent dataEvent = accessoryDevice.prepare();
-        //accessoryDevice.begin();
+        final UsbAccessoryDevice accessoryDevice = new UsbAccessoryDevice(this, 8);
+        final DataWithEvent dataWithEvent = accessoryDevice.prepare();
 
-        UsbListener listener = new UsbListener(this, 1000, TimeUnit.MILLISECONDS);
+        UsbListener listener = new UsbListener(accessoryDevice, 10, TimeUnit.MILLISECONDS);
+        listener.startListening();
 
-        if (dataEvent != null && dataEvent.getEvent()!= null)
-            dataEvent.getEvent().addListener(listener);
+        if (dataWithEvent != null && dataWithEvent.getEvent()!= null)
+            dataWithEvent.getEvent().addListener(listener);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("recording...");
-        //accessoryDevice.begin();
+        accessoryDevice.begin();
         alert.setNegativeButton("Stop", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 accessoryDevice.stop();
                 Toast.makeText(context, "MESSAGE IS |" + message + "|", Toast.LENGTH_LONG).show();
-                }
-            });
+            }
+        });
         alert.show();
 
     }

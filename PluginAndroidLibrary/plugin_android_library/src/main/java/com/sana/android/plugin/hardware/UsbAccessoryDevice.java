@@ -11,6 +11,7 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
 import com.sana.android.plugin.data.DataWithEvent;
 
@@ -19,84 +20,81 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by quang on 9/16/14.
  */
-public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable {
+public class UsbAccessoryDevice extends UsbGeneralDevice {
+
+    private static final String LOG_TAG = "UsbAccessoryDevice";
 
     UsbAccessory accessory;
     ParcelFileDescriptor accessoryFileDescriptor;
     FileInputStream accessoryInput;
     FileOutputStream accessoryOutput;
     CaptureSetting setting;
-    BinaryDataWithPollingEvent event;
+    BinaryDataWithPollingEvent dataWithEvent;
+    private int bufferSize;
 
     public UsbAccessoryDevice() {}
 
     public UsbAccessoryDevice(Context context) {
         super(context);
+        this.bufferSize = 8;
+    }
+
+    public UsbAccessoryDevice(Context context, int bufferSize) {
+        super(context);
+        this.bufferSize = bufferSize;
     }
 
     private final BroadcastReceiver usbBroadcastReceiver = new BroadcastReceiver() {
 
         public void onReceive(Context context, Intent intent) {
 
-            Log.d("good, ", "very good");
-
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
                     accessory = (UsbAccessory) intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        if(accessory != null){
+                        if (accessory != null) {
                             openAccessory(accessory);
                         }
-                    }
-                    else {
-                        Log.d("debuggg: ", "permission denied for accessory " + accessory);
+                    } else {
+                        Log.d(UsbAccessoryDevice.LOG_TAG, "Permission denied for accessory " + accessory);
                     }
                 }
             }
         }
     };
 
-    private void openAccessory(UsbAccessory accessory)
-    {
-        Log.d("openning", accessory.toString());
+    private void openAccessory(UsbAccessory accessory) {
         accessoryFileDescriptor = usbManager.openAccessory(accessory);
-        if (accessoryFileDescriptor != null)
-        {
+        if (accessoryFileDescriptor != null) {
             this.accessory = accessory;
             FileDescriptor fd = accessoryFileDescriptor.getFileDescriptor();
             accessoryInput = new FileInputStream(fd);
             accessoryOutput = new FileOutputStream(fd);
 
-            Log.d("accessory opened","");
-            // TODO: enable USB operations in the app
-        }
-        else
-        {
-            Log.d("accessory open fail","");
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory opened");
+        } else {
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory open fail");
         }
     }
 
-    private void closeAccessory()
-    {
-        // TODO: disable USB operations in the app
-        try
-        {
-            if (accessoryFileDescriptor != null) {
-                accessoryFileDescriptor.close();
-                Log.d("closed accessory file descriptor", "");
+    private void closeAccessory() {
+        try {
+            if (accessoryInput != null) {
+                accessoryInput.close();
+                Log.d(UsbAccessoryDevice.LOG_TAG, "Closed accessory input stream");
             }
-        }
-        catch (IOException e)
-        {
-            Log.d("exception closing", e.toString());
-        }
-        finally {
+        } catch (IOException e) {
+            Log.d(UsbAccessoryDevice.LOG_TAG, "exception closing accessory: " + e.toString());
+        } finally {
             accessoryFileDescriptor = null;
             accessory = null;
         }
@@ -114,52 +112,58 @@ public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable
         }
 
         if (accessory == null) {
-            Toast.makeText(context, "null accessory", Toast.LENGTH_LONG).show();
+            Log.d(UsbAccessoryDevice.LOG_TAG, "No accessories found");
             return null;
         }
-        else openAccessory(accessory);
+
+        openAccessory(accessory);
 
         if (accessoryInput == null) {
-            Toast.makeText(context, "null input", Toast.LENGTH_LONG).show();
-            return null;
-        }
-        if (!usbManager.hasPermission(accessory)) {
-            Toast.makeText(context, "no permission", Toast.LENGTH_LONG).show();
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Input stream cannot be opened");
             return null;
         }
 
-        Toast.makeText(context, accessoryInput.toString(), Toast.LENGTH_LONG).show();
+        if (!usbManager.hasPermission(accessory)) {
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Permission denied for accessory " + accessory);
+            return null;
+        }
 
         try {
-            event = new BinaryDataWithPollingEvent(
-                    null, // Feature.USB_ACCESSORY
-                    null, // MimeType.BINARY ?
+            dataWithEvent = new BinaryDataWithPollingEvent(
+                    Feature.USB_ACCESSORY,
+                    MimeType.TEXT_PLAIN,
                     null,
                     this,
                     accessoryInput,
-                    100000
+                    bufferSize
             );
         } catch (FileNotFoundException e) {
-            Log.d("file not found", e.toString());
+            Log.d(UsbAccessoryDevice.LOG_TAG, "file not found: " + e.toString());
         } catch (URISyntaxException e) {
-            Log.d("uri exception", e.toString());
+            Log.d(UsbAccessoryDevice.LOG_TAG, "uri exception: " + e.toString());
         }
-        return event;
+
+        return dataWithEvent;
     }
 
     @Override
     public void begin() {
-        if (accessory != null) {
-            openAccessory(accessory);
+        if (dataWithEvent != null) {
+            dataWithEvent.getEvent().startEvent();
         }
     }
 
     @Override
     public void stop() {
-        if (accessory != null) {
-            closeAccessory();
-            context.unregisterReceiver(usbBroadcastReceiver);
+        if (dataWithEvent != null && dataWithEvent.getEvent() != null) {
+            try {
+                dataWithEvent.getEvent().stopEvent();
+            } catch (InterruptedException e) {
+                Log.d(UsbAccessoryDevice.LOG_TAG, "interrupted exception: " + e.toString());
+            }
         }
+        closeAccessory();
+        context.unregisterReceiver(usbBroadcastReceiver);
     }
 
     public void reset() {
@@ -169,15 +173,4 @@ public class UsbAccessoryDevice extends UsbGeneralDevice { //implements Runnable
     public void setCaptureSetting(CaptureSetting setting) {
         this.setting = setting;
     }
-
-/*    @Override
-    public void run() {
-        byteStream = new byte[MAX_BYTE_ARRAY_LENGTH];
-
-        try {
-            accessoryInput.read(byteStream);
-        } catch (IOException e) {
-            Log.d("Exception in USB accessory input reading", e.toString());
-        }
-    }*/
 }

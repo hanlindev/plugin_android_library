@@ -6,6 +6,7 @@ import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
