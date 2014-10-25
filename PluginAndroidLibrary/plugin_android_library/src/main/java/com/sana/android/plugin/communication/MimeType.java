@@ -8,6 +8,7 @@ public enum MimeType {
     TEXT_CSV("text/csv"),
     IMAGE("image/jpeg"),
     AUDIO("audio/3gpp"),
+    AUDIO_UNCOMPRESSED("audio/amr"),
     VIDEO("video/3gpp"),
     JSON("application/json"),
     XML("application/xml");
