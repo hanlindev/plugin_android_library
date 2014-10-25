@@ -7,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.sana.android.plugin.application.CaptureManager;
+import com.sana.android.plugin.application.CommManager;
+
 
 public class FirstPageActivity extends ActionBarActivity {
 
@@ -19,6 +22,11 @@ public class FirstPageActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_page);
+
+        // Get launch intent from MockSana
+        Intent intent = getIntent();
+        CommManager cm = CommManager.getInstance();
+        cm.respondToIntent(intent);
     }
 
 
