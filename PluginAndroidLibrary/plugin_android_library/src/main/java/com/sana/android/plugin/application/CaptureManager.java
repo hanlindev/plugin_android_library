@@ -155,4 +155,8 @@ public class CaptureManager {
         this.data = null;
         this.dataSource.reset();
     }
+
+    public GeneralDevice getDevice(){
+        return this.dataSource;
+    }
 }
