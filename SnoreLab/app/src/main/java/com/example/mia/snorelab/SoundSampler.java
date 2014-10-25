@@ -5,7 +5,7 @@ package com.example.mia.snorelab;
  */
 import android.media.AudioRecord;
 import android.util.Log;
-
+import com.sana.android.plugin.data.listener;
 
 
 public class SoundSampler {
@@ -16,6 +16,7 @@ public class SoundSampler {
     private int               nChannels = 16;
     private MainActivity      mainActivity;
     private Thread            recordingThread;
+
 
     public SoundSampler(MainActivity mAct) throws Exception
     {
