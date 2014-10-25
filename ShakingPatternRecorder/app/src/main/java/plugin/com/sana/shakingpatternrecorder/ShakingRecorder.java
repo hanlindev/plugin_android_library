@@ -116,7 +116,6 @@ public class ShakingRecorder extends ActionBarActivity {
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
 
-
         spinner = (ProgressBar)findViewById(R.id.progressBar);
         spinner.setVisibility(View.GONE);
 
@@ -133,7 +132,6 @@ public class ShakingRecorder extends ActionBarActivity {
         captureManager.addListener(listener);
         captureManager.prepare();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
