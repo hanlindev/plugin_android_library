@@ -10,10 +10,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This is the base listener that listens for updates by a fixed number of
- * datas. It works by having a background thread monitoring new datas
+ * data. It works by having a background thread monitoring new data
  * coming in. The listener has a fixed sized buffer that holds the incoming
- * datas. When the buffer is full, the listener will process the datas in
- * the buffer and clear it, allowing more datas to be filled into the buffer.
+ * data. When the buffer is full, the listener will process the data in
+ * the buffer and clear it, allowing more data to be filled into the buffer.
  *
  * @author Han Lin
  */

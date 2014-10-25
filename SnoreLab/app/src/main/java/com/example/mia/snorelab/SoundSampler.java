@@ -5,9 +5,10 @@ package com.example.mia.snorelab;
  */
 import android.media.AudioRecord;
 import android.util.Log;
+import com.sana.android.plugin.data.listener.DataChunkListener;
+import com.sana.android.plugin.application.CaptureManager;
 
-
-
+/*
 public class SoundSampler {
 
     private static final int  FS = 16000;     // sampling frequency
@@ -16,6 +17,10 @@ public class SoundSampler {
     private int               nChannels = 16;
     private MainActivity      mainActivity;
     private Thread            recordingThread;
+    private CaptureManager cm;
+
+
+
 
     public SoundSampler(MainActivity mAct) throws Exception
     {
@@ -44,18 +49,6 @@ public class SoundSampler {
 
     public void init() throws Exception
     {
-        try {
-            if (audioRecord != null) {
-                audioRecord.stop();
-                audioRecord.release();
-            }
-            audioRecord = new AudioRecord(1, FS, nChannels, audioEncoding, AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding));
-
-        }
-        catch (Exception e) {
-            Log.d("Error in Init() ", e.getMessage());
-            throw new Exception();
-        }
 
         MainActivity.bufferSize = AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding);
         MainActivity.buffer = new short[MainActivity.bufferSize];
@@ -83,3 +76,4 @@ public class SoundSampler {
 
 
 }
+*/
