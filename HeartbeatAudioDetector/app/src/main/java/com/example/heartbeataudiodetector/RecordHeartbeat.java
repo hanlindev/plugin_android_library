@@ -32,10 +32,6 @@ import com.sana.android.plugin.data.listener.TimedListener;
 import com.sana.android.plugin.hardware.AudioRecordDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.Feature;
-import com.sana.android.plugin.hardware.GeneralDevice;
-//import com.sana.android.plugin.hardware.BluetoothDevice;
-
-
 
 public class RecordHeartbeat extends Activity {
     private static final String TAG = "Heartbeat";
@@ -47,11 +43,9 @@ public class RecordHeartbeat extends Activity {
     private static long startTime;
     private static long duration;
     private static final int NUM_SECONDS_NEEDED = 15;
-    private static final int PROGRESS_BOUNDARY = NUM_SECONDS_NEEDED / 360;
 
     private CaptureManager captureManager;
     private ProgressWheel progressWheel;
-    private int progress;
     private VerticalPager verticalPager;
     private ProgressBar spinner;
     private int amplitudeThreshold;
@@ -61,8 +55,9 @@ public class RecordHeartbeat extends Activity {
         @Override
         public void handleMessage(Message msg) {
             long timeElapsed = System.nanoTime() - startTime;
-            if((int)(timeElapsed/1000000000)>15){
+            if((int)(timeElapsed/1000000000)>NUM_SECONDS_NEEDED){
                 verticalPager.scrollDown();
+                // create a sound notification when time is up
                 try {
                     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                     Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
@@ -78,7 +73,7 @@ public class RecordHeartbeat extends Activity {
             TextView readingCount = (TextView) findViewById(R.id.readingCount);
             readingCount.setText("Heartbeat Readings: " + heartbeatCount);
             long timeElapsed = System.nanoTime() - startTime;
-            progressWheel.setProgress((int)(360*timeElapsed/1000000000)/15);
+            progressWheel.setProgress((int)(360*timeElapsed/1000000000)/NUM_SECONDS_NEEDED);
         }
     };
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +92,6 @@ public class RecordHeartbeat extends Activity {
         cm.respondToIntent(intent);
         // prepare data
         heartbeatCount = 0;
-        progress = 0;
         amplitudeThreshold = 5000;
 
         captureManager = new CaptureManager(Feature.MICROPHONE, MimeType.AUDIO, getContentResolver());
@@ -126,7 +120,7 @@ public class RecordHeartbeat extends Activity {
                 heartbeatCount = 0;
                 do {
                     duration = System.nanoTime() - startTime;
-                    if(duration/1000000000 > 15) {
+                    if(duration/1000000000 > NUM_SECONDS_NEEDED) {
                         continueRecording = false;
                     }
                     Log.d(TAG, "waiting while recording...");
@@ -149,12 +143,12 @@ public class RecordHeartbeat extends Activity {
         System.out.println(heartbeatCount);
     }
 
-
     private void waitSome()
     {
         try{  // wait some time
             Thread.sleep(clipTime);
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             Log.d(TAG, "interrupted");
         }
@@ -163,7 +157,7 @@ public class RecordHeartbeat extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        captureManager.stop();
+        //captureManager.stop();
     }
 
     protected void onPause() {
@@ -189,6 +183,6 @@ public class RecordHeartbeat extends Activity {
     }
 
     private String getDataString() {
-        return Integer.toString(heartbeatCount);
+        return "Your heartbeat is "+Integer.toString(4*heartbeatCount)+" beats/min.";
     }
 }
