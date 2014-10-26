@@ -77,7 +77,6 @@ public class ShakingRecorder extends ActionBarActivity {
                 if (progress < 360) {
                     progressWheel.setProgress(360);
                 }
-
                 // add notification sound while done
                 try {
                     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

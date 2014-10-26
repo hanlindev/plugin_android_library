@@ -159,7 +159,7 @@ public class MockSana extends ActionBarActivity {
      */
     public void launchMockApp(View view) {
         if (textRadio.isChecked()) {
-            launchMockAppWithRequiredText("com.jwetherell.heart_rate_monitor.HEART_BEAT");
+            launchMockAppWithRequiredText("com.example.heart_rate_monitor.HEART_BEAT");
         }
         else if (imageRadio.isChecked()) {
             createLaunchIntent("sana.com.plugin.mockApp.PICTURE", "image/jpeg" , "jpg", "images", IMAGE_REQUEST);
