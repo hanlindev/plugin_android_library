@@ -18,7 +18,78 @@ import java.util.Vector;
 
 /**
  * The main helper class that facilitates data capturing from various sensing
- * devices.
+ * devices. You should use this class in most cases. Sample code snippets:
+ * <ol>
+ *     <li>
+ *         Create an instance variable:
+ *         <pre>
+ *             <code>
+ *                 private CaptureManager captureManager;
+ *             </code>
+ *         </pre>
+ *     </li>
+ *     <li>
+ *         Optional: Implement your own data event listener. You can extend from existing listeners
+ *         including {@link com.sana.android.plugin.data.listener.DataChunkListener} and
+ *         {@link com.sana.android.plugin.data.listener.TimedListener}. If these classes don't
+ *         meet your requirement, you can implement {@link com.sana.android.plugin.data.listener.DataListener}.
+ *     </li>
+ *     <li>
+ *         Instantiate the captureManager instance variable in onCreate method.
+ *         <pre>
+ *             <code>
+ *                 protected void onCreate(Bundle savedInstanceState) {
+ *                     <b>//...</b>
+ *                     captureManager = new CaptureManager(Feature.BLUETOOTH, MimeType.Audio, getContentResolver());
+ *                     captureManager.addListener(new MyListener());// You have to call addListener before prepare
+ *                     captureManager.prepare();
+ *                     <b>//...</b>
+ *                 }
+ *             </code>
+ *         </pre>
+ *         Additionally, if you need to pass additional or required capture setting, you can do this:
+ *         <pre>
+ *             <code>
+ *                 protected void onCreate(Bundle savedInstanceState) {
+ *                     <b>//...</b>
+ *                     CaptureSetting captureSetting = new CaptureSetting();
+ *                     // Do something with captureSetting
+ *                     captureManager = new CaptureManager(Feature.BLUETOOTH, MimeType.Audio, getContentResolver(), captureSetting);
+ *                     captureManager.addListener(new MyListener());// You have to call addListener before prepare
+ *                     captureManager.prepare();
+ *                     <b>//...</b>
+ *                 }
+ *             </code>
+ *         </pre>
+ *     </li>
+ *     <li>
+ *         Call {@link #begin()} and {@link #stop()} at appropriate places. Here they are called in a button
+ *         click listener.
+ *         <pre>
+ *             <code>
+ *                 public void recordButtonListener(View view) {
+ *                     if (recording) {
+ *                         captureManager.stop();
+ *                         captureManager.reset();// You have to call reset before calling prepare again.
+ *                         recording = false;
+ *                     } else {
+ *                         captureManager.begin();
+ *                         recording = true;
+ *                     }
+ *                 }
+ *             </code>
+ *         </pre>
+ *     </li>
+ *     <li>
+ *         When data is ready to be sent to Sana, probably after some post processing, call
+ *         {@link com.sana.android.plugin.application.CommManager#sendData(android.app.Activity)}.
+ *         <pre>
+ *             <code>
+ *                 CommManager.getInstance().sendData(this);
+ *             </code>
+ *         </pre>
+ *     </li>
+ * </ol>
  *
  * @author Han Lin
  */
