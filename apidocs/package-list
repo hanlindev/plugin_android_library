@@ -1,0 +1,11 @@
+com.sana.android.plugin.application
+com.sana.android.plugin.communication
+com.sana.android.plugin.data
+com.sana.android.plugin.data.event
+com.sana.android.plugin.data.listener
+com.sana.android.plugin.errors
+com.sana.android.plugin.hardware
+com.sana.android.plugin.tests.data
+com.sana.android.plugin.tests.hardware
+com.sana.android.plugin.tests.mocks
+com.sana.android.plugin.tests.subjects
