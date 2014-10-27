@@ -29,7 +29,7 @@ import java.net.URISyntaxException;
  */
 public class AudioRecordUncompressedDevice implements GeneralDevice {
     private ContentResolver resolver;
-    private static String mFileName = "";
+    private String mFileName = "";
     private static final String LOG_TAG = "UncompressedAudioRecord";
     private static final int RECORDER_BPP = 16;
     private String AUDIO_RECORDER_FILE_EXT;
@@ -46,14 +46,8 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
     private boolean isRecording = false;
 
     public AudioRecordUncompressedDevice(){
-        String filepath = Environment.getExternalStorageDirectory().getPath();
-        File file = new File(filepath,AUDIO_RECORDER_FOLDER);
-
-        if(!file.exists()){
-            file.mkdirs();
-        }
-
-        mFileName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT;
+        mFileName=Environment.getExternalStorageDirectory().getAbsolutePath()
+                + "/audiorecordtest.wav";
     }
 
     @Override
@@ -97,14 +91,6 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
 
         recordingThread.start();
     }
-
-    public boolean isRecordingThreadRunning(){
-        if(recordingThread.isAlive())
-            return true;
-        else
-            return false;
-    }
-
     @Override
     public void stop() {
         if(null != recorder){
