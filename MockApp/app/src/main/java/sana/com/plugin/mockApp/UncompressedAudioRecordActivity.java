@@ -35,6 +35,12 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 
+import com.sana.android.plugin.application.CaptureManager;
+import com.sana.android.plugin.communication.MimeType;
+import com.sana.android.plugin.hardware.AudioRecordUncompressedDevice;
+import com.sana.android.plugin.hardware.CaptureSetting;
+import com.sana.android.plugin.hardware.Feature;
+
 public class UncompressedAudioRecordActivity extends Activity {
     private static final int RECORDER_BPP = 16;
     private static final String AUDIO_RECORDER_FILE_EXT_WAV = ".wav";
@@ -44,11 +50,12 @@ public class UncompressedAudioRecordActivity extends Activity {
     private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
-    private AudioRecord recorder = null;
+ //   private AudioRecord recorder = null;
     private int bufferSize = 0;
     private Thread recordingThread = null;
     private boolean isRecording = false;
-
+    private CaptureManager cm;
+    private AudioRecordUncompressedDevice recorder;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +65,11 @@ public class UncompressedAudioRecordActivity extends Activity {
         enableButtons(false);
 
         bufferSize = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE,RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING);
+  //      recorder = new AudioRecordUncompressedDevice();
+    //    recorder.setCaptureSetting(CaptureSetting.defaultSetting(Feature.MICROPHONE_UNCOMPRESSED,MimeType.AUDIO_UNCOMPRESSED));
+      //  recorder.prepare();
+        cm = new CaptureManager(Feature.MICROPHONE_UNCOMPRESSED, MimeType.AUDIO_UNCOMPRESSED, getContentResolver());
+        cm.prepare();
     }
 
     private void setButtonHandlers() {
@@ -73,7 +85,7 @@ public class UncompressedAudioRecordActivity extends Activity {
         enableButton(R.id.btnStart,!isRecording);
         enableButton(R.id.btnStop,isRecording);
     }
-
+/*
     private String getFilename(){
         String filepath = Environment.getExternalStorageDirectory().getPath();
         File file = new File(filepath,AUDIO_RECORDER_FOLDER);
@@ -100,8 +112,11 @@ public class UncompressedAudioRecordActivity extends Activity {
 
         return (file.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
     }
-
+*/
     private void startRecording(){
+  //      recorder.begin();
+        cm.begin();
+  /*
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING, bufferSize);
 
@@ -118,8 +133,9 @@ public class UncompressedAudioRecordActivity extends Activity {
         },"AudioRecorder Thread");
 
         recordingThread.start();
+        */
     }
-
+/*
     private void writeAudioDataToFile(){
         byte data[] = new byte[bufferSize];
         String filename = getTempFilename();
@@ -154,8 +170,11 @@ public class UncompressedAudioRecordActivity extends Activity {
             }
         }
     }
-
+*/
     private void stopRecording(){
+        cm.stop();
+
+   /*
         if(null != recorder){
             isRecording = false;
 
@@ -168,8 +187,9 @@ public class UncompressedAudioRecordActivity extends Activity {
 
         copyWaveFile(getTempFilename(),getFilename());
         deleteTempFile();
+        */
     }
-
+/*
     private void deleteTempFile() {
         File file = new File(getTempFilename());
 
@@ -265,7 +285,7 @@ public class UncompressedAudioRecordActivity extends Activity {
 
         out.write(header, 0, 44);
     }
-
+*/
     private View.OnClickListener btnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
