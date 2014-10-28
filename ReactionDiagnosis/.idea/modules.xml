@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MockApp.iml" filepath="$PROJECT_DIR$/MockApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ReactionDiagnosis.iml" filepath="$PROJECT_DIR$/ReactionDiagnosis.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PluginAndroidLibrary/plugin_android_library/plugin_android_library.iml" filepath="$PROJECT_DIR$/../PluginAndroidLibrary/plugin_android_library/plugin_android_library.iml" />
     </modules>
