@@ -7,7 +7,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".ShakingRecorder"
+    tools:context=".SnoreLab"
     android:background="#ffeaedf0">
 
     <com.example.mia.snorelab.VerticalPager
@@ -86,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Touch the circular area to start recording. It will automatically stop."
+                    android:text="Touch the circular area to start recording. Touch again to stop."
                     android:id="@+id/instruction"
                     android:layout_gravity="center_horizontal"
                     android:textSize="18dp"
@@ -119,7 +119,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Readings: 0"
+                    android:text="You have slept for 00:00:00"
                     android:id="@+id/readingCount"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
