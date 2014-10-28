@@ -45,11 +45,20 @@ public class AudioRecordDevice implements GeneralDevice {
 //        prepare();
     }
 
+    private void ensureFileExists(String fileName) throws IOException {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+    }
+
     @Override
     public DataWithEvent prepare() {
         mRecorder = new MediaRecorder();
         mRecorder.setOutputFile(mFileName);
         try {
+            ensureFileExists(mFileName);
             InputStream is = new FileInputStream(mFileName);
             DataWithEvent result = new BinaryDataWithPollingEvent(Feature.MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
             return result;
