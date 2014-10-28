@@ -46,7 +46,8 @@ public class RecordActivity extends Activity {
     private long clipTime = DEFAULT_CLIP_TIME;
     private static int heartbeatCount;
     private static Thread calculateThread;
-    private static boolean continueRecording;
+    private boolean continueRecording;
+    private boolean stopped;
     private static long startTime;
     private static long duration;
     private static final int NUM_SECONDS_NEEDED = 15;
@@ -64,7 +65,7 @@ public class RecordActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             long timeElapsed = System.nanoTime() - startTime;
-            if((int)(timeElapsed/1000000000)>15){
+            if(stopped){
                 verticalPager.scrollDown();
                 try {
                     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -79,9 +80,9 @@ public class RecordActivity extends Activity {
 
         private void updateUI(){
             TextView readingCount = (TextView) findViewById(R.id.readingCount);
-            readingCount.setText("Heartbeat Readings: " + heartbeatCount);
+            readingCount.setText("Recording... " );
             long timeElapsed = System.nanoTime() - startTime;
-            progressWheel.setProgress((int)(360*timeElapsed/1000000000)/15);
+     //       progressWheel.setProgress((int)(360*timeElapsed/1000000000)/15);
         }
     };
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,74 +100,47 @@ public class RecordActivity extends Activity {
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
         // prepare data
-        heartbeatCount = 0;
+   //     heartbeatCount = 0;
         progress = 0;
-        amplitudeThreshold = 5000;
+   //     amplitudeThreshold = 5000;
 
         captureManager = new CaptureManager(Feature.MICROPHONE, MimeType.AUDIO, getContentResolver());
+        continueRecording = false;
+        stopped = false;
     }
 
     // Start recording with MediaRecorder
     //original startRecording Class
     public void startRecording(View view) {
-        ProgressWheel start = (ProgressWheel)findViewById(R.id.startButton);
-        start.setText("Recording");
-        try{
-            captureManager.prepare();
-        }
-        catch(Exception o){
+        if(!continueRecording) {
+            ProgressWheel start = (ProgressWheel) findViewById(R.id.startButton);
+            start.setText("Touch to Stop");
+            try {
+                captureManager.prepare();
+            } catch (Exception o) {
 
-        }
-        captureManager.begin();
-        startTime = System.nanoTime();
-        // ... do recording ...
-        continueRecording = true;
-        calculateThread = new Thread(new Runnable(){
-            public void run() {
-                AudioRecordDevice mic = (AudioRecordDevice)captureManager.getDevice();
-                int startAmplitude = mic.getmRecorder().getMaxAmplitude();
-                Log.d(TAG, "starting amplitude: " + startAmplitude);
-                heartbeatCount = 0;
-                do {
-                    duration = System.nanoTime() - startTime;
-                    if(duration/1000000000 > 15) {
-                        continueRecording = false;
-                    }
-                    Log.d(TAG, "waiting while recording...");
-                    waitSome();
-                    int finishAmplitude = mic.getmRecorder().getMaxAmplitude();
-                    int ampDifference = finishAmplitude - startAmplitude;
-                    if (ampDifference >= amplitudeThreshold) {
-                        Log.d(TAG, "heard a heartbeat!");
-                        heartbeatCount++;
-                    }
-                    handler.sendEmptyMessage(0);
-                    System.out.println(heartbeatCount);
-                    Log.d(TAG, "finishing amplitude: " + finishAmplitude + " diff: "
-                            + ampDifference);
-                } while (continueRecording);
             }
-        });
-        calculateThread.start();
-        Log.d(TAG, "stopped recording");
-        System.out.println(heartbeatCount);
-    }
+            captureManager.begin();
+            startTime = System.nanoTime();
+            continueRecording = true;
+            handler.sendEmptyMessage(0);
 
-
-    private void waitSome()
-    {
-        try{  // wait some time
-            Thread.sleep(clipTime);
-        } catch (InterruptedException e)
-        {
-            Log.d(TAG, "interrupted");
+        }else{
+            ProgressWheel start = (ProgressWheel) findViewById(R.id.startButton);
+            start.setText("Touch to Start");
+            captureManager.stop();
+            continueRecording = false;
+            stopped = true;
+            handler.sendEmptyMessage(0);
         }
     }
+
     // Release recording and playback resources, if necessary
     @Override
     protected void onStop() {
         super.onStop();
         captureManager.stop();
+        stopped = true;
     }
 
     protected void onPause() {
@@ -178,9 +152,9 @@ public class RecordActivity extends Activity {
     }
 
     public void sendDataToSana(View view) {
-        if (!continueRecording) {
+        if (stopped) {
             CommManager cm = CommManager.getInstance();
-            cm.sendData(this, getDataString());
+            cm.sendData(this);
         } else {
             Toast errorToast = Toast.makeText(
                     getApplicationContext(),
@@ -191,8 +165,5 @@ public class RecordActivity extends Activity {
         }
     }
 
-    private String getDataString() {
-        return Integer.toString(heartbeatCount);
-    }
 }
 
