@@ -6,6 +6,8 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
@@ -23,7 +25,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="sana.com.plugin.mockApp.AUDIO" />
 
@@ -31,6 +32,13 @@
 
                 <data android:mimeType="audio/3gpp" />
                 <data android:mimeType="video/3gpp" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.sana.android.plugin.examples.SNORE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="audio/x-wav" />
             </intent-filter>
         </activity>
         <activity
@@ -40,6 +48,10 @@
         <activity
             android:name=".WakeUpActivity"
             android:label="@string/title_activity_wake_up" >
+        </activity>
+        <activity
+            android:name=".RecordActivity"
+            android:label="@string/title_activity_record" >
         </activity>
     </application>
 

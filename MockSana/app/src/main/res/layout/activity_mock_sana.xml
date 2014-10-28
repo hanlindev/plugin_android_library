@@ -40,6 +40,13 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Snoring"
+            android:id="@+id/radioButton"
+            android:checked="false" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Image"
             android:id="@+id/radioButton2"
             android:checked="false" />
