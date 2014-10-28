@@ -23,9 +23,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="com.example.heart_rate_monitor.HEART_BEAT" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
