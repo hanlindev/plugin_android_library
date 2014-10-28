@@ -41,9 +41,6 @@ public class UsbHostRecordActivity extends ActionBarActivity {
 
         @Override
         public void processData(Object sender, Object[] data) {
-            // Check if the sender matched
-            if (this.sender != sender) return;
-
             for (int i=0;i<data.length;i++)
                 message += (char)Integer.parseInt(data[i].toString());
         }
