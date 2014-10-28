@@ -170,4 +170,6 @@ public class CaptureSetting {
         this.sensorManager = sensorManager;
         return this;
     }
+
+
 }

@@ -169,8 +169,16 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="53dp"
                 android:onClick="sendDataToSana"/>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/sendButton"
+                android:layout_centerHorizontal="true" />
         </RelativeLayout>
 
     </plugin.com.sana.shakingpatternrecorder.VerticalPager>
+
 
 </RelativeLayout>

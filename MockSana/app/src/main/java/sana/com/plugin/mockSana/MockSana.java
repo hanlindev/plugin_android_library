@@ -30,6 +30,7 @@ public class MockSana extends ActionBarActivity {
     static final String ERROR_MESSAGE_FORMAT = "Mimetype %s is wrong, %s expected";
 
     private RadioButton textRadio;
+    private RadioButton shakeRadio;
     private RadioButton imageRadio;
     private RadioButton audioRadio;
     private RadioButton videoRadio;
@@ -50,6 +51,7 @@ public class MockSana extends ActionBarActivity {
         imageRadio = (RadioButton)findViewById(R.id.radioButton2);
         audioRadio = (RadioButton)findViewById(R.id.radioButton3);
         videoRadio = (RadioButton)findViewById(R.id.radioButton4);
+        shakeRadio = (RadioButton)findViewById(R.id.radioShaking);
     }
 
     private void handleSendText(Intent intent) {
@@ -157,7 +159,7 @@ public class MockSana extends ActionBarActivity {
      */
     public void launchMockApp(View view) {
         if (textRadio.isChecked()) {
-            launchMockAppWithRequiredText();
+            launchMockAppWithRequiredText("com.example.heart_rate_monitor.HEART_BEAT");
         }
         else if (imageRadio.isChecked()) {
             createLaunchIntent("sana.com.plugin.mockApp.PICTURE", "image/jpeg" , "jpg", "images", IMAGE_REQUEST);
@@ -169,15 +171,18 @@ public class MockSana extends ActionBarActivity {
         else if (videoRadio.isChecked()) {
             createLaunchIntent("sana.com.plugin.mockApp.VIDEO", "video/3gpp" , "3gp", "videos", VIDEO_REQUEST);
         }
+        else if (shakeRadio.isChecked()) {
+            launchMockAppWithRequiredText("com.sana.android.plugin.examples.SHAKING_PATTERN");
+        }
         else {
             Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("sana.com.plugin.mockApp");
             startActivity(LaunchIntent);
         }
     }
 
-    private void launchMockAppWithRequiredText() {
+    private void launchMockAppWithRequiredText(String action) {
         Intent LaunchIntent = new Intent();
-        LaunchIntent.setAction("com.jwetherell.heart_rate_monitor.HEART_BEAT");
+        LaunchIntent.setAction(action);
         LaunchIntent.setType("text/plain");
         startActivityForResult(LaunchIntent, TEXT_DATA_REQUEST);
     }

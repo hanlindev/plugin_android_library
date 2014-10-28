@@ -3,6 +3,9 @@ package plugin.com.sana.shakingpatternrecorder;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +13,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +50,7 @@ public class ShakingRecorder extends ActionBarActivity {
         }
     }
 
-    private static final int NUM_RECORDINGS_NEEDED = 5000;
+    private static final int NUM_RECORDINGS_NEEDED = 1000;
     private static final int PROGRESS_BOUNDARY = NUM_RECORDINGS_NEEDED / 360 + 1;
     private static final long RECORDING_INTERVAL = 1;
     private static final TimeUnit RECORDING_INTERVAL_UNIT = TimeUnit.MILLISECONDS;
@@ -58,6 +62,7 @@ public class ShakingRecorder extends ActionBarActivity {
     private ProgressWheel progressWheel;
     private int progress;
     private VerticalPager verticalPager;
+    private ProgressBar spinner;
 
     private Handler handler = new Handler() {
         @Override
@@ -71,6 +76,14 @@ public class ShakingRecorder extends ActionBarActivity {
             if (recordings.size() >= NUM_RECORDINGS_NEEDED) {
                 if (progress < 360) {
                     progressWheel.setProgress(360);
+                }
+                // add notification sound while done
+                try {
+                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                    r.play();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 progressWheel.setText("Done");
                 listener.stopListening();
@@ -102,6 +115,9 @@ public class ShakingRecorder extends ActionBarActivity {
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
 
+        spinner = (ProgressBar)findViewById(R.id.progressBar);
+        spinner.setVisibility(View.GONE);
+
         // Prepare data
         recordings = new LinkedList<AccelerometerData>();
         progress = 0;
@@ -115,7 +131,6 @@ public class ShakingRecorder extends ActionBarActivity {
         captureManager.addListener(listener);
         captureManager.prepare();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -170,6 +185,7 @@ public class ShakingRecorder extends ActionBarActivity {
 
     public void sendDataToSana(View view) {
         if (recordings.size() >= NUM_RECORDINGS_NEEDED) {
+            spinner.setVisibility(View.VISIBLE);
             CommManager cm = CommManager.getInstance();
             cm.sendData(this, getDataString());
         } else {
