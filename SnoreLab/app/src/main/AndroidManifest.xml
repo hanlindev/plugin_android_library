@@ -6,6 +6,8 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
@@ -31,6 +33,12 @@
 
                 <data android:mimeType="audio/3gpp" />
                 <data android:mimeType="video/3gpp" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.sana.android.plugin.examples.SNORE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/x-wav" />
             </intent-filter>
         </activity>
         <activity

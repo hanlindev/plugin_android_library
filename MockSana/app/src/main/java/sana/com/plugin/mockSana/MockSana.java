@@ -34,6 +34,7 @@ public class MockSana extends ActionBarActivity {
     private RadioButton imageRadio;
     private RadioButton audioRadio;
     private RadioButton videoRadio;
+    private RadioButton snoreRadio;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +53,7 @@ public class MockSana extends ActionBarActivity {
         audioRadio = (RadioButton)findViewById(R.id.radioButton3);
         videoRadio = (RadioButton)findViewById(R.id.radioButton4);
         shakeRadio = (RadioButton)findViewById(R.id.radioShaking);
+        snoreRadio = (RadioButton)findViewById(R.id.radioButton);
     }
 
     private void handleSendText(Intent intent) {
@@ -174,6 +176,9 @@ public class MockSana extends ActionBarActivity {
         else if (shakeRadio.isChecked()) {
             launchMockAppWithRequiredText("com.sana.android.plugin.examples.SHAKING_PATTERN");
         }
+        else if (snoreRadio.isChecked()) {
+            createLaunchIntent("com.sana.android.plugin.examples.SNORE", "audio/x-wav" , "wav", "audio", AUDIO_REQUEST);
+        }
         else {
             Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("sana.com.plugin.mockApp");
             startActivity(LaunchIntent);
@@ -198,10 +203,15 @@ public class MockSana extends ActionBarActivity {
         LaunchIntent.setType(type);
         Uri contentUri = getContentUri(generateRandomFileName(ext), subfolder);
         System.out.println("---------------------------" + getContentResolver().getType(contentUri));
+
+        // grant permission for writing and reading the uri
         grantUriPermission("sana.com.plugin.mockApp", contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         grantUriPermission("sana.com.plugin.mockApp", contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         grantUriPermission("com.example.mia.snorelab", contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         grantUriPermission("com.example.mia.snorelab", contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        grantUriPermission("com.example.heartbeataudiodetector", contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        grantUriPermission("com.example.heartbeataudiodetector", contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
         LaunchIntent.setData(contentUri);
         if (LaunchIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(LaunchIntent, requestCode);
