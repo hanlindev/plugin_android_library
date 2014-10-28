@@ -50,12 +50,21 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
                 + "/audiorecordtest.wav";
     }
 
+    private void ensureFileExists(String fileName) throws IOException {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+    }
+
     @Override
     public DataWithEvent prepare() {
         bufferSize = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE,RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING);
         recorder = new AudioRecord(audioSource,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING, bufferSize);
         try {
+            ensureFileExists(mFileName);
             InputStream is = new FileInputStream(mFileName);
             DataWithEvent result = new BinaryDataWithPollingEvent(Feature.MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
             return result;
@@ -141,7 +150,6 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
         //this.audioSource = setting.getAudioSource();
         //this.outputFormat = setting.getOutputFormat();
         this.resolver = setting.getContentResolver();
-        this.mFileName = setting.getOutputFileName();
         //this.RECORDER_BPP = 16;
         this.AUDIO_RECORDER_FILE_EXT = setting.getAudioFileExtention();
         this.AUDIO_RECORDER_FOLDER = setting.getOutputFolderName();
