@@ -8,14 +8,13 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 /**
- * Created by hanlin on 9/13/14.
- * This event is actively triggered by sensors when the sensor pushes
- * data to the app. Therefore we don't need to have complicated
- * routines. It will get notified when data is available and
- * read whatever available in the input stream.
+ * This event type should be used when the source actively broadcast the updates.
+ * When such event is received from the data source. This event object will
+ * obtain all available bytes from the given input stream.
+ *
+ * @author Han Lin
  */
 public class BytePushingDataEvent extends BaseDataEvent {
     public static final int UNKNOWN_PACKET_SIZE = -1;
@@ -31,6 +30,7 @@ public class BytePushingDataEvent extends BaseDataEvent {
 
     private InputStream incomingData;
     private int packetSize;
+    private boolean isStarted;
 
     /**
      * Create an instance of the event with a given packet size.
@@ -48,6 +48,7 @@ public class BytePushingDataEvent extends BaseDataEvent {
         super(sender);
         this.incomingData = incomingData;
         this.packetSize = packetSize;
+        this.isStarted = false;
     }
 
     /**
@@ -68,14 +69,15 @@ public class BytePushingDataEvent extends BaseDataEvent {
             }
 
             Byte[] data = this.readBytes(numBytesToRead);
-            this.notifyListeners(data);
+            if (this.isStarted) {
+                this.notifyListeners(data);
+            }
             Log.d(
                 BytePushingDataEvent.LOG_TAG,
                 "Number of bytes read: " + data.length
             );
             return data.length;
         } catch (IOException e) {
-            // TODO handle IOException
             Log.d(
                     BytePushingDataEvent.LOG_TAG,
                     BytePushingDataEvent.READ_BYTE_EXCEPTION_MSG,
@@ -108,25 +110,24 @@ public class BytePushingDataEvent extends BaseDataEvent {
             ++attemptCount;
         }
 
-        Byte[] result;
+        byte[] result;
         if (pointer < buffer.length) {
-            result = new Byte[pointer];
+            result = new byte[pointer];
             System.arraycopy(buffer, 0, result, 0, pointer);
         } else {
-            result = ArrayUtils.toObject(buffer);
+            result = buffer;
         }
 
-        return result;
+        return ArrayUtils.toObject(result);
     }
 
     @Override
     public void startEvent() {
-        // No thread is used in this event, don't need to do anything to start
-        // it.
+        this.isStarted = true;
     }
 
     @Override
-    public void stopEvent() throws InterruptedException {
-        // Don't need this either.
+    public void stopEvent() throws RuntimeException {
+        this.isStarted = false;
     }
 }

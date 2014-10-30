@@ -14,9 +14,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by hanlin on 9/13/14.
  * This is the event type that actively polls data from sensors and notifies
- * interested listeners.
+ * interested listeners. When the buffer of this event is full,
+ * {@link #notifyListeners()} will be called.
+ *
+ * @author Han Lin
  */
 
 public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
@@ -39,13 +41,19 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
     private ExecutorService pollingThreads;
     private int pointer;
 
+    /**
+     * @param sender
+     * @param incomingDataChannel  This is the input stream from which the event
+     *                                 will poll data from.
+     */
     public BytePollingDataEvent(Object sender, InputStream incomingDataChannel) {
         this(sender, incomingDataChannel, BytePollingDataEvent.BUFFER_SIZE_SMALL);
     }
 
     /**
-     * @param sender                The owner of the event.
-     * @param incomingDataChannel   The input stream where the data comes from.
+     * @param sender                The source of data.
+     * @param incomingDataChannel   The input stream from which the event polls
+     *                                  data from.
      * @param bufferSize            The size of the buffer. The event will only
      *                              notify listeners when its buffer becomes
      *                              full.
