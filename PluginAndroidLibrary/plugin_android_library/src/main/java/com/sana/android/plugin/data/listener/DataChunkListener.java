@@ -20,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class DataChunkListener
         implements DataListener, Runnable {
     private final static String LOG_TAG = "DataChunkListener";
+    private final static String RESOURCE_LEAK_WARNING_MSG =
+            "Threads not properly shutdown. Potential resource leak may be caused.";
     private final static String SHUTDOWN_INTERRUPTED_MSG_EXCEPTION_MSG =
         "Listener shutdown interrupted.";
     private final static String FATAL_INTERRUPTION_MSG_FORMAT =
@@ -56,13 +58,6 @@ public abstract class DataChunkListener
         return this.sender;
     }
 
-    /**
-     * Put the given data in the waiting list of data to be processed.
-     *
-     * @param data    The data to be processed.
-     * @throws InterruptedException when the data fail to be put into the
-     * waiting list.
-     */
     @Override
     public synchronized void putData(Object[] data) {
         Log.d(
@@ -88,19 +83,12 @@ public abstract class DataChunkListener
         }
     }
 
-    /**
-     * Start the background thread and begin accepting data.
-     */
     @Override
     public void startListening() {
         this.isListening = true;
         this.receiverThread.submit(this);
     }
 
-    /**
-     * Attempt to stop this data listener. It will wait for 5 seconds before
-     * timing out.
-     */
     @Override
     public void stopListening() {
         this.stopListening(
@@ -108,10 +96,7 @@ public abstract class DataChunkListener
             DataChunkListener.SHUTDOWN_TIMEOUT_UNIT
         );
     }
-    /**
-     * Stop accepting more data, then signal the monitoring thread to finish
-     * the remaining job.
-     */
+
     @Override
     public void stopListening(long timeout, TimeUnit unit) {
         Log.d(
@@ -122,10 +107,12 @@ public abstract class DataChunkListener
         this.receiverThread.shutdown();
         try {
             if (!this.receiverThread.awaitTermination(timeout,unit)) {
-                // TODO decide what to do when shutdown times out.
+                Log.d(
+                        DataChunkListener.LOG_TAG,
+                        DataChunkListener.RESOURCE_LEAK_WARNING_MSG
+                );
             }
         } catch (InterruptedException e) {
-            // TODO decide what to do when shutdown is interrupted.
             Log.d(
                     DataChunkListener.LOG_TAG,
                     DataChunkListener.SHUTDOWN_INTERRUPTED_MSG_EXCEPTION_MSG,
@@ -137,6 +124,7 @@ public abstract class DataChunkListener
 
     /**
      * The procedure the background thread uses to monitor incoming data.
+     * When data is available, it will be appended to the buffer.
      * Process the data when the buffer is full and clear the buffer after
      * that.
      */
@@ -177,10 +165,7 @@ public abstract class DataChunkListener
     }
 
     /**
-     * Process the new data.
-     *
-     * @param data This can be any number of data. But when invoked by the
-     *                incoming data monitoring thread the number of data
+     * @param data  When invoked by the incoming data monitoring thread the number of data
      *                is less than or equal to the buffer size.
      */
     @Override

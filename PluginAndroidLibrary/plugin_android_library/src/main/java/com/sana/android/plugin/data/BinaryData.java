@@ -21,13 +21,23 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * Created by Han Lin on 9/10/14.
+ * A binary data object backed by a binary file.
+ *
+ * @author Han Lin
  */
 public abstract class BinaryData implements DataWithEvent {
     private Feature source;
     private MimeType type;
     private Uri uriToData;
 
+    /**
+     * @param source    The system feature by which the data is captured.
+     * @param type    The MimeType of the data.
+     * @param uriToData    The Uri to the binary file storing the data.
+     * @throws URISyntaxException    If the URI is malformed.
+     * @throws FileNotFoundException    If the file is not found at the
+     * given location
+     */
     public BinaryData(Feature source, MimeType type, Uri uriToData)
             throws URISyntaxException, FileNotFoundException {
         this.source = source;
@@ -53,9 +63,12 @@ public abstract class BinaryData implements DataWithEvent {
     /**
      * Get the data that was captured.
      *
-     * @param contentResolver    The ContentResolver instance of the app. You
-     *                           can use getContentResolver() static method
-     *                           to get the instance.
+     * @param contentResolver    The {@link android.content.ContentResolver}
+     *                           instance of the app.To pass it to the
+     *                           {@link com.sana.android.plugin.application.CaptureManager} or
+     *                           {@link com.sana.android.plugin.hardware.GeneralDevice}, refer
+     *                           to {@link com.sana.android.plugin.application.CaptureManager#CaptureManager(com.sana.android.plugin.hardware.Feature, com.sana.android.plugin.communication.MimeType, android.content.ContentResolver)}
+     *                           and {@link com.sana.android.plugin.hardware.GeneralDevice#setCaptureSetting(com.sana.android.plugin.hardware.CaptureSetting)}.
      * @return The byte array containing the captured data.
      * @throws IOException
      */
@@ -66,9 +79,12 @@ public abstract class BinaryData implements DataWithEvent {
     }
 
     /**
-     * @param contentResolver    The ContentResolver instance of the app. You
-     *                           can use getContentResolver() static method
-     *                           to get the instance.
+     * @param contentResolver    The {@link android.content.ContentResolver}
+     *                           instance of the app.To pass it to the
+     *                           {@link com.sana.android.plugin.application.CaptureManager} or
+     *                           {@link com.sana.android.plugin.hardware.GeneralDevice}, refer
+     *                           to {@link com.sana.android.plugin.application.CaptureManager#CaptureManager(com.sana.android.plugin.hardware.Feature, com.sana.android.plugin.communication.MimeType, android.content.ContentResolver)}
+     *                           and {@link com.sana.android.plugin.hardware.GeneralDevice#setCaptureSetting(com.sana.android.plugin.hardware.CaptureSetting)}.
      * @return
      * @throws IOException
      */
@@ -80,10 +96,13 @@ public abstract class BinaryData implements DataWithEvent {
     /**
      * Get the binary data that was captured from the given start position
      * with the given number of bytes.
+     * Currently not supported.
      *
      * @param start     Is the start position of the binary data.
      * @param length    Is the number of bytes to read from the start position.
      * @return The requested portion of binary data.
+     * @throws java.lang.UnsupportedOperationException This method is not
+     * implemented yet.
      */
     public Byte[] getBinaryData(int start, int length) {
         throw new UnsupportedOperationException();
