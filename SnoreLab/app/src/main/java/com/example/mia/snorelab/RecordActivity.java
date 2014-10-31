@@ -46,7 +46,7 @@ public class RecordActivity extends Activity {
     private long clipTime = DEFAULT_CLIP_TIME;
     private static int heartbeatCount;
     private static Thread calculateThread;
-    private boolean continueRecording;
+    private boolean isRecording;
     private boolean stopped;
     private static long startTime;
     private static long duration;
@@ -79,6 +79,9 @@ public class RecordActivity extends Activity {
         }
 
         private void updateUI(){
+            ProgressWheel start = (ProgressWheel) findViewById(R.id.startButton);
+            if(isRecording)
+            start.setText("Touch to Stop");
             TextView readingCount = (TextView) findViewById(R.id.readingCount);
             readingCount.setText("Recording... " );
             long timeElapsed = System.nanoTime() - startTime;
@@ -105,14 +108,14 @@ public class RecordActivity extends Activity {
    //     amplitudeThreshold = 5000;
 
         captureManager = new CaptureManager(Feature.MICROPHONE, MimeType.AUDIO, getContentResolver());
-        continueRecording = false;
+        isRecording = false;
         stopped = false;
     }
 
     // Start recording with MediaRecorder
     //original startRecording Class
     public void startRecording(View view) {
-        if(!continueRecording) {
+        if(!isRecording) {
             ProgressWheel start = (ProgressWheel) findViewById(R.id.startButton);
             start.setText("Touch to Stop");
             try {
@@ -122,14 +125,14 @@ public class RecordActivity extends Activity {
             }
             captureManager.begin();
             startTime = System.nanoTime();
-            continueRecording = true;
+            isRecording = true;
             handler.sendEmptyMessage(0);
 
         }else{
             ProgressWheel start = (ProgressWheel) findViewById(R.id.startButton);
             start.setText("Touch to Start");
             captureManager.stop();
-            continueRecording = false;
+            isRecording = false;
             stopped = true;
             handler.sendEmptyMessage(0);
         }
@@ -139,8 +142,8 @@ public class RecordActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        captureManager.stop();
-        stopped = true;
+     //   captureManager.stop();
+    //    stopped = true;
     }
 
     protected void onPause() {
