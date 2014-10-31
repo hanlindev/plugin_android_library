@@ -101,11 +101,13 @@ public class AudioRecordDevice implements GeneralDevice {
 
     private void moveData() {
         try {
-            /*
+            if(CommManager.getInstance().getUri() == null) {
+                return ;
+            }
             Log.d(
                     "AudioRecordDevice",
                     CommManager.getInstance().getUri().toString()
-            );*/
+            );
             FileInputStream is = new FileInputStream(mFileName);
             OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());
             Log.e(LOG_TAG, CommManager.getInstance().getUri().toString());
