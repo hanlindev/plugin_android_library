@@ -8,6 +8,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * This is the base abstract listener that listens for updates by a fixed time interval.
+ * It has a worker thread that schedules task by the given time interval.
  *
  * @author Han Lin
  */
@@ -127,6 +129,12 @@ public abstract class TimedListener implements Runnable, DataListener {
         }
     }
 
+    /**
+     * You may need to handle race condition if your specified time interval is
+     * too small and this method is expected to take some time. This is because
+     * the worker thread schedules the task using
+     * {@link java.util.concurrent.ScheduledExecutorService#scheduleWithFixedDelay(Runnable, long, long, java.util.concurrent.TimeUnit)}.
+     */
     @Override
     public abstract void processData(Object sender, Object[] data);
 }

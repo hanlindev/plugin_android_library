@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class BluetoothAudioDevice implements GeneralDevice {
     private static final String LOG_TAG = "Is it here?";
     private AudioManager mAudioManager;
     private MediaRecorder mRecorder = null;
+    private MediaPlayer mPlayer = null;
     private static String mFileName = "";
     private Context mContext;
     private int audioEncoder;
@@ -76,13 +78,13 @@ public class BluetoothAudioDevice implements GeneralDevice {
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 //        mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        startBluetoothMic();
         try {
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
         mRecorder.start();
+        startBluetoothMic();
     }
 
     @Override
@@ -129,6 +131,7 @@ public class BluetoothAudioDevice implements GeneralDevice {
     //switch the current input channel to bluetooth mic
     public void startBluetoothMic(){
         mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
+
         mContext.getApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -142,5 +145,13 @@ public class BluetoothAudioDevice implements GeneralDevice {
         }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
         Log.d(TAG, "starting bluetooth");
         mAudioManager.startBluetoothSco();
+    }
+
+    public MediaRecorder getmRecorder(){
+        return mRecorder;
+    }
+
+    public MediaPlayer getmPlayer(){
+        return mPlayer;
     }
 }

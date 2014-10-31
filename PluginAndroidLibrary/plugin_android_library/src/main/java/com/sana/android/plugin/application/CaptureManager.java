@@ -208,7 +208,7 @@ public class CaptureManager {
         this.dataSource.stop();
         try {
             this.data.getEvent().stopEvent();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             Log.e(
                     CaptureManager.LOG_TAG,
                     CaptureManager.STOP_INTERRUPTED_EXCEPTION_MSG,

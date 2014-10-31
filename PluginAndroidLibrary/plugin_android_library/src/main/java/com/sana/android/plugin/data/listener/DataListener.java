@@ -15,7 +15,9 @@ public interface DataListener {
     public void startListening();
 
     /**
-     * Called by the library user after the app no longer needs data updates.
+     * Called by the library user after the app no longer needs data updates. This moethod or
+     * {@link #stopListening(long, java.util.concurrent.TimeUnit)} must be called in order
+     * to prevent resource leak.
      */
     public void stopListening();
 
