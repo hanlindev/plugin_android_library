@@ -97,6 +97,14 @@ public class BluetoothAudioDevice implements GeneralDevice {
 
     private void moveData() {
         try {
+            // if Sana is requesting text, the Uri will be null
+            if(CommManager.getInstance().getUri() == null) {
+                return ;
+            }
+            Log.d(
+                    "AudioRecordDevice",
+                    CommManager.getInstance().getUri().toString()
+            );
             FileInputStream is = new FileInputStream(mFileName);
             //Log.d(TAG, "Inputstream" + IOUtils.toString(is, "UTF-8"));
             OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());

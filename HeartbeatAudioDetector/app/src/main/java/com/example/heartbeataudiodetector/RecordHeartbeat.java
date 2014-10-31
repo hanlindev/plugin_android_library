@@ -179,7 +179,7 @@ public class RecordHeartbeat extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        //captureManager.stop();
+        captureManager.stop();
     }
 
     protected void onPause() {
