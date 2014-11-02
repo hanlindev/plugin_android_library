@@ -40,17 +40,26 @@ public class FeatureChecker {
 
     // return true if there is a stable bluetooth connectivity
     private boolean checkBluetoothConnectivity(){
-
-        IntentFilter filter1 = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
-        final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                context.unregisterReceiver(this);
-                String action = intent.getAction();
-                bluetoothConnected= BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)?true:false;
-            }
-        };
-        mContext.registerReceiver(mReceiver, filter1);
+        Integer currentAPI = Integer.valueOf(android.os.Build.VERSION.SDK);
+        if(currentAPI >=14) {
+            BluetoothAdapter mAdapter;
+            mAdapter = BluetoothAdapter.getDefaultAdapter();
+            int status= mAdapter.getProfileConnectionState(BluetoothProfile.HEADSET);
+            System.out.println("status = "+ status);
+            bluetoothConnected = status==2;
+        }
+        else {
+            IntentFilter filter1 = new IntentFilter(android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED);
+            final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    context.unregisterReceiver(this);
+                    String action = intent.getAction();
+                    bluetoothConnected = BluetoothDevice.ACTION_ACL_CONNECTED.equals(action) ? true : false;
+                }
+            };
+            mContext.registerReceiver(mReceiver, filter1);
+        }
         return bluetoothConnected;
     }
     /*
