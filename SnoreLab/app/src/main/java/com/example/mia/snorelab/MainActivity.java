@@ -45,10 +45,7 @@ public class MainActivity extends Activity {
             }
         }
     }
-/*
-need to receive a buffer from listener. Don't know how.
 
- */
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
