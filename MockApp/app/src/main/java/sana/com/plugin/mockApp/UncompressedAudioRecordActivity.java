@@ -52,7 +52,10 @@ public class UncompressedAudioRecordActivity extends Activity {
         setButtonHandlers();
         enableButtons(false);
 
-        cm = new CaptureManager(Feature.MICROPHONE_UNCOMPRESSED, MimeType.AUDIO_UNCOMPRESSED, getContentResolver());
+        cm = new CaptureManager(
+                Feature.MICROPHONE_UNCOMPRESSED,
+                MimeType.AUDIO_UNCOMPRESSED,
+                getContentResolver());
         cm.prepare();
     }
 

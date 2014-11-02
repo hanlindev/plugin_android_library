@@ -107,7 +107,7 @@
                     android:id="@+id/startButton"
                     android:layout_width="260dp"
                     android:layout_height="wrap_content"
-                    ProgressWheel:text="Touch To Start"
+                    ProgressWheel:text="Touch"
                     ProgressWheel:textSize="20sp"
                     ProgressWheel:rimColor="#FF595960"
                     ProgressWheel:rimWidth="8dp"
@@ -119,7 +119,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="You have slept for 00:00:00"
+                    android:text="Good Night. "
                     android:id="@+id/readingCount"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
