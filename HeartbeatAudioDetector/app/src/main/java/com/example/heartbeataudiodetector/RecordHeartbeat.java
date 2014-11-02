@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.bluetooth.BluetoothAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,7 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import android.bluetooth.BluetoothProfile;
 import com.sana.android.plugin.application.CaptureManager;
 import com.sana.android.plugin.application.CommManager;
 import com.sana.android.plugin.communication.MimeType;
