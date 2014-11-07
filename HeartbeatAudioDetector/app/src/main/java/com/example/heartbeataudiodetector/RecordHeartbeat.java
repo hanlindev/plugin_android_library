@@ -52,7 +52,6 @@ public class RecordHeartbeat extends Activity {
     private ProgressBar spinner;
     private int amplitudeThreshold;
 
-
     // Handler is used to update UI on the UI thread
     private final Handler handler = new Handler(){
         @Override
