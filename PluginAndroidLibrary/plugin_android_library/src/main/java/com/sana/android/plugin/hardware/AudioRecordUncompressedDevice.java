@@ -150,9 +150,9 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
     @Override
     public void setCaptureSetting(CaptureSetting setting) {
         this.resolver = setting.getContentResolver();
-        this.AUDIO_RECORDER_FILE_EXT = setting.getAudioFileExtention();
+        this.AUDIO_RECORDER_FILE_EXT = setting.getFileExtention();
         this.AUDIO_RECORDER_FOLDER = setting.getOutputFolderName();
-        this.AUDIO_RECORDER_TEMP_FILE = setting.getAudioTempFileName();
+        this.AUDIO_RECORDER_TEMP_FILE = setting.getTempFileName();
         this.RECORDER_SAMPLERATE = setting.getRecorderSampleRate();
         this.RECORDER_CHANNELS = setting.getRecorderChannels();
         this.RECORDER_AUDIO_ENCODING = setting.getAudioEncoder();
