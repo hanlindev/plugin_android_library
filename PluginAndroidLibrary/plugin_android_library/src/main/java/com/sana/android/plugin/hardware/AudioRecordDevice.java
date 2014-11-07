@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 
 /**
  * Created by Mia on 23/9/14.
+ *
  * This AudioRecordDevice class supports recording .3gp format files.
  * It also includes a MediaPlayer to play the recording.
  */
@@ -112,7 +113,7 @@ public class AudioRecordDevice implements GeneralDevice {
                 return ;
             }
             Log.d(
-                    "AudioRecordDevice",
+                    LOG_TAG,
                     CommManager.getInstance().getUri().toString()
             );
             FileInputStream is = new FileInputStream(mFileName);

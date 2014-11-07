@@ -62,6 +62,8 @@ public class CaptureSetting {
                 this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
                 this.outputFileName += "/audiorecord.3gp";
                 break;
+            case CAMERA_REAR:
+
             default:
                 break;
         }
