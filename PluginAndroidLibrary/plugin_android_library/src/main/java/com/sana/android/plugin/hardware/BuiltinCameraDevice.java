@@ -31,7 +31,11 @@ public class BuiltinCameraDevice implements GeneralDevice  {
 
     @Override
     public void begin() {
-        mCamera.takePicture(null, null, mPicture);
+        try {
+            mCamera.takePicture(null, null, mPicture);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -60,6 +64,7 @@ public class BuiltinCameraDevice implements GeneralDevice  {
             camera = Camera.open();
         } catch (Exception e) {
             // cannot get camera or does not exist
+            e.printStackTrace();
         }
         return camera;
     }
