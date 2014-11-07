@@ -22,6 +22,10 @@ import java.util.Date;
  */
 public class BuiltinCameraDevice implements GeneralDevice  {
     private Camera mCamera;
+    private static File outputFolder;
+    private static String outputFolderName;
+    private static String fileExtention;
+    private final static String FAIL_CREATE_DIR = "failed to create directory";
 
     @Override
     public DataWithEvent prepare() {
@@ -50,6 +54,9 @@ public class BuiltinCameraDevice implements GeneralDevice  {
 
     @Override
     public void setCaptureSetting(CaptureSetting setting) {
+        this.outputFolder = setting.getOutputFolder();
+        this.outputFolderName = setting.getOutputFolderName();
+        this.fileExtention = setting.getFileExtention();
 
     }
 
@@ -81,20 +88,18 @@ public class BuiltinCameraDevice implements GeneralDevice  {
                 fos.write(data);
                 fos.close();
             } catch (FileNotFoundException e) {
-
+                e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     };
 
     private static File getOutputMediaFile() {
-        File mediaStorageDir = new File(
-                Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES),
-                        "MyCameraApp");
+        File mediaStorageDir = new File(outputFolder,outputFolderName);
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
+                Log.d(outputFolderName, FAIL_CREATE_DIR);
                 return null;
             }
         }
@@ -103,7 +108,7 @@ public class BuiltinCameraDevice implements GeneralDevice  {
                 .format(new Date());
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                + "IMG_" + timeStamp + ".jpg");
+                + "IMG_" + timeStamp + fileExtention);
 
         return mediaFile;
     }
