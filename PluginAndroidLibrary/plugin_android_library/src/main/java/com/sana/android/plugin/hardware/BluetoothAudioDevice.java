@@ -27,9 +27,10 @@ import java.io.File;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 
+
 /**
  * Created by hanlin on 9/14/14.
- */
+*/
 public class BluetoothAudioDevice implements GeneralDevice {
     private ContentResolver resolver;
     private static final String TAG = "BluetoothAudioRecordTest";
@@ -55,7 +56,14 @@ public class BluetoothAudioDevice implements GeneralDevice {
         startBluetoothMic();
         try {
             InputStream is = new FileInputStream(mFileName);
-            DataWithEvent result = new BinaryDataWithPollingEvent(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
+            DataWithEvent result = new BinaryDataWithPollingEvent(
+                    Feature.BLUETOOTH_MICROPHONE,
+                    MimeType.AUDIO,
+                    CommManager.getInstance().getUri(),
+                    this,
+                    is,
+                    BytePollingDataEvent.BUFFER_SIZE_SMALL
+            );
             return result;
         } catch (FileNotFoundException e) {
             // TODO handle more carefully
@@ -127,6 +135,7 @@ public class BluetoothAudioDevice implements GeneralDevice {
         }
     }
 
+    // mContext is essential for checking bluetooth connectivity
     public void setCaptureSetting(CaptureSetting setting) {
         this.audioEncoder = setting.getAudioEncoder();
         this.audioSource = setting.getAudioSource();
@@ -139,7 +148,6 @@ public class BluetoothAudioDevice implements GeneralDevice {
     //switch the current input channel to bluetooth mic
     public void startBluetoothMic(){
         mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
-
         mContext.getApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -161,5 +169,29 @@ public class BluetoothAudioDevice implements GeneralDevice {
 
     public MediaPlayer getmPlayer(){
         return mPlayer;
+    }
+
+    public int getAudioEncoder(){
+        return audioEncoder;
+    }
+
+    public int getAudioSource(){
+        return audioSource;
+    }
+
+    public int getOutputFormat(){
+        return outputFormat;
+    }
+
+    public ContentResolver getResolver(){
+        return resolver;
+    }
+
+    public Context getContext(){
+        return mContext;
+    }
+
+    public String getFileName(){
+        return mFileName;
     }
 }
