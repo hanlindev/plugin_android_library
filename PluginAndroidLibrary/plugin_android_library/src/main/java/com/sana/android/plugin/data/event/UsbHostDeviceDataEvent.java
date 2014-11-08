@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 public class UsbHostDeviceDataEvent extends BaseDataEvent implements Runnable {
 
     private static final String LOG_TAG = "UsbHostDeviceDataEvent";
+    private static final int BUFFER_SIZE = 1000000;
 
     private ExecutorService notificationMasterThread;
     private UsbDeviceConnection connection;
@@ -24,6 +25,7 @@ public class UsbHostDeviceDataEvent extends BaseDataEvent implements Runnable {
     private byte[] buffer;
     private int bufferSize;
     private int timeout;
+    private int pointer;
 
     public UsbHostDeviceDataEvent(
             Object sender,
@@ -50,15 +52,25 @@ public class UsbHostDeviceDataEvent extends BaseDataEvent implements Runnable {
         notificationMasterThread.shutdown();
     }
 
+    public void dispose() throws InterruptedException {
+        stopEvent();
+        buffer = null;
+    }
+
+    public byte[] getBuffer() {
+        buffer = ArrayUtils.subarray(buffer, 0, pointer);
+        return buffer;
+    }
+
     @Override
     public void run() {
-        byte[] buffer = new byte[bufferSize];
-        int pointer = 0;
+        buffer = new byte[bufferSize];
+        pointer = 0;
 
         Log.d(UsbHostDeviceDataEvent.LOG_TAG, "Listening for endpoint = " + endpoint + " at connection = " + connection);
 
         while (true) {
-            byte[] temp = new byte[1000000];
+            byte[] temp = new byte[BUFFER_SIZE];
             final int numBytesRead = connection.bulkTransfer(endpoint, temp, temp.length, 0);
             if (numBytesRead > 0) {
                 Log.d(UsbHostDeviceDataEvent.LOG_TAG, "Number of bytes read: " + numBytesRead);

@@ -103,7 +103,7 @@ public class ReactionAppActivity extends Activity {
 
 
     private void setupDevice() {
-        device = new UsbHostDevice(this, 1, 0);
+        device = new UsbHostDevice(this, 1, 0); // Context, buffer size, timeout
         dataWithEvent = device.prepare();
 
         initialListener = new UsbListenerInitial(device, 100, TimeUnit.MILLISECONDS);
