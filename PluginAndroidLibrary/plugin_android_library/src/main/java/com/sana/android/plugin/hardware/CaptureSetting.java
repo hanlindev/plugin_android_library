@@ -6,8 +6,13 @@ import android.hardware.SensorManager;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.os.Environment;
+import android.util.Log;
 
 import com.sana.android.plugin.communication.MimeType;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * You should add your the capture setting required by your sensor. The setter
@@ -22,12 +27,13 @@ public class CaptureSetting {
     private ContentResolver contentResolver;
     private Context applicationContext;
     private SensorManager sensorManager;
-    private static String outputFileName = null;
-    private String audioFileExtention = null;
-    private String audioTempFileName = null;
+    private String outputFileName = null;
+    private String fileExtention = null;
+    private String tempFileName = null;
     private Integer recorderSampleRate;
     private Integer recorderChannels;
     private String outputFolderName = null;
+    private File outputFolder;
 
     public static CaptureSetting defaultSetting(Feature source, MimeType type
     ) {
@@ -48,9 +54,9 @@ public class CaptureSetting {
                 break;
             case MICROPHONE_UNCOMPRESSED:
                 this.audioSource = MediaRecorder.AudioSource.MIC;
-                this.audioFileExtention = ".wav";
+                this.fileExtention = ".wav";
                 this.outputFolderName = "UncompressedAudioRecorder";
-                this.audioTempFileName = "record_temp.raw";
+                this.tempFileName = "record_temp.raw";
                 this.recorderSampleRate = 44100;
                 this.recorderChannels = AudioFormat.CHANNEL_IN_STEREO;
                 this.audioEncoder = AudioFormat.ENCODING_PCM_16BIT;
@@ -61,6 +67,12 @@ public class CaptureSetting {
                 this.outputFormat = MediaRecorder.OutputFormat.THREE_GPP;
                 this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
                 this.outputFileName += "/audiorecord.3gp";
+                break;
+            case CAMERA_REAR:
+                this.outputFolderName = "MyCameraApp";
+                this.outputFolder = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES);
+                this.fileExtention = ".jpg";
                 break;
             default:
                 break;
@@ -76,12 +88,22 @@ public class CaptureSetting {
                 this.outputFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
                 this.outputFileName += "/audiorecord.3gp";
                 break;
+            case IMAGE:
+                this.outputFolderName = "MyCameraApp";
+                this.outputFolder = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES);
+                this.fileExtention = ".jpg";
+                break;
+            default:
+                break;
+
         }
     }
 
     public Integer getAudioEncoder() {
         return this. audioEncoder;
     }
+
 
     public CaptureSetting setAudioEncoder(Integer audioEncoder) {
         this.audioEncoder = audioEncoder;
@@ -90,13 +112,47 @@ public class CaptureSetting {
 
     public Integer getRecorderSampleRate() { return this.recorderSampleRate; }
 
+    public CaptureSetting setRecorderSampleRate(Integer recorderSampleRate){
+        this.recorderSampleRate = recorderSampleRate;
+        return this;
+    }
+
     public Integer getRecorderChannels() {return this.recorderChannels; }
 
-    public String getAudioFileExtention() { return this.audioFileExtention; }
+    public CaptureSetting setRecorderChannels(Integer recorderChannels){
+        this.recorderChannels = recorderChannels;
+        return this;
+    }
+
+    public String getFileExtention() { return this.fileExtention; }
+
+    public CaptureSetting setFileExtention(String fileExtention){
+        this.fileExtention = fileExtention;
+        return this;
+    }
 
     public String getOutputFolderName() { return this.outputFolderName; }
 
-    public String getAudioTempFileName() { return this.audioTempFileName; }
+    public CaptureSetting setOutputFolderName(String outputFolderName){
+        this.outputFolderName = outputFolderName;
+        return this;
+    }
+
+    public File getOutputFolder(){
+        return this.outputFolder;
+    }
+
+    public CaptureSetting setOutputFolder(File outputFolder){
+        this.outputFolder = outputFolder;
+        return this;
+    }
+
+    public String getTempFileName() { return this.tempFileName; }
+
+    public CaptureSetting setTempFileName(String tempFileName){
+        this.tempFileName = tempFileName;
+        return this;
+    }
 
 
     public String getOutputFileName() { return this.outputFileName; }
@@ -170,6 +226,5 @@ public class CaptureSetting {
         this.sensorManager = sensorManager;
         return this;
     }
-
 
 }

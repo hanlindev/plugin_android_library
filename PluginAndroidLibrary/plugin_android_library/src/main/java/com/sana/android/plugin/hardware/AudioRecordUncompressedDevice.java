@@ -1,20 +1,16 @@
 package com.sana.android.plugin.hardware;
 
 import android.content.ContentResolver;
-import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
+import android.media.MediaPlayer;
 import android.os.Environment;
 import android.util.Log;
-
 import com.sana.android.plugin.application.CommManager;
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
 import com.sana.android.plugin.data.DataWithEvent;
 import com.sana.android.plugin.data.event.BytePollingDataEvent;
-
 import org.apache.commons.io.IOUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,13 +20,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 
+
 /**
  * Created by Mia on 19/10/14.
+ * This AudioRecordDevice class supports recording .3gp format files.
  */
 public class AudioRecordUncompressedDevice implements GeneralDevice {
     private ContentResolver resolver;
     private String mFileName = "";
     private static final String LOG_TAG = "UncompressedAudioRecord";
+    private static final String PREPARE_FAILED = "prepare() failed.";
+    private static final String THREAD_NAME ="UncompressedAudioRecorder Thread";
     private static final int RECORDER_BPP = 16;
     private String AUDIO_RECORDER_FILE_EXT;
     private String AUDIO_RECORDER_FOLDER;
@@ -39,7 +39,7 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
     private int RECORDER_CHANNELS;
     private int RECORDER_AUDIO_ENCODING;
     private int audioSource;
-
+    private MediaPlayer   mPlayer = null;
     private AudioRecord recorder = null;
     private int bufferSize = 0;
     private Thread recordingThread = null;
@@ -50,21 +50,41 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
                 + "/audiorecordtest.wav";
     }
 
+    private void ensureFileExists(String fileName) throws IOException {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+    }
+
     @Override
     public DataWithEvent prepare() {
-        bufferSize = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE,RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING);
-        recorder = new AudioRecord(audioSource,
-                RECORDER_SAMPLERATE, RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING, bufferSize);
+        bufferSize = AudioRecord.getMinBufferSize(
+                RECORDER_SAMPLERATE,
+                RECORDER_CHANNELS,
+                RECORDER_AUDIO_ENCODING);
+        recorder = new AudioRecord(
+                audioSource,
+                RECORDER_SAMPLERATE,
+                RECORDER_CHANNELS,
+                RECORDER_AUDIO_ENCODING,
+                bufferSize);
         try {
+            ensureFileExists(mFileName);
             InputStream is = new FileInputStream(mFileName);
-            DataWithEvent result = new BinaryDataWithPollingEvent(Feature.MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
+            DataWithEvent result = new BinaryDataWithPollingEvent(
+                    Feature.MICROPHONE,
+                    MimeType.AUDIO,
+                    CommManager.getInstance().getUri(),
+                    this,
+                    is,
+                    BytePollingDataEvent.BUFFER_SIZE_SMALL);
             return result;
         } catch (FileNotFoundException e) {
-            // TODO handle more carefully
             e.printStackTrace();
             return null;
         } catch (URISyntaxException e) {
-            // TODO handle more carefully
             e.printStackTrace();
             return null;
         } catch (IOException e) {
@@ -76,35 +96,27 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
 
     @Override
     public void begin() {
-
         recorder.startRecording();
-
         isRecording = true;
-
         recordingThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 writeAudioDataToFile();
             }
-        },"UncompressedAudioRecorder Thread");
-
+        },THREAD_NAME);
         recordingThread.start();
     }
     @Override
     public void stop() {
         if(null != recorder){
             isRecording = false;
-
             recorder.stop();
             recorder.release();
-
             recorder = null;
-          //  recordingThread.
             recordingThread = null;
 
         }
-
         copyWaveFile(getTempFilename(),mFileName);
         deleteTempFile();
         moveData();
@@ -137,15 +149,10 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
 
     @Override
     public void setCaptureSetting(CaptureSetting setting) {
-      //  this.audioEncoder = setting.getAudioEncoder();
-        //this.audioSource = setting.getAudioSource();
-        //this.outputFormat = setting.getOutputFormat();
         this.resolver = setting.getContentResolver();
-        this.mFileName = setting.getOutputFileName();
-        //this.RECORDER_BPP = 16;
-        this.AUDIO_RECORDER_FILE_EXT = setting.getAudioFileExtention();
+        this.AUDIO_RECORDER_FILE_EXT = setting.getFileExtention();
         this.AUDIO_RECORDER_FOLDER = setting.getOutputFolderName();
-        this.AUDIO_RECORDER_TEMP_FILE = setting.getAudioTempFileName();
+        this.AUDIO_RECORDER_TEMP_FILE = setting.getTempFileName();
         this.RECORDER_SAMPLERATE = setting.getRecorderSampleRate();
         this.RECORDER_CHANNELS = setting.getRecorderChannels();
         this.RECORDER_AUDIO_ENCODING = setting.getAudioEncoder();
@@ -154,7 +161,6 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
 
     private void deleteTempFile() {
         File file = new File(getTempFilename());
-
         file.delete();
     }
     private void writeAudioDataToFile(){
@@ -174,7 +180,6 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
         if(null != os){
             while(isRecording){
                 read = recorder.read(data, 0, bufferSize);
-
                 if(AudioRecord.ERROR_INVALID_OPERATION != read){
                     try {
                         os.write(data);
@@ -183,7 +188,6 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
                     }
                 }
             }
-
             try {
                 os.close();
             } catch (IOException e) {
@@ -294,5 +298,30 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
         header[43] = (byte) ((totalAudioLen >> 24) & 0xff);
 
         out.write(header, 0, 44);
+    }
+    public void startPlaying() {
+        mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setDataSource(mFileName);
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, PREPARE_FAILED);
+        }
+    }
+
+    public void stopPlaying() {
+        if (mPlayer.isPlaying())
+            mPlayer.stop();
+        mPlayer.release();
+        mPlayer = null;
+    }
+
+    public AudioRecord getRecorder(){
+        return recorder;
+    }
+
+    public MediaPlayer getmPlayer(){
+        return mPlayer;
     }
 }

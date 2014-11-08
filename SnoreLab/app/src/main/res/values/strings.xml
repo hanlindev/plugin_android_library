@@ -9,5 +9,6 @@
     <string name="capture_sound">Capture Sound</string>
     <string name="title_activity_first_page">FirstPageActivity</string>
     <string name="title_activity_wake_up">WakeUpActivity</string>
+    <string name="title_activity_record">RecordActivity</string>
 
 </resources>

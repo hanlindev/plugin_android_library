@@ -24,10 +24,12 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 
 /**
  * Created by Mia on 23/9/14.
+ *
+ * This AudioRecordDevice class supports recording .3gp format files.
+ * It also includes a MediaPlayer to play the recording.
  */
 public class AudioRecordDevice implements GeneralDevice {
     private ContentResolver resolver;
@@ -35,30 +37,47 @@ public class AudioRecordDevice implements GeneralDevice {
     private MediaRecorder mRecorder = null;
     private MediaPlayer   mPlayer = null;
     private static final String LOG_TAG = "AudioRecord";
+    private static final String DEFAULT_FILE_NAME = "/audiorecordtest.3gp";
+    private static final String PREPARE_FAILED = "prepare() failed.";
     private int audioEncoder;
     private int audioSource;
     private int outputFormat;
 
     public AudioRecordDevice(){
-        mFileName=Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/audiorecordtest.3gp";
-//        prepare();
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath()
+                + DEFAULT_FILE_NAME;
     }
 
+    private void ensureFileExists(String fileName) throws IOException {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+    }
+/*
+ This method prepares the device and return a DataWithEvent for further
+ process of the obtained data.
+ */
     @Override
     public DataWithEvent prepare() {
         mRecorder = new MediaRecorder();
         mRecorder.setOutputFile(mFileName);
         try {
+            ensureFileExists(mFileName);
             InputStream is = new FileInputStream(mFileName);
-            DataWithEvent result = new BinaryDataWithPollingEvent(Feature.MICROPHONE, MimeType.AUDIO, CommManager.getInstance().getUri(), this, is, BytePollingDataEvent.BUFFER_SIZE_SMALL);
+            DataWithEvent result = new BinaryDataWithPollingEvent(
+                    Feature.MICROPHONE,
+                    MimeType.AUDIO,
+                    CommManager.getInstance().getUri(),
+                    this,
+                    is,
+                    BytePollingDataEvent.BUFFER_SIZE_SMALL);
             return result;
         } catch (FileNotFoundException e) {
-            // TODO handle more carefully
             e.printStackTrace();
             return null;
         } catch (URISyntaxException e) {
-            // TODO handle more carefully
             e.printStackTrace();
             return null;
         } catch (IOException e) {
@@ -69,15 +88,13 @@ public class AudioRecordDevice implements GeneralDevice {
 
     @Override
     public void begin() {
-//        mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(audioSource);
         mRecorder.setOutputFormat(outputFormat);
-//        mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(audioEncoder);
         try {
             mRecorder.prepare();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+            Log.e(LOG_TAG, PREPARE_FAILED);
         }
         mRecorder.start();
     }
@@ -92,13 +109,18 @@ public class AudioRecordDevice implements GeneralDevice {
 
     private void moveData() {
         try {
+            if(CommManager.getInstance().getUri() == null) {
+                return ;
+            }
             Log.d(
-                    "AudioRecordDevice",
+                    LOG_TAG,
                     CommManager.getInstance().getUri().toString()
             );
             FileInputStream is = new FileInputStream(mFileName);
-            OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());
-            Log.e(LOG_TAG, CommManager.getInstance().getUri().toString());
+            OutputStream os = resolver.openOutputStream(
+                    CommManager.getInstance().getUri());
+            Log.e(LOG_TAG,
+                    CommManager.getInstance().getUri().toString());
             IOUtils.copy(is, os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -147,7 +169,7 @@ public class AudioRecordDevice implements GeneralDevice {
             mPlayer.prepare();
             mPlayer.start();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+            Log.e(LOG_TAG, PREPARE_FAILED);
         }
     }
 
@@ -165,5 +187,5 @@ public class AudioRecordDevice implements GeneralDevice {
     public MediaPlayer getmPlayer(){
         return mPlayer;
     }
-    //public void startBluetoothMic(){}
+
 }
