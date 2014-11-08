@@ -43,6 +43,8 @@ dependencies {
     compile 'commons-io:commons-io:+'
     compile 'org.apache.commons:commons-lang3:3.0'
     compile files('app/libs/mockito-all-1.9.5.jar')
+    compile files('app/libs/dexmaker-1.0.jar')
+    compile files('app/libs/dexmaker-mockito-1.0.jar')
 }
 
 
