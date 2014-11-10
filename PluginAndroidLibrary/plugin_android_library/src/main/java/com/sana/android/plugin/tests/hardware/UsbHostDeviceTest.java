@@ -48,7 +48,8 @@ public class UsbHostDeviceTest extends InstrumentationTestCase {
             if (this.sender != sender) return;
 
             if (data.length > 0) {
-                receivedLength = data.length;
+                if (receivedLength == -1) receivedLength = 0;
+                receivedLength += data.length;
                 receivedBuffer = new byte[receivedLength];
                 for (int i = 0; i < TEST_VALUE; i++) {
                     receivedBuffer[i] = (byte)data[i];
@@ -75,7 +76,7 @@ public class UsbHostDeviceTest extends InstrumentationTestCase {
         receivedBuffer = null;
         receivedLength = -1;
 
-        TestListener listener = new TestListener(this, 100, TimeUnit.MILLISECONDS);
+        TestListener listener = new TestListener(this, 1, TimeUnit.MILLISECONDS);
         listener.startListening();
 
         dataEvent = new UsbHostDeviceDataEvent(this, mockConnection, null, TEST_VALUE, 0);

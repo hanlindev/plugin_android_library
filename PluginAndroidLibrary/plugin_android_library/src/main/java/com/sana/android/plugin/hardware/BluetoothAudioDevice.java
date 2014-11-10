@@ -81,25 +81,29 @@ public class BluetoothAudioDevice implements GeneralDevice {
 
     @Override
     public void begin() {
-//        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-//        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+        //mRecorder = new MediaRecorder();
+        if (mRecorder != null) {
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            //        mRecorder.setOutputFile(mFileName);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            try {
+                mRecorder.prepare();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "prepare() failed");
+            }
+            mRecorder.start();
+            startBluetoothMic();
         }
-        mRecorder.start();
-        startBluetoothMic();
     }
 
     @Override
     public void stop() {
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
+        if (mRecorder != null) {
+            mRecorder.stop();
+            mRecorder.release();
+            mRecorder = null;
+        }
         moveData();
     }
 
@@ -147,20 +151,22 @@ public class BluetoothAudioDevice implements GeneralDevice {
 
     //switch the current input channel to bluetooth mic
     public void startBluetoothMic(){
-        mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
-        mContext.getApplicationContext().registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -1);
-                Log.d(TAG, "Audio SCO state: " + state);
-                if (AudioManager.SCO_AUDIO_STATE_CONNECTED == state) {
-                    // now the connection has be established to the bluetooth device
-                    mContext.getApplicationContext().unregisterReceiver(this);
+        if (mContext != null) {
+            mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+            mContext.getApplicationContext().registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    int state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -1);
+                    Log.d(TAG, "Audio SCO state: " + state);
+                    if (AudioManager.SCO_AUDIO_STATE_CONNECTED == state) {
+                        // now the connection has be established to the bluetooth device
+                        mContext.getApplicationContext().unregisterReceiver(this);
+                    }
                 }
-            }
-        }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
-        Log.d(TAG, "starting bluetooth");
-        mAudioManager.startBluetoothSco();
+            }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
+            Log.d(TAG, "starting bluetooth");
+            mAudioManager.startBluetoothSco();
+        }
     }
 
     public MediaRecorder getmRecorder(){

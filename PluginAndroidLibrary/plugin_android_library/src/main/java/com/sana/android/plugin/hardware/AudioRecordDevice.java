@@ -39,9 +39,9 @@ public class AudioRecordDevice implements GeneralDevice {
     private static final String LOG_TAG = "AudioRecord";
     private static final String DEFAULT_FILE_NAME = "/audiorecordtest.3gp";
     private static final String PREPARE_FAILED = "prepare() failed.";
-    private int audioEncoder;
-    private int audioSource;
-    private int outputFormat;
+    private int audioSource = -1;
+    private int audioEncoder = -1;
+    private int outputFormat = -1;
 
     public AudioRecordDevice(){
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath()
@@ -88,15 +88,17 @@ public class AudioRecordDevice implements GeneralDevice {
 
     @Override
     public void begin() {
-        mRecorder.setAudioSource(audioSource);
-        mRecorder.setOutputFormat(outputFormat);
-        mRecorder.setAudioEncoder(audioEncoder);
-        try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, PREPARE_FAILED);
+        if (mRecorder != null && audioSource != -1) {
+            mRecorder.setAudioSource(audioSource);
+            mRecorder.setOutputFormat(outputFormat);
+            mRecorder.setAudioEncoder(audioEncoder);
+            try {
+                mRecorder.prepare();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, PREPARE_FAILED);
+            }
+            mRecorder.start();
         }
-        mRecorder.start();
     }
 
     @Override

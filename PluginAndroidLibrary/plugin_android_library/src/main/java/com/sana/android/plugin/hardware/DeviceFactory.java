@@ -61,7 +61,9 @@ public class DeviceFactory {
                 Log.e(LOG_TAG, UNEXPECTED_ERROR_MESSAGE);
             }
         }
-        instance.setCaptureSetting(setting);
+        if (instance != null) {
+            instance.setCaptureSetting(setting);
+        }
         return instance;
     }
 

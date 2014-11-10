@@ -14,6 +14,7 @@ import java.io.*;
 import com.sana.android.plugin.application.CommManager;
 import com.sana.android.plugin.hardware.BluetoothAudioDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
+import com.sana.android.plugin.hardware.Feature;
 
 import junit.framework.Assert;
 
@@ -26,8 +27,22 @@ import junit.framework.Assert;
         private Context mContext;
         private static final String TAG = "BluetoothDeviceTest";
 
+        public void testPrepare(){
+            BD = new BluetoothAudioDevice();
+            BD.prepare();
+            Assert.assertNotNull(BD.getmRecorder());
+        }
+
+        public void testStop(){
+            BD = new BluetoothAudioDevice();
+            BD.begin();
+            BD.stop();
+            Assert.assertNull(BD.getmRecorder());
+        }
+/*
         public void testBluetoothMicChannel() throws Exception {
             BD = new BluetoothAudioDevice();
+            BD.prepare();
             BD.begin();
             BD.startBluetoothMic();
             mContext.getApplicationContext().registerReceiver(new BroadcastReceiver() {
@@ -40,18 +55,6 @@ import junit.framework.Assert;
             }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
         }
 
-        public void testBegin(){
-            BD = new BluetoothAudioDevice();
-            BD.begin();
-            Assert.assertNotNull(BD.getmRecorder());
-        }
-
-        public void testStop(){
-            BD = new BluetoothAudioDevice();
-            BD.begin();
-            BD.stop();
-            Assert.assertNull(BD.getmRecorder());
-        }
 
         public void testSetCaptureSetting(CaptureSetting cm){
             BD = new BluetoothAudioDevice();
@@ -80,4 +83,5 @@ import junit.framework.Assert;
             BD.reset();
             Assert.assertNull(BD.getFileName());
         }
+        */
     }
