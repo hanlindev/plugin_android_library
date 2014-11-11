@@ -80,10 +80,11 @@ public class CommManager {
      */
     public void sendData(Activity sender, String data) {
         Uri uri = this.intent.getData();
+        uri = uri.buildUpon().fragment(data).build();
         String type = this.intent.getType();
         Intent dataIntent = new Intent();
         dataIntent.setDataAndType(uri, type);
-        dataIntent.putExtra(Intent.EXTRA_TEXT, data);
+//        dataIntent.putExtra(Intent.EXTRA_TEXT, data);
         sender.setResult(Activity.RESULT_OK, dataIntent);
         sender.finish();
     }
