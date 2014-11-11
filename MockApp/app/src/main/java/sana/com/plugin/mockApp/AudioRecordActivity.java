@@ -121,7 +121,10 @@ public class AudioRecordActivity extends ActionBarActivity {
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
 
-        cm = new CaptureManager(Feature.MICROPHONE, MimeType.AUDIO, getContentResolver());
+        cm = new CaptureManager(
+                Feature.MICROPHONE,
+                MimeType.AUDIO,
+                getContentResolver());
         cm.prepare();
         setContentView(ll);
     }
@@ -129,8 +132,6 @@ public class AudioRecordActivity extends ActionBarActivity {
     @Override
     public void onPause() {
         super.onPause();
-//        audioRecord.pauseRecorder();
-//        audioRecord.pausePlayer();
     }
 }
 

@@ -80,6 +80,14 @@ public class UsbHostDevice extends UsbGeneralDevice {
         }
     };
 
+    private void setupTransfer() {
+        connection.controlTransfer(0x21, 0x22, 0, 0, null, 0, 0);
+
+        // Set baud rate to be 9600
+        connection.controlTransfer(0x21, 0x20, 0, 0,
+                new byte[]{(byte) 0x80, 0x25, 0x00, 0x00, 0x00, 0x00, 0x08}, 7, 0);
+    }
+
     private void openDevice(UsbDevice device) {
         if (device == null) {
             Log.d(UsbHostDevice.LOG_TAG, "null device");
@@ -95,11 +103,8 @@ public class UsbHostDevice extends UsbGeneralDevice {
             return;
         }
 
-        connection.controlTransfer(0x21, 0x22, 0, 0, null, 0, 0);
 
-        // Set baud rate to be 9600
-        connection.controlTransfer(0x21, 0x20, 0, 0,
-                new byte[]{(byte) 0x80, 0x25, 0x00, 0x00, 0x00, 0x00, 0x08}, 7, 0);
+        setupTransfer();
 
         for (int i = 0; i < usbInterface.getEndpointCount(); i++) {
 
@@ -165,9 +170,9 @@ public class UsbHostDevice extends UsbGeneralDevice {
                     timeout
             );
         } catch (FileNotFoundException e) {
-            Log.d(UsbHostDevice.LOG_TAG, "file not found: " + e.toString());
+            Log.e(LOG_TAG, "File not found.", e);
         } catch (URISyntaxException e) {
-            Log.d(UsbHostDevice.LOG_TAG, "uri exception: " + e.toString());
+            Log.e(LOG_TAG, "URI exception.", e);
         }
 
         return dataWithEvent;
@@ -192,12 +197,23 @@ public class UsbHostDevice extends UsbGeneralDevice {
             }
         }
         closeDevice();
-        Log.d(UsbHostDevice.LOG_TAG, "Unregistering Receiver");
+        Log.d(UsbHostDevice.LOG_TAG, "Unregistering broadcast receiver");
         context.unregisterReceiver(usbBroadcastReceiver);
     }
 
     public void reset() {
-
+        if (dataWithEvent != null) {
+            try {
+                dataWithEvent.dispose();
+            } catch (InterruptedException e) {
+                Log.e(
+                        LOG_TAG,
+                        "Operation interrupted while disposing the previous data.",
+                        e
+                );
+            }
+        }
+        dataWithEvent = null;
     }
 
     public void setCaptureSetting(CaptureSetting setting) { this.setting = setting; }

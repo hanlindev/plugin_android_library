@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../ShakingPatternRecorder" external.system.id="GRADLE" external.system.module.group="ShakingPatternRecorder.PluginAndroidLibrary" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+<module external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../ReactionDiagnosis" external.system.id="GRADLE" external.system.module.group="ReactionDiagnosis.PluginAndroidLibrary" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
-        <option name="GRADLE_PROJECT_PATH" value=":PluginAndroidLibrary:plugin_android_library" />
+        <option name="GRADLE_PROJECT_PATH" value=":plugin_android_library" />
       </configuration>
     </facet>
     <facet type="android" name="Android">
@@ -82,11 +82,14 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="mockito-all-1.9.5" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-20.0.0" level="project" />
+    <orderEntry type="library" exported="" name="dexmaker-1.0" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="commons-lang3-3.0" level="project" />
     <orderEntry type="library" exported="" name="commons-io-2.4" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-20.0.0" level="project" />
+    <orderEntry type="library" exported="" name="dexmaker-mockito-1.0" level="project" />
   </component>
 </module>
 

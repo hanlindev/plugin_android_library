@@ -2,10 +2,13 @@ package com.example.heartbeataudiodetector;
 
 import java.io.IOException;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.bluetooth.BluetoothAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,27 +18,17 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.LinkedList;
-
+import android.bluetooth.BluetoothProfile;
 import com.sana.android.plugin.application.CaptureManager;
 import com.sana.android.plugin.application.CommManager;
 import com.sana.android.plugin.communication.MimeType;
-import com.sana.android.plugin.data.event.AccelerometerDataEvent;
-import com.sana.android.plugin.data.listener.TimedListener;
 import com.sana.android.plugin.hardware.AudioRecordDevice;
+import com.sana.android.plugin.hardware.BluetoothAudioDevice;
 import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.Feature;
-import com.sana.android.plugin.hardware.GeneralDevice;
-//import com.sana.android.plugin.hardware.BluetoothDevice;
-
-
+import com.sana.android.plugin.hardware.FeatureChecker;
 
 public class RecordHeartbeat extends Activity {
     private static final String TAG = "Heartbeat";
@@ -44,14 +37,17 @@ public class RecordHeartbeat extends Activity {
     private static int heartbeatCount;
     private static Thread calculateThread;
     private static boolean continueRecording;
+    private static boolean bluetoothConnected;
     private static long startTime;
     private static long duration;
     private static final int NUM_SECONDS_NEEDED = 15;
-    private static final int PROGRESS_BOUNDARY = NUM_SECONDS_NEEDED / 360;
 
+    private static final String BLUETOOTH_ERROR_TITLE = "Bluetooth not connected!";
+    private static final String BLUETOOTH_ERROR_MESSAGE= "Please go to settings, turn on bluetooth and try to pair with a bluetooth mic";
+
+    private FeatureChecker fc;
     private CaptureManager captureManager;
     private ProgressWheel progressWheel;
-    private int progress;
     private VerticalPager verticalPager;
     private ProgressBar spinner;
     private int amplitudeThreshold;
@@ -61,8 +57,9 @@ public class RecordHeartbeat extends Activity {
         @Override
         public void handleMessage(Message msg) {
             long timeElapsed = System.nanoTime() - startTime;
-            if((int)(timeElapsed/1000000000)>15){
+            if((int)(timeElapsed/1000000000)>NUM_SECONDS_NEEDED){
                 verticalPager.scrollDown();
+                // create a sound notification when time is up
                 try {
                     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                     Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
@@ -78,10 +75,11 @@ public class RecordHeartbeat extends Activity {
             TextView readingCount = (TextView) findViewById(R.id.readingCount);
             readingCount.setText("Heartbeat Readings: " + heartbeatCount);
             long timeElapsed = System.nanoTime() - startTime;
-            progressWheel.setProgress((int)(360*timeElapsed/1000000000)/15);
+            progressWheel.setProgress((int)(360*timeElapsed/1000000000)/NUM_SECONDS_NEEDED);
         }
     };
     protected void onCreate(Bundle savedInstanceState) {
+        fc = new FeatureChecker(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_heartbeat);
 
@@ -97,64 +95,82 @@ public class RecordHeartbeat extends Activity {
         cm.respondToIntent(intent);
         // prepare data
         heartbeatCount = 0;
-        progress = 0;
         amplitudeThreshold = 5000;
 
-        captureManager = new CaptureManager(Feature.MICROPHONE, MimeType.AUDIO, getContentResolver());
+        // this is the code to use built-in audio
+        //captureManager = new CaptureManager(Feature.MICROPHONE, MimeType.AUDIO, getContentResolver());
+
+        // this is the code to use bluetooth audio
+        CaptureSetting defaultSetting = CaptureSetting.defaultSetting(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO)
+                .setApplicationContext(getApplicationContext());
+        captureManager = new CaptureManager(Feature.BLUETOOTH_MICROPHONE, MimeType.AUDIO, getContentResolver(), defaultSetting);
     }
 
     // Start recording with MediaRecorder
     //original startRecording Class
     public void startRecording(View view) {
-        ProgressWheel start = (ProgressWheel)findViewById(R.id.startButton);
-        start.setText("Recording");
-        try{
+
+        bluetoothConnected = fc.isConnected(Feature.BLUETOOTH);
+        System.out.println(bluetoothConnected);
+        if(!continueRecording && bluetoothConnected) {
+            ProgressWheel start = (ProgressWheel) findViewById(R.id.startButton);
+            start.setText("Recording");
             captureManager.prepare();
+            captureManager.begin();
+            startTime = System.nanoTime();
+            // ... do recording ...
+            continueRecording = true;
+            calculateThread = new Thread(new Runnable() {
+                public void run() {
+                    //AudioRecordDevice mic = (AudioRecordDevice) captureManager.getDevice();
+                    BluetoothAudioDevice mic = (BluetoothAudioDevice) captureManager.getDevice();
+                    int startAmplitude = mic.getmRecorder().getMaxAmplitude();
+                    Log.d(TAG, "starting amplitude: " + startAmplitude);
+                    heartbeatCount = 0;
+                    do {
+                        duration = System.nanoTime() - startTime;
+                        if (duration / 1000000000 > NUM_SECONDS_NEEDED) {
+                            continueRecording = false;
+                        }
+                        Log.d(TAG, "waiting while recording...");
+                        waitSome();
+                        int finishAmplitude = mic.getmRecorder().getMaxAmplitude();
+                        int ampDifference = finishAmplitude - startAmplitude;
+                        if (ampDifference >= amplitudeThreshold) {
+                            Log.d(TAG, "heard a heartbeat!");
+                            heartbeatCount++;
+                        }
+                        handler.sendEmptyMessage(0);
+                        System.out.println(heartbeatCount);
+                        Log.d(TAG, "finishing amplitude: " + finishAmplitude + " diff: "
+                                + ampDifference);
+                    } while (continueRecording);
+                }
+            });
+            calculateThread.start();
+            Log.d(TAG, "stopped recording");
+            System.out.println(heartbeatCount);
         }
-        catch(Exception o){
-
+        else if (!continueRecording && !bluetoothConnected){
+            new AlertDialog.Builder(this)
+                    .setTitle(BLUETOOTH_ERROR_TITLE)
+                    .setMessage(BLUETOOTH_ERROR_MESSAGE)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
-        captureManager.begin();
-        startTime = System.nanoTime();
-        // ... do recording ...
-        continueRecording = true;
-        calculateThread = new Thread(new Runnable(){
-            public void run() {
-                AudioRecordDevice mic = (AudioRecordDevice)captureManager.getDevice();
-                int startAmplitude = mic.getmRecorder().getMaxAmplitude();
-                Log.d(TAG, "starting amplitude: " + startAmplitude);
-                heartbeatCount = 0;
-                do {
-                    duration = System.nanoTime() - startTime;
-                    if(duration/1000000000 > 15) {
-                        continueRecording = false;
-                    }
-                    Log.d(TAG, "waiting while recording...");
-                    waitSome();
-                    int finishAmplitude = mic.getmRecorder().getMaxAmplitude();
-                    int ampDifference = finishAmplitude - startAmplitude;
-                    if (ampDifference >= amplitudeThreshold) {
-                        Log.d(TAG, "heard a heartbeat!");
-                        heartbeatCount++;
-                    }
-                    handler.sendEmptyMessage(0);
-                    System.out.println(heartbeatCount);
-                    Log.d(TAG, "finishing amplitude: " + finishAmplitude + " diff: "
-                            + ampDifference);
-                } while (continueRecording);
-            }
-        });
-        calculateThread.start();
-        Log.d(TAG, "stopped recording");
-        System.out.println(heartbeatCount);
     }
-
 
     private void waitSome()
     {
         try{  // wait some time
             Thread.sleep(clipTime);
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             Log.d(TAG, "interrupted");
         }
@@ -189,6 +205,6 @@ public class RecordHeartbeat extends Activity {
     }
 
     private String getDataString() {
-        return Integer.toString(heartbeatCount);
+        return "Your heartbeat is "+Integer.toString(4*heartbeatCount)+" beats/min.";
     }
 }

@@ -1,8 +1,10 @@
 package com.sana.android.plugin.tests.hardware;
 
 import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 import com.sana.android.plugin.communication.MimeType;
+import com.sana.android.plugin.errors.InvalidCaptureSettingsError;
 import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.DeviceFactory;
 import com.sana.android.plugin.hardware.Feature;
@@ -30,13 +32,25 @@ public class DeviceFactoryTests extends InstrumentationTestCase {
     }
 
     private void testGetDeviceInstanceForImplementedFeature(Feature feature) {
-        GeneralDevice newDevice =
-                DeviceFactory.getDeviceInstance(feature, CaptureSetting.defaultSetting(feature, MimeType.AUDIO));
-        assertEquals(
-                "Generated device should be the same as predefined class.",
-                newDevice.getClass().getName(),
-                feature.getDeviceClass().getName()
-        );
+
+        GeneralDevice newDevice = null;
+
+        try {
+            newDevice =
+                    DeviceFactory.getDeviceInstance(feature, CaptureSetting.defaultSetting(feature, MimeType.AUDIO));
+        } catch (InvalidCaptureSettingsError e) {
+            if (feature != Feature.ACCELEROMETER) {
+                throw e;
+            }
+        }
+
+        if (newDevice != null) {
+            assertEquals(
+                    "Generated device should be the same as predefined class.",
+                    newDevice.getClass().getName(),
+                    feature.getDeviceClass().getName()
+            );
+        }
     }
 
     private void testGetDeviceInstanceForUnimplementedFeature(Feature feature) {
