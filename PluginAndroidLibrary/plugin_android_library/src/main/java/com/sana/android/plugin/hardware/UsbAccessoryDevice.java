@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 public class UsbAccessoryDevice extends UsbGeneralDevice {
 
     private static final String LOG_TAG = "UsbAccessoryDevice";
+    private static final int BUFFER_DEFAULT_SIZE = 8;
 
     UsbAccessory accessory;
     ParcelFileDescriptor accessoryFileDescriptor;
@@ -44,7 +45,7 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
 
     public UsbAccessoryDevice(Context context) {
         super(context);
-        this.bufferSize = 8;
+        this.bufferSize = BUFFER_DEFAULT_SIZE;
     }
 
     public UsbAccessoryDevice(Context context, int bufferSize) {
@@ -93,7 +94,7 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
                 Log.d(UsbAccessoryDevice.LOG_TAG, "Closed accessory input stream");
             }
         } catch (IOException e) {
-            Log.d(UsbAccessoryDevice.LOG_TAG, "exception closing accessory: " + e.toString());
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Exception closing accessory: " + e.toString());
         } finally {
             accessoryFileDescriptor = null;
             accessory = null;
@@ -167,7 +168,18 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
     }
 
     public void reset() {
-
+        if (dataWithEvent != null) {
+            try {
+                dataWithEvent.dispose();
+            } catch (InterruptedException e) {
+                Log.e(
+                        UsbAccessoryDevice.LOG_TAG,
+                        "Operation interrupted while disposing the previous data.",
+                        e
+                );
+            }
+        }
+        dataWithEvent = null;
     }
 
     public void setCaptureSetting(CaptureSetting setting) {

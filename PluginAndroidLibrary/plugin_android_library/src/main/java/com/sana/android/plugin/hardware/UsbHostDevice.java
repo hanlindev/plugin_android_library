@@ -73,7 +73,7 @@ public class UsbHostDevice extends UsbGeneralDevice {
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         openDevice(device);
                     } else {
-                        Log.d(UsbHostDevice.LOG_TAG, "permission denied for device " + device);
+                        Log.d(UsbHostDevice.LOG_TAG, "Permission denied for device " + device);
                     }
                 }
             }

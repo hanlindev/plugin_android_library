@@ -56,7 +56,7 @@ public class UsbAccessoryRecordActivity extends ActionBarActivity {
         final UsbAccessoryDevice accessoryDevice = new UsbAccessoryDevice(this, 8);
         final DataWithEvent dataWithEvent = accessoryDevice.prepare();
 
-        UsbListener listener = new UsbListener(accessoryDevice, 10, TimeUnit.MILLISECONDS);
+        UsbListener listener = new UsbListener(accessoryDevice, 100, TimeUnit.MILLISECONDS);
         listener.startListening();
 
         if (dataWithEvent != null && dataWithEvent.getEvent()!= null)
