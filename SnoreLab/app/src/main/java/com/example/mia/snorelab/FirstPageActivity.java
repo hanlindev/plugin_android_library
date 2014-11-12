@@ -1,6 +1,8 @@
 package com.example.mia.snorelab;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,13 +12,32 @@ import android.view.View;
 import com.sana.android.plugin.application.CaptureManager;
 import com.sana.android.plugin.application.CommManager;
 
+import java.io.InputStream;
+
 
 public class FirstPageActivity extends ActionBarActivity {
+    private MediaPlayer mPlayer;
 
-    public void startGoodNight (View view) {
-        // Do something in response to button
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+    public void play (View view) {
+        mPlayer = new MediaPlayer();
+        try{
+            mPlayer.setDataSource(getApplicationContext(), getIntent().getData());
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void stopPlaying(View view){
+        try{
+            mPlayer.release();
+            mPlayer = null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

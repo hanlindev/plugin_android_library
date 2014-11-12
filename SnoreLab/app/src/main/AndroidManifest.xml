@@ -45,11 +45,6 @@
                 <data android:mimeType="audio/pcm-16"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-            <intent-filter>
-                <action android:name="com.sana.android.plugin.examples.SNORE_VIEW"/>
-                <data android:mimeType="audio/pcm-16"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
@@ -62,6 +57,11 @@
         <activity
             android:name=".FirstPageActivity"
             android:label="@string/title_activity_record" >
+            <intent-filter>
+                <action android:name="com.sana.android.plugin.examples.SNORE_VIEW"/>
+                <data android:mimeType="audio/pcm-16"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
     </application>
 

@@ -62,14 +62,18 @@ public class MainActivity extends Activity {
 
         try {
             bufferSize = AudioRecord.getMinBufferSize(FS, nChannels, audioEncoding);
-            cm = new CaptureManager(Feature.MICROPHONE_UNCOMPRESSED, MimeType.AUDIO_UNCOMPRESSED, getContentResolver());
+            cm = new CaptureManager(Feature.MICROPHONE_UNCOMPRESSED,
+                    MimeType.AUDIO_UNCOMPRESSED,
+                    getContentResolver());
             listener = new AudioEventListener(cm);
             cm.addListener(listener);
             cm.prepare();
             listener.startListening();
             cm.begin();
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Cannot start capture manager or listener!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),
+                    "Cannot start capture manager or listener!",
+                    Toast.LENGTH_LONG).show();
         }
         surfaceView = (CSurfaceView)findViewById(R.id.surfaceView);
         surfaceView.drawThread.setBuffer(buffer);
