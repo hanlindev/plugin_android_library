@@ -50,7 +50,7 @@ public class ShakingRecorder extends ActionBarActivity {
         }
     }
 
-    private static final int NUM_RECORDINGS_NEEDED = 1000;
+    private static final int NUM_RECORDINGS_NEEDED = 5000;
     private static final int PROGRESS_BOUNDARY = NUM_RECORDINGS_NEEDED / 360 + 1;
     private static final long RECORDING_INTERVAL = 1;
     private static final TimeUnit RECORDING_INTERVAL_UNIT = TimeUnit.MILLISECONDS;
@@ -112,8 +112,13 @@ public class ShakingRecorder extends ActionBarActivity {
 
         // receive launch intent from sana
         Intent intent = getIntent();
+
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
+        if (cm.getControlParameter("procedure_name") != null) {
+            System.out.println(cm.getControlParameter("procedure_name"));
+        }
+
 
         spinner = (ProgressBar)findViewById(R.id.progressBar);
         spinner.setVisibility(View.GONE);
@@ -184,10 +189,13 @@ public class ShakingRecorder extends ActionBarActivity {
     }
 
     public void sendDataToSana(View view) {
+        long start_time = System.currentTimeMillis();
         if (recordings.size() >= NUM_RECORDINGS_NEEDED) {
             spinner.setVisibility(View.VISIBLE);
             CommManager cm = CommManager.getInstance();
             cm.sendData(this, getDataString());
+            long end_time = System.currentTimeMillis();
+            System.out.println(end_time - start_time);
         } else {
             Toast errorToast = Toast.makeText(
                     getApplicationContext(),

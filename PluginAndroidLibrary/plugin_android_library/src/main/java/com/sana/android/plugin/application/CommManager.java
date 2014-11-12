@@ -9,7 +9,9 @@ import com.sana.android.plugin.communication.IntentAction;
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.hardware.Feature;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 public class CommManager {
     private Intent intent;
@@ -63,6 +65,30 @@ public class CommManager {
         //return this.intent.getData();
     }
 
+    /**
+     *
+     * @param key Key of control parameter
+     * @return Value of control parameter with key name or null if the control parameter is not exist
+     */
+    public String getControlParameter(String key) {
+        return this.intent.getStringExtra(key);
+    }
+
+    /**
+     *
+     * @param keys keys of all control parameters
+     * @return a Map with all control parameter key-value pairs
+     */
+    public Map<String, String> getAllControlParameters(Collection<String> keys) {
+        HashMap<String, String> result = new HashMap<>();
+        for (String key : keys) {
+            if (this.getControlParameter(key) != null) {
+                result.put(key, this.getControlParameter(key));
+            }
+        }
+        return result;
+    }
+
     /*
         Send binary data to Sana
      */
@@ -80,10 +106,11 @@ public class CommManager {
      */
     public void sendData(Activity sender, String data) {
         Uri uri = this.intent.getData();
+        uri = uri.buildUpon().fragment(data).build();
         String type = this.intent.getType();
         Intent dataIntent = new Intent();
         dataIntent.setDataAndType(uri, type);
-        dataIntent.putExtra(Intent.EXTRA_TEXT, data);
+//        dataIntent.putExtra(Intent.EXTRA_TEXT, data);
         sender.setResult(Activity.RESULT_OK, dataIntent);
         sender.finish();
     }
