@@ -33,12 +33,12 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
     private static final String LOG_TAG = "UsbAccessoryDevice";
     private static final int BUFFER_DEFAULT_SIZE = 8;
 
-    UsbAccessory accessory;
-    ParcelFileDescriptor accessoryFileDescriptor;
-    FileInputStream accessoryInput;
-    FileOutputStream accessoryOutput;
-    CaptureSetting setting;
-    BinaryDataWithPollingEvent dataWithEvent;
+    private UsbAccessory accessory;
+    private ParcelFileDescriptor accessoryFileDescriptor;
+    private FileInputStream accessoryInput;
+    private FileOutputStream accessoryOutput;
+    private CaptureSetting setting;
+    private BinaryDataWithPollingEvent dataWithEvent;
     private int bufferSize;
 
     public UsbAccessoryDevice() {}

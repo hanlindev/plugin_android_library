@@ -28,7 +28,7 @@ public class ReactionAppActivity extends Activity {
 
     private class UsbListenerInitial extends TimedListener {
 
-        Object sender;
+        private Object sender;
 
         public UsbListenerInitial(Object sender, long interval, TimeUnit unit) {
             super(sender, interval, unit);
@@ -52,7 +52,7 @@ public class ReactionAppActivity extends Activity {
 
     private class UsbListenerTime extends TimedListener {
 
-        Object sender;
+        private Object sender;
 
         public UsbListenerTime(Object sender, long interval, TimeUnit unit) {
             super(sender, interval, unit);

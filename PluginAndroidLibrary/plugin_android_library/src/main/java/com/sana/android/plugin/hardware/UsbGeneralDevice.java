@@ -13,8 +13,8 @@ import java.io.IOException;
  */
 public abstract class UsbGeneralDevice implements GeneralDevice {
 
-    Context context;
-    UsbManager usbManager;
+    protected Context context;
+    protected UsbManager usbManager;
 
     final String ACTION_USB_PERMISSION = "com.sana.android.plugin.hardware.USB_PERMISSION";
 

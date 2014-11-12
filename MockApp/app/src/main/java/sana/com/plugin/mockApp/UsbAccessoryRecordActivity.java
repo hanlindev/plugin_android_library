@@ -24,11 +24,11 @@ public class UsbAccessoryRecordActivity extends ActionBarActivity {
 
     final Context context = this;
 
-    String message = "";
+    private String message = "";
 
     public class UsbListener extends TimedListener {
 
-        Object sender;
+        private Object sender;
 
         public UsbListener(Object sender, long interval, TimeUnit unit) {
             super(sender, interval, unit);

@@ -28,7 +28,7 @@ public class UsbHostRecordActivity extends ActionBarActivity {
 
     private class UsbListener extends TimedListener {
 
-        Object sender;
+        private Object sender;
 
         public UsbListener(Object sender, long interval, TimeUnit unit) {
             super(sender, interval, unit);
