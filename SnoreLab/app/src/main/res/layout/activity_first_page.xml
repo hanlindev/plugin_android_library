@@ -10,17 +10,29 @@
     tools:context="com.example.mia.snorelab.FirstPageActivity">
 
     <Button
-        android:id="@+id/btn_CaptureSound"
-        android:layout_width="450dp"
-        android:layout_height="400dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="16dp"
-        android:onClick="startGoodNight"
-        android:background="#0000"
-        android:textColor="#FFFFFF"
-        android:textSize="40dp"
-        android:fontFamily="melon"
-        android:text="Good Night\nTouch" />
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:background="@drawable/send_button_shape"
+        android:text="Play"
+        android:id="@+id/playButton"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#FFFF"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="53dp"
+        android:onClick="play"/>
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:background="@drawable/send_button_shape"
+        android:text="Stop"
+        android:id="@+id/stopButton"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#FFFF"
+        android:layout_marginTop="47dp"
+        android:onClick="stopPlaying"
+        android:layout_below="@+id/playButton"
+        android:layout_alignLeft="@+id/playButton"
+        android:layout_alignStart="@+id/playButton" />
 
 </RelativeLayout>

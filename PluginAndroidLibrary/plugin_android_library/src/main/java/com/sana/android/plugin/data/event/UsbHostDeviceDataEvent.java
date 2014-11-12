@@ -71,7 +71,7 @@ public class UsbHostDeviceDataEvent extends BaseDataEvent implements Runnable {
 
         while (true) {
             byte[] temp = new byte[BUFFER_SIZE];
-            final int numBytesRead = connection.bulkTransfer(endpoint, temp, temp.length, 0);
+            final int numBytesRead = connection.bulkTransfer(endpoint, temp, temp.length, timeout);
             if (numBytesRead > 0) {
                 Log.d(UsbHostDeviceDataEvent.LOG_TAG, "Number of bytes read: " + numBytesRead);
                 for (int i = 0; i < numBytesRead && pointer < bufferSize; i++, pointer++)
