@@ -283,7 +283,7 @@ public class ReactionAppActivity extends Activity {
                                 actionMessage.setText("Done");
                             }
                         });
-                        sendButton.setVisibility(View.INVISIBLE);
+                        sendButton.setVisibility(View.VISIBLE);
                         break;
                     }
 

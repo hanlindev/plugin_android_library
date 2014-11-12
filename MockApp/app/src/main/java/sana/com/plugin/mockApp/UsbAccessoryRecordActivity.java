@@ -41,10 +41,9 @@ public class UsbAccessoryRecordActivity extends ActionBarActivity {
 
         @Override
         public void processData(Object sender, Object[] data) {
-            for (int i=0;i<data.length;i++)
+            for (int i = 0; i < data.length; i++) {
                 message += data[i].toString();
-            Log.d("Message = ", message);
-            Log.d("length = ", data.length+"");
+            }
         }
     }
 

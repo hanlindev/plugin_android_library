@@ -61,6 +61,9 @@ public class CommManager {
 
     public Uri getUri() {
         //Intent intent = this.intent;
+        if (this.getIntent() == null) {
+            return null;
+        }
         return this.getIntent().getData();
         //return this.intent.getData();
     }
