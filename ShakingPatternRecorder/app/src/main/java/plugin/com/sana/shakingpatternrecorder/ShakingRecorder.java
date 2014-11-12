@@ -112,8 +112,13 @@ public class ShakingRecorder extends ActionBarActivity {
 
         // receive launch intent from sana
         Intent intent = getIntent();
+
         CommManager cm = CommManager.getInstance();
         cm.respondToIntent(intent);
+        if (cm.getControlParameter("procedure_name") != null) {
+            System.out.println(cm.getControlParameter("procedure_name"));
+        }
+
 
         spinner = (ProgressBar)findViewById(R.id.progressBar);
         spinner.setVisibility(View.GONE);
