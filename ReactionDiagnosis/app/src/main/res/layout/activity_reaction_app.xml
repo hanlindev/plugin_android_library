@@ -57,6 +57,18 @@
             android:gravity="center_horizontal" />
     </LinearLayout>
 
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:background="@drawable/send_button_shape"
+        android:text="Send"
+        android:id="@+id/send_button"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#FFFF"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="500dp"
+        android:onClick="sendDataToSana"/>
+
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
 </FrameLayout>
