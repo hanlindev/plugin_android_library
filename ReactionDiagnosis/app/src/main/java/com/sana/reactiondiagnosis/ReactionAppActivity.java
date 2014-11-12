@@ -10,9 +10,12 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.sana.android.plugin.application.CommManager;
 import com.sana.android.plugin.data.DataWithEvent;
 import com.sana.android.plugin.data.listener.TimedListener;
 import com.sana.android.plugin.hardware.UsbHostDevice;
@@ -25,7 +28,7 @@ public class ReactionAppActivity extends Activity {
 
     private class UsbListenerInitial extends TimedListener {
 
-        Object sender;
+        private Object sender;
 
         public UsbListenerInitial(Object sender, long interval, TimeUnit unit) {
             super(sender, interval, unit);
@@ -49,7 +52,7 @@ public class ReactionAppActivity extends Activity {
 
     private class UsbListenerTime extends TimedListener {
 
-        Object sender;
+        private Object sender;
 
         public UsbListenerTime(Object sender, long interval, TimeUnit unit) {
             super(sender, interval, unit);
@@ -100,6 +103,7 @@ public class ReactionAppActivity extends Activity {
     private TextView actionMessage;
     private TextView startMessage;
     private TextView infoMessage;
+    private Button sendButton;
 
 
     private void setupDevice() {
@@ -135,9 +139,11 @@ public class ReactionAppActivity extends Activity {
         actionMessage = (TextView) findViewById(R.id.action_message);
         startMessage = (TextView) findViewById(R.id.start);
         infoMessage = (TextView) findViewById(R.id.info_message);
+        sendButton = (Button) findViewById(R.id.send_button);
 
         actionMessage.setVisibility(View.INVISIBLE);
         infoMessage.setVisibility(View.INVISIBLE);
+        sendButton.setVisibility(View.INVISIBLE);
 
         if (device == null) {
             setupDevice();
@@ -160,7 +166,6 @@ public class ReactionAppActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        Log.d("destroying", "destroying");
         super.onDestroy();
         dataWithEvent.getEvent().removeAllListeners();
         if (initialListener != null) {
@@ -223,7 +228,6 @@ public class ReactionAppActivity extends Activity {
             public void run() {
                 while (true) {
                     Log.d(ReactionAppActivity.LOG_TAG, "Running reading button");
-                    Log.d("last time = ", lastButtonTime + "");
                     long pushedTime = INVALID_TIME;
                     try {
                         do {
@@ -232,12 +236,9 @@ public class ReactionAppActivity extends Activity {
                     } catch (InterruptedException e) {
                         Log.d(ReactionAppActivity.LOG_TAG, "Interrupted when reading from blocking queue");
                     }
-                    Log.d("this time = ", pushedTime + "");
-                    //lastButtonTime = pushedTime;
 
                     String message = "";
                     if (curTime == INVALID_TIME || pushedTime < curTime) {
-                        Log.d("Cheaing ", lastButtonTime + " / " + pushedTime);
                         message = "Cheating";
                         changingBackground.interrupt();
                     } else {
@@ -249,7 +250,6 @@ public class ReactionAppActivity extends Activity {
 
                     curTime = INVALID_TIME;
 
-                    Log.d("fff", "after pushing button");
                     final String newMessage = message;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -283,6 +283,7 @@ public class ReactionAppActivity extends Activity {
                                 actionMessage.setText("Done");
                             }
                         });
+                        sendButton.setVisibility(View.INVISIBLE);
                         break;
                     }
 
@@ -295,7 +296,7 @@ public class ReactionAppActivity extends Activity {
 
     private void startTester() {
 
-        timeListener = new UsbListenerTime(device, 1, TimeUnit.MILLISECONDS);
+        timeListener = new UsbListenerTime(device, 5, TimeUnit.MILLISECONDS);
         timeListener.startListening();
 
         if (dataWithEvent != null && dataWithEvent.getEvent() != null) {
@@ -319,5 +320,15 @@ public class ReactionAppActivity extends Activity {
         runWaitingScreen();
         setupReactionDisplay();
         readingButton.start();
+    }
+
+    private String getDataString() {
+        double reactionTime = (triesCount == 0) ? 0 : timeSum / triesCount;
+        return "Average reaction time is: " + reactionTime + "ms.";
+    }
+
+    private void sendDataToSana(View view) {
+        CommManager cm = CommManager.getInstance();
+        cm.sendData(this, getDataString());
     }
 }
