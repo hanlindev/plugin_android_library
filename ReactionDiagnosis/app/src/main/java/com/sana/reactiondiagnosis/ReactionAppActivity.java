@@ -295,7 +295,7 @@ public class ReactionAppActivity extends Activity {
 
     private void startTester() {
 
-        timeListener = new UsbListenerTime(device, 1, TimeUnit.MILLISECONDS);
+        timeListener = new UsbListenerTime(device, 5, TimeUnit.MILLISECONDS);
         timeListener.startListening();
 
         if (dataWithEvent != null && dataWithEvent.getEvent() != null) {

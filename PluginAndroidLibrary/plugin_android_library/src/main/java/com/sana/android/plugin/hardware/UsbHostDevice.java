@@ -11,7 +11,6 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,7 +38,6 @@ public class UsbHostDevice extends UsbGeneralDevice {
     private static final String LOG_TAG = "UsbHostDevice";
 
     private UsbDevice device;
-    private ParcelFileDescriptor deviceFileDescriptor;
     private UsbDeviceConnection connection;
     private UsbInterface usbInterface;
     private UsbEndpoint endpoint;
@@ -123,7 +121,6 @@ public class UsbHostDevice extends UsbGeneralDevice {
             connection.releaseInterface(usbInterface);
         }
         device = null;
-        deviceFileDescriptor = null;
     }
 
     @Override
@@ -187,7 +184,7 @@ public class UsbHostDevice extends UsbGeneralDevice {
     }
 
     @Override
-    public void stop() {
+        public void stop() {
         Log.d(UsbHostDevice.LOG_TAG, "Stopping device");
         if (dataWithEvent != null && dataWithEvent.getEvent() != null) {
             try {

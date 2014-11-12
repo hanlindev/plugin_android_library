@@ -81,9 +81,9 @@ public class UsbAccessoryDevice extends UsbGeneralDevice {
             accessoryInput = new FileInputStream(fd);
             accessoryOutput = new FileOutputStream(fd);
 
-            Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory opened");
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory open: SUCCESS");
         } else {
-            Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory open fail");
+            Log.d(UsbAccessoryDevice.LOG_TAG, "Accessory open: FAILURE");
         }
     }
 
