@@ -26,6 +26,21 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="com.sana.android.plugin.examples.HEART_RATE_AUDIO"/>
+                <data android:mimeType="text/plain"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.sana.android.plugin.examples.HEART_RATE_AUDIO"/>
+                <data android:mimeType="audio/3gpp"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.sana.android.plugin.examples.HEART_RATE_AUDIO_VIEW"/>
+                <data android:mimeType="audio/3gpp"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
     </application>
 </manifest>
