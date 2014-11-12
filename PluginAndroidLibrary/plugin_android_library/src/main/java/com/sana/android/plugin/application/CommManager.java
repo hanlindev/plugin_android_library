@@ -63,6 +63,15 @@ public class CommManager {
         //return this.intent.getData();
     }
 
+    /**
+     *
+     * @param name Key of control parameter
+     * @return Value of control parameter with key name or null if the control parameter is not exist
+     */
+    public String getControlParameter(String name) {
+        return this.intent.getStringExtra(name);
+    }
+
     /*
         Send binary data to Sana
      */
