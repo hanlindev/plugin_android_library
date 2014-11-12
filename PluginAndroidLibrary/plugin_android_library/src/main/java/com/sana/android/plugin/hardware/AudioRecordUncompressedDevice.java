@@ -163,6 +163,9 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
         File file = new File(getTempFilename());
         file.delete();
     }
+    /*
+    This method writes audio data to the temp file.
+     */
     private void writeAudioDataToFile(){
         byte data[] = new byte[bufferSize];
         String filename = getTempFilename();
@@ -211,6 +214,9 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
 
         return (file.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
     }
+    /*
+    This method copies tempfile to the required file.
+     */
     private void copyWaveFile(String inFilename,String outFilename){
         FileInputStream in = null;
         FileOutputStream out = null;
@@ -245,6 +251,9 @@ public class AudioRecordUncompressedDevice implements GeneralDevice {
             e.printStackTrace();
         }
     }
+    /*
+    This method convert pcm-16 format to .wav format
+     */
     private void WriteWaveFileHeader(
             FileOutputStream out, long totalAudioLen,
             long totalDataLen, long longSampleRate, int channels,

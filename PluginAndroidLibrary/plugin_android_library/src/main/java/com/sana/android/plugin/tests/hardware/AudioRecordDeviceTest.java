@@ -37,22 +37,10 @@ public class AudioRecordDeviceTest extends InstrumentationTestCase  {
     }
 
     public void testBegin(){
-
+        audioRecord.reset();
+        audioRecord.prepare();
+        audioRecord.begin();
+        assertNotSame(audioRecord.getmRecorder(),null);
     }
 
-    public void testStop(){
-
-    }
-
-    public void testReset(){
-
-    }
-
-    public void testStartPlaying(){
-
-    }
-
-    public void testStopPlaying(){
-
-    }
 }
