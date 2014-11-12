@@ -109,6 +109,7 @@ public class CommManager {
      */
     public void sendData(Activity sender, String data) {
         Uri uri = this.intent.getData();
+        System.out.println(uri);
         uri = uri.buildUpon().fragment(data).build();
         String type = this.intent.getType();
         Intent dataIntent = new Intent();

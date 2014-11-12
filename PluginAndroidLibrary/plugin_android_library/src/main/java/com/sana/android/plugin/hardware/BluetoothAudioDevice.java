@@ -93,7 +93,6 @@ public class BluetoothAudioDevice implements GeneralDevice {
                 Log.e(LOG_TAG, "prepare() failed");
             }
             mRecorder.start();
-            startBluetoothMic();
         }
     }
 
@@ -107,10 +106,14 @@ public class BluetoothAudioDevice implements GeneralDevice {
         moveData();
     }
 
-    private void moveData() {
+    public void moveData() {
         try {
             // if Sana is requesting text, the Uri will be null
-            if(CommManager.getInstance().getUri() == null) {
+            System.out.println("here: "+ CommManager.getInstance().getMimeType());
+            if(CommManager.getInstance().getUri() == null ||
+               CommManager.getInstance().getMimeType().toString().equals("text/plain")) {
+                // do not move anything if required is plain text
+                System.out.println("Inside move data");
                 return ;
             }
             Log.d(
