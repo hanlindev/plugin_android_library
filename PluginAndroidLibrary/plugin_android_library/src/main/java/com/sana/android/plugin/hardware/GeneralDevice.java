@@ -18,6 +18,4 @@ public interface GeneralDevice {
     public void stop();
     public void reset();
     public void setCaptureSetting(CaptureSetting setting);
-    //public Object getmRecorder();
-    //public void startBluetoothMic();
 }
