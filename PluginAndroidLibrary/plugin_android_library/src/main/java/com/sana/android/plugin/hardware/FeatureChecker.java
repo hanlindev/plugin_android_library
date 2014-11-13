@@ -62,10 +62,7 @@ public class FeatureChecker {
         }
         return bluetoothConnected;
     }
-    /*
-    public void unregister(){
-        mContext.unregisterReceiver(mReceiver);
-    }*/
+
     // return true is there is a valid bluetooth connectivity
     // return false if there is no
 

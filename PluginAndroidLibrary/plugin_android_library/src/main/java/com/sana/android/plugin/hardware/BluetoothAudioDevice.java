@@ -29,7 +29,7 @@ import java.net.URISyntaxException;
 
 
 /**
- * Created by hanlin on 9/14/14.
+ * Created by zhaoyue on 9/14/14.
 */
 public class BluetoothAudioDevice implements GeneralDevice {
     private ContentResolver resolver;
@@ -43,8 +43,8 @@ public class BluetoothAudioDevice implements GeneralDevice {
     private int audioEncoder;
     private int audioSource;
     private int outputFormat;
-    //prepare is to store location of recorded audio?
 
+    // set the current output file name
     public BluetoothAudioDevice(){
         this.mFileName=Environment.getExternalStorageDirectory().getAbsolutePath()
                 + "/bluetoothtest.3gp";
@@ -66,11 +66,9 @@ public class BluetoothAudioDevice implements GeneralDevice {
             );
             return result;
         } catch (FileNotFoundException e) {
-            // TODO handle more carefully
             e.printStackTrace();
             return null;
         } catch (URISyntaxException e) {
-            // TODO handle more carefully
             e.printStackTrace();
             return null;
         } catch (IOException e) {
@@ -81,11 +79,9 @@ public class BluetoothAudioDevice implements GeneralDevice {
 
     @Override
     public void begin() {
-        //mRecorder = new MediaRecorder();
         if (mRecorder != null) {
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            //        mRecorder.setOutputFile(mFileName);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             try {
                 mRecorder.prepare();
@@ -121,9 +117,7 @@ public class BluetoothAudioDevice implements GeneralDevice {
                     CommManager.getInstance().getUri().toString()
             );
             FileInputStream is = new FileInputStream(mFileName);
-            //Log.d(TAG, "Inputstream" + IOUtils.toString(is, "UTF-8"));
             OutputStream os = resolver.openOutputStream(CommManager.getInstance().getUri());
-            //Log.d(TAG, "Outputstream" + os.toString());
             IOUtils.copy(is, os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
