@@ -61,16 +61,14 @@ public class CommManager {
     }
 
     public Uri getUri() {
-        //Intent intent = this.intent;
         if (this.getIntent() == null) {
             return null;
         }
         return this.getIntent().getData();
-        //return this.intent.getData();
     }
 
     /**
-     *
+     * Get control parameter with given key
      * @param key Key of control parameter
      * @return Value of control parameter with key name or null if the control parameter is not exist
      */
@@ -93,8 +91,9 @@ public class CommManager {
         return result;
     }
 
-    /*
-        Send binary data to Sana
+    /**
+     * Send binary data to Sana
+     * @param sender
      */
     public void sendData(Activity sender) {
         Uri uri = this.intent.getData();
@@ -105,8 +104,10 @@ public class CommManager {
         sender.finish();
     }
 
-    /*
-        Send plain text data to Sana
+    /**
+     * Send plain text to Sana
+     * @param sender
+     * @param data
      */
     public void sendData(Activity sender, String data) {
         Uri uri = this.intent.getData();
@@ -115,7 +116,6 @@ public class CommManager {
         String type = this.intent.getType();
         Intent dataIntent = new Intent();
         dataIntent.setDataAndType(uri, type);
-//        dataIntent.putExtra(Intent.EXTRA_TEXT, data);
         sender.setResult(Activity.RESULT_OK, dataIntent);
         sender.finish();
     }

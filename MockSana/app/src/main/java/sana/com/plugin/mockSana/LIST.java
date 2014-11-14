@@ -92,7 +92,6 @@ public class LIST extends ActionBarActivity implements AdapterView.OnItemClickLi
             Intent intent = new Intent("sana.com.plugin.mockSana.ImagePreview");
             startActivity(intent);
             intent.putExtra(Intent.EXTRA_TEXT, files[i].getPath());
-            System.out.println(files[i].getPath());
         }
         else if (folderName.equals("audio")) {
             Intent intent = new Intent("sana.com.plugin.mockSana.AudioPreview");
