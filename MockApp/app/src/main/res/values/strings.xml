@@ -4,7 +4,34 @@
     <string name="app_name">MockApp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="send_text">Send Text to MockSana</string>
-    <string name="send_binary">Send Binary to MockSana</string>
+    <string name="send_text">Send Text</string>
+    <string name="send_binary">Send Binary</string>
+    <string name="record_from_accessory_button">Record from USB Accessory</string>
+    <string name="record_from_host_button">Record from USB Host</string>
+    <string name="bluetooth_button">Record from bluetooth mic</string>
+    <string name="stop_recording_string">Stop Bluetooth Recording</string>
+    <string name="start_recording_string">Start Bluetooth Recording</string>
+    <string name="start_playback_string">Start Bluetooth Playback</string>
+    <string name="stop_playback_string">Stop Bluetooth Playback</string>
+    <string name="button_record_from_mic">Record From built-in mic</string>
+    <string name="button_take_photo_or_video">Take a Photo or Video</string>
+    <string name="title_activity_audio_recording">AudioRecordingActivity</string>
+    <string name="title_activity_audio_record">AudioRecordActivity</string>
+    <string name="title_activity_take_photo_or_video">TakePhotoOrVideoActivity</string>
+    <string name="title_activity_usb_accessory_record">UsbAccessoryRecordActivity</string>
+    <string name="title_activity_accelerometer">AccelerometerActivity</string>
+    <string name="display_button">Display Message</string>
+
+    <color name="white">#FFFFFF</color>
+    <color name="blue">#CCFFFF</color>
+
+    <string name="title_activity_usb_host_record">UsbHostRecordActivity</string>
+    <string name="title_activity_reaction_app">ReactionAppActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="start_recording">Record</string>
+    <string name="stop_recording">Stop</string>
+
+    <string name="title_activity_uncompressed_audio_record">UncompressedAudioRecordActivity</string>
 
 </resources>

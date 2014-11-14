@@ -2,20 +2,29 @@ package com.sana.android.plugin.data.event;
 
 import android.util.Log;
 
+import com.sana.android.plugin.data.BinaryDataWithPollingEvent;
+
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by hanlin on 9/13/14.
  * This is the event type that actively polls data from sensors and notifies
- * interested listeners.
+ * interested listeners. When the buffer of this event is full,
+ * {@link #notifyListeners()} will be called.
+ *
+ * @author Han Lin
  */
 
 public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
+
+    private static final long TERMINATION_TIMEOUT = 5;
+    private static final TimeUnit TERMINATION_TIMEOUT_UNIT = TimeUnit.SECONDS;
     private static final String LOG_TAG = "IEL.BytePollingDataEvent";
     private static final String UNEXPECTED_END_STREAM_EXCEPTION_MSG =
             "Unexpected end of input stream encountered.";
@@ -32,18 +41,43 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
     private ExecutorService pollingThreads;
     private int pointer;
 
+    /**
+     * @param sender
+     * @param incomingDataChannel  This is the input stream from which the event
+     *                                 will poll data from.
+     */
     public BytePollingDataEvent(Object sender, InputStream incomingDataChannel) {
         this(sender, incomingDataChannel, BytePollingDataEvent.BUFFER_SIZE_SMALL);
     }
 
+    /**
+     * @param sender                The source of data.
+     * @param incomingDataChannel   The input stream from which the event polls
+     *                                  data from.
+     * @param bufferSize            The size of the buffer. The event will only
+     *                              notify listeners when its buffer becomes
+     *                              full.
+     */
     public BytePollingDataEvent(
             Object sender, InputStream incomingDataChannel, int bufferSize) {
         super(sender);
         this.incomingDataChannel = incomingDataChannel;
         this.bufferSize = bufferSize;
+        this.buffer = new byte[bufferSize];
         this.pollingThreads = Executors.newSingleThreadExecutor();
         this.pointer = 0;
+    }
+
+    public void startEvent() {
         this.pollingThreads.submit(this);
+    }
+
+    public void stopEvent() throws InterruptedException {
+        this.pollingThreads.shutdown();
+        this.pollingThreads.awaitTermination(
+                BytePollingDataEvent.TERMINATION_TIMEOUT,
+                BytePollingDataEvent.TERMINATION_TIMEOUT_UNIT
+        );
     }
 
     @Override
@@ -53,13 +87,21 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
             try {
                 numBytesRead = this.incomingDataChannel.read(
                         this.buffer, this.pointer, this.bufferSize - this.pointer);
-                this.pointer += numBytesRead;
+                this.pointer = (this.pointer + numBytesRead) % this.bufferSize;
+                Log.d(
+                        BytePollingDataEvent.LOG_TAG,
+                        String.format(
+                                "Number of bytes read: %d and current" +
+                                        " pointer position: %d",
+                                numBytesRead,
+                                this.pointer
+                        )
+                );
+
                 if (this.pointer == 0) {
-                    this.notifyListeners(ArrayUtils.toObject(this.buffer));
+                    this.notifyListeners();
                 }
             } catch (IOException e) {
-                // TODO decide what to do when the input stream is shutdown
-                // unexpectedly. But I think we shouldn't fatal this.
                 Log.d(
                         BytePollingDataEvent.LOG_TAG,
                         BytePollingDataEvent.UNEXPECTED_END_STREAM_EXCEPTION_MSG,
@@ -68,5 +110,14 @@ public class BytePollingDataEvent extends BaseDataEvent implements Runnable {
                 break;
             }
         }
+
+        // Notify the listeners of remaining bytes.
+        if (this.pointer > 0) {
+            this.notifyListeners();
+        }
+    }
+
+    private void notifyListeners() {
+        this.notifyListeners(ArrayUtils.toObject(this.buffer));
     }
 }

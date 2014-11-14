@@ -15,13 +15,84 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
+        <!-- Providers below here are deprecated -->
+        <!-- <provider -->
+        <!-- android:name="org.sana.android.db.ImageProvider" -->
+        <!-- android:authorities="org.sana.provider.Image" /> -->
+        <!-- <provider -->
+        <!-- android:name="org.sana.android.db.SoundProvider" -->
+        <!-- android:authorities="org.sana.provider.Sound" /> -->
+        <!-- <provider -->
+        <!-- android:name="org.sana.android.db.BinaryProvider" -->
+        <!-- android:authorities="org.sana.provider.Binary" /> -->
+
+
+        <!-- FileProvider -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="sana.com.plugin.mockSana.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".READING"
+            android:label="@string/title_activity_reading" >
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockSana.READING" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".LIST"
+            android:label="@string/title_activity_list" >
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockSana.LIST" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AudioPreview"
+            android:label="@string/title_activity_audio_preview" >
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockSana.AudioPreview" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideoPreview"
+            android:label="@string/title_activity_video_preview" >
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockSana.VideoPreview" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ImagePreview"
+            android:label="@string/title_activity_image_preview" >
+            <intent-filter>
+                <action android:name="sana.com.plugin.mockSana.ImagePreview" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

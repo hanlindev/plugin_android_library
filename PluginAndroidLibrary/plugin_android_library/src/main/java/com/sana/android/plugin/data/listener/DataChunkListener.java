@@ -10,17 +10,18 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This is the base listener that listens for updates by a fixed number of
- * datas. It works by having a background thread monitoring new datas
+ * data. It works by having a background thread monitoring new data
  * coming in. The listener has a fixed sized buffer that holds the incoming
- * datas. When the buffer is full, the listener will process the datas in
- * the buffer and clear it, allowing more datas to be filled into the buffer.
+ * data. When the buffer is full, the listener will process the data in
+ * the buffer and clear it, allowing more data to be filled into the buffer.
  *
  * @author Han Lin
  */
 public abstract class DataChunkListener
-    implements DataListener, Runnable {
-
-    private final static String LOG_TAG = "IEL.DataChunkListener";
+        implements DataListener, Runnable {
+    private final static String LOG_TAG = "DataChunkListener";
+    private final static String RESOURCE_LEAK_WARNING_MSG =
+            "Threads not properly shutdown. Potential resource leak may be caused.";
     private final static String SHUTDOWN_INTERRUPTED_MSG_EXCEPTION_MSG =
         "Listener shutdown interrupted.";
     private final static String FATAL_INTERRUPTION_MSG_FORMAT =
@@ -49,22 +50,27 @@ public abstract class DataChunkListener
         this.receiverThread = Executors.newSingleThreadExecutor();
     }
 
+    public void setExpectedSender(Object sender) {
+        this.sender = sender;
+    }
+
     public Object getExpectedSender() {
         return this.sender;
     }
 
-    /**
-     * Put the given data in the waiting list of data to be processed.
-     *
-     * @param data    The data to be processed.
-     * @throws InterruptedException when the data fail to be put into the
-     * waiting list.
-     */
     @Override
     public synchronized void putData(Object[] data) {
+        Log.d(
+                DataChunkListener.LOG_TAG,
+                "Received data of length " + data.length
+        );
         if (this.isListening) {
             try {
                 this.appendOperations.put(new DataAppender(this.buffer, data));
+                Log.d(
+                        DataChunkListener.LOG_TAG,
+                        "DataAppender created for " + data
+                );
             } catch (InterruptedException e) {
                 // This is designed to wait indefinitely before the new data
                 // are registered. If it is interrupted, we can assume
@@ -77,19 +83,12 @@ public abstract class DataChunkListener
         }
     }
 
-    /**
-     * Start the background thread and begin accepting data.
-     */
     @Override
     public void startListening() {
         this.isListening = true;
         this.receiverThread.submit(this);
     }
 
-    /**
-     * Attempt to stop this data listener. It will wait for 5 seconds before
-     * timing out.
-     */
     @Override
     public void stopListening() {
         this.stopListening(
@@ -97,30 +96,35 @@ public abstract class DataChunkListener
             DataChunkListener.SHUTDOWN_TIMEOUT_UNIT
         );
     }
-    /**
-     * Stop accepting more data, then signal the monitoring thread to finish
-     * the remaining job.
-     */
+
     @Override
     public void stopListening(long timeout, TimeUnit unit) {
+        Log.d(
+                DataChunkListener.LOG_TAG,
+                "Stopping listener - " + this
+        );
         this.isListening = false;
         this.receiverThread.shutdown();
         try {
             if (!this.receiverThread.awaitTermination(timeout,unit)) {
-                // TODO decide what to do when shutdown times out.
+                Log.d(
+                        DataChunkListener.LOG_TAG,
+                        DataChunkListener.RESOURCE_LEAK_WARNING_MSG
+                );
             }
         } catch (InterruptedException e) {
-            // TODO decide what to do when shutdown is interrupted.
             Log.d(
                     DataChunkListener.LOG_TAG,
                     DataChunkListener.SHUTDOWN_INTERRUPTED_MSG_EXCEPTION_MSG,
                     e
             );
         }
+        this.processRemainingData();
     }
 
     /**
      * The procedure the background thread uses to monitor incoming data.
+     * When data is available, it will be appended to the buffer.
      * Process the data when the buffer is full and clear the buffer after
      * that.
      */
@@ -130,6 +134,10 @@ public abstract class DataChunkListener
             DataAppender appendOperation = null;
             try {
                 appendOperation = this.appendOperations.take();
+                Log.d(
+                        DataChunkListener.LOG_TAG,
+                        "AppendOperation " + appendOperation + " taken"
+                );
                 this.processAppendOperation(appendOperation);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -146,7 +154,7 @@ public abstract class DataChunkListener
     }
 
     private void processRemainingData() {
-        DataAppender[] appenders = this.buffer.toArray(new DataAppender[0]);
+        DataAppender[] appenders = this.appendOperations.toArray(new DataAppender[0]);
         for (DataAppender appender : appenders) {
             this.processAppendOperation(appender);
         }
@@ -157,10 +165,7 @@ public abstract class DataChunkListener
     }
 
     /**
-     * Process the new data.
-     *
-     * @param data This can be any number of data. But when invoked by the
-     *                incoming data monitoring thread the number of data
+     * @param data  When invoked by the incoming data monitoring thread the number of data
      *                is less than or equal to the buffer size.
      */
     @Override

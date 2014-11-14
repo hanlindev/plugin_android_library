@@ -1,5 +1,8 @@
 package com.sana.android.plugin.application;
 
+import android.content.ContentResolver;
+import android.util.Log;
+
 import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.DataWithEvent;
 import com.sana.android.plugin.data.listener.DataListener;
@@ -8,30 +11,108 @@ import com.sana.android.plugin.hardware.CaptureSetting;
 import com.sana.android.plugin.hardware.DeviceFactory;
 import com.sana.android.plugin.hardware.Feature;
 import com.sana.android.plugin.hardware.GeneralDevice;
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Vector;
 
 /**
  * The main helper class that facilitates data capturing from various sensing
- * devices.
+ * devices. You should use this class in most cases. Sample code snippets:
+ * <ol>
+ *     <li>
+ *         Create an instance variable:
+ *         <pre>
+ *             <code>
+ *                 private CaptureManager captureManager;
+ *             </code>
+ *         </pre>
+ *     </li>
+ *     <li>
+ *         Optional: Implement your own data event listener. You can extend from existing listeners
+ *         including {@link com.sana.android.plugin.data.listener.DataChunkListener} and
+ *         {@link com.sana.android.plugin.data.listener.TimedListener}. If these classes don't
+ *         meet your requirement, you can implement {@link com.sana.android.plugin.data.listener.DataListener}.
+ *     </li>
+ *     <li>
+ *         Instantiate the captureManager instance variable in onCreate method.
+ *         <pre>
+ *             <code>
+ *                 protected void onCreate(Bundle savedInstanceState) {
+ *                     <b>//...</b>
+ *                     captureManager = new CaptureManager(Feature.BLUETOOTH, MimeType.Audio, getContentResolver());
+ *                     captureManager.addListener(new MyListener());// You have to call addListener before prepare
+ *                     captureManager.prepare();
+ *                     <b>//...</b>
+ *                 }
+ *             </code>
+ *         </pre>
+ *         Additionally, if you need to pass additional or required capture setting, you can do this:
+ *         <pre>
+ *             <code>
+ *                 protected void onCreate(Bundle savedInstanceState) {
+ *                     <b>//...</b>
+ *                     CaptureSetting captureSetting = new CaptureSetting();
+ *                     // Do something with captureSetting
+ *                     captureManager = new CaptureManager(Feature.BLUETOOTH, MimeType.Audio, getContentResolver(), captureSetting);
+ *                     captureManager.addListener(new MyListener());// You have to call addListener before prepare
+ *                     captureManager.prepare();
+ *                     <b>//...</b>
+ *                 }
+ *             </code>
+ *         </pre>
+ *     </li>
+ *     <li>
+ *         Call {@link #begin()} and {@link #stop()} at appropriate places. Here they are called in a button
+ *         click listener.
+ *         <pre>
+ *             <code>
+ *                 public void recordButtonListener(View view) {
+ *                     if (recording) {
+ *                         captureManager.stop();
+ *                         captureManager.reset();// You have to call reset before calling prepare again.
+ *                         recording = false;
+ *                     } else {
+ *                         captureManager.begin();
+ *                         recording = true;
+ *                     }
+ *                 }
+ *             </code>
+ *         </pre>
+ *     </li>
+ *     <li>
+ *         When data is ready to be sent to Sana, probably after some post processing, call
+ *         {@link com.sana.android.plugin.application.CommManager#sendData(android.app.Activity)}.
+ *         <pre>
+ *             <code>
+ *                 CommManager.getInstance().sendData(this);
+ *             </code>
+ *         </pre>
+ *     </li>
+ * </ol>
  *
  * @author Han Lin
  */
 public class CaptureManager {
+    private static final String LOG_TAG = "CaptureManager";
     private static final String RESET_NOT_CALLED_ERROR_MSG =
             "reset must be called before prepare";
     private static final String PREPARE_NOT_CALLED_ERROR_MSG =
             "prepare must be called before begin";
-    private static final String NULL_SETTING_EXCEPTION_MSG =
-            "Capture setting can't be null";
+    private static final String STOP_INTERRUPTED_EXCEPTION_MSG =
+            "Call to method - stop is interrupted.";
 
     private GeneralDevice dataSource;
     private DataWithEvent data;
     private Vector<DataListener> listeners;
-
-    public CaptureManager(Feature source, MimeType type) {
-        this(source, type, CaptureSetting.defaultSetting(source, type));
+    public CaptureManager(
+            Feature source, MimeType type, ContentResolver contentResolver) {
+        this(
+                source,
+                type,
+                contentResolver,
+                CaptureSetting.defaultSetting(source, type)
+        );
     }
 
     /**
@@ -43,14 +124,21 @@ public class CaptureManager {
      * @param setting   The setting to be passed to the sensor.
      */
     public CaptureManager(
-            Feature source, MimeType type, CaptureSetting setting) {
+            Feature source,
+            MimeType type,
+            ContentResolver contentResolver,
+            CaptureSetting setting
+    ) {
         if (setting == null) {
             setting = CaptureSetting.defaultSetting(source, type);
         }
+        setting.setContentResolver(contentResolver);
         this.dataSource =
-                DeviceFactory.getDeviceInstance(source, type, setting);
-        this.listeners = new Vector<>();
+                DeviceFactory.getDeviceInstance(source, setting);
+        this.listeners = new Vector<DataListener>();
     }
+
+
 
     /**
      * Add a listener to the sensing device. Call this method if you wish
@@ -73,7 +161,7 @@ public class CaptureManager {
      * @param listener
      */
     public void removeListener(DataListener listener) {
-        ArrayList<DataListener> removing = new ArrayList<>();
+        ArrayList<DataListener> removing = new ArrayList<DataListener>();
         removing.add(listener);
         this.listeners.removeAll(removing);
     }
@@ -105,6 +193,7 @@ public class CaptureManager {
             throw new InvalidInvocationError(
                     CaptureManager.PREPARE_NOT_CALLED_ERROR_MSG);
         }
+        this.data.getEvent().startEvent();
         this.dataSource.begin();
     }
 
@@ -117,6 +206,15 @@ public class CaptureManager {
      */
     public DataWithEvent stop() {
         this.dataSource.stop();
+        try {
+            this.data.getEvent().stopEvent();
+        } catch (Exception e) {
+            Log.e(
+                    CaptureManager.LOG_TAG,
+                    CaptureManager.STOP_INTERRUPTED_EXCEPTION_MSG,
+                    e
+            );
+        }
         return data;
     }
 
@@ -127,5 +225,9 @@ public class CaptureManager {
     public void reset() {
         this.data = null;
         this.dataSource.reset();
+    }
+
+    public GeneralDevice getDevice(){
+        return this.dataSource;
     }
 }

@@ -1,0 +1,74 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
+    android:id="@+id/frame"
+    tools:context=".ReactionAppActivity">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+    <TextView android:id="@+id/welcome_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:keepScreenOn="true"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:layout_gravity="center_horizontal"
+        android:text="Reaction time diagnosis" />
+
+
+    <TextView android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        android:keepScreenOn="true"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:layout_gravity="center_horizontal"
+        android:text="Push button on Arduino to start" />
+
+    <TextView android:id="@+id/action_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:textSize="50sp"
+        android:gravity="center"
+        android:text="WAIT" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="500dp"
+        android:gravity="center_horizontal" >
+
+        <TextView android:id="@+id/info_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:keepScreenOn="true"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:background="@drawable/send_button_shape"
+        android:text="Send"
+        android:id="@+id/send_button"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#FFFF"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="650dp"
+        android:onClick="sendDataToSana"/>
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+</FrameLayout>

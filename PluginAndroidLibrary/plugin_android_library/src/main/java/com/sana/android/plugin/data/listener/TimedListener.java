@@ -1,5 +1,6 @@
 package com.sana.android.plugin.data.listener;
 
+import android.os.Debug;
 import android.util.Log;
 
 import java.util.concurrent.Executors;
@@ -8,6 +9,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * This is the base abstract listener that listens for updates by a fixed time interval.
+ * It has a worker thread that schedules task by the given time interval.
  *
  * @author Han Lin
  */
@@ -16,6 +19,8 @@ public abstract class TimedListener implements Runnable, DataListener {
             "TimedListener";
     private final static String SHUTDOWN_INTERRUPTED_EXCEPTION_MSG =
             "Timed listener shutdown interrupted.";
+    private final static String SHUTDOWN_TIMEOUT_MSG =
+            "Timeout happened while shutting down the listener.";
     private final static String FATAL_INTERRUPTION_MSG_FORMAT =
             "Unable to carry out critical operation - %s";
     private final static String PUT_BYTE_OPERATION_NAME =
@@ -30,8 +35,11 @@ public abstract class TimedListener implements Runnable, DataListener {
     private LinkedBlockingQueue<Object> buffer;
     private Object sender;
 
+    public TimedListener() {}
+
     /**
-     * @param interval  Is the time interval in milliseconds.
+     * @param interval   Is the time interval's value
+     * @param unit        The time interval's unit.
      */
     public TimedListener(Object sender, long interval, TimeUnit unit) {
         this.sender = sender;
@@ -39,6 +47,10 @@ public abstract class TimedListener implements Runnable, DataListener {
         this.timeUnit = unit;
         this.scheduledThread = Executors.newSingleThreadScheduledExecutor();
         this.buffer = new LinkedBlockingQueue<Object>();
+    }
+
+    public void setExpectedSender(Object sender) {
+        this.sender = sender;
     }
 
     public Object getExpectedSender() {
@@ -66,6 +78,10 @@ public abstract class TimedListener implements Runnable, DataListener {
 
     @Override
     public synchronized void putData(Object[] data) {
+        Log.d(
+                TimedListener.LOG_TAG,
+                "Received data of length " + data.length
+        );
         for (Object element : data) {
             try {
                 this.buffer.put(element);
@@ -100,10 +116,12 @@ public abstract class TimedListener implements Runnable, DataListener {
         this.scheduledThread.shutdown();
         try {
             if (!this.scheduledThread.awaitTermination(timeout,unit)) {
-                // TODO decide what to do when shutdown times out.
+                Log.d(
+                        TimedListener.LOG_TAG,
+                        TimedListener.SHUTDOWN_TIMEOUT_MSG
+                );
             }
         } catch (InterruptedException e) {
-            // TODO decide what to do when shutdown is interrupted.
             Log.d(
                     TimedListener.LOG_TAG,
                     TimedListener.SHUTDOWN_INTERRUPTED_EXCEPTION_MSG,
@@ -112,6 +130,12 @@ public abstract class TimedListener implements Runnable, DataListener {
         }
     }
 
+    /**
+     * You may need to handle race condition if your specified time interval is
+     * too small and this method is expected to take some time. This is because
+     * the worker thread schedules the task using
+     * {@link java.util.concurrent.ScheduledExecutorService#scheduleWithFixedDelay(Runnable, long, long, java.util.concurrent.TimeUnit)}.
+     */
     @Override
     public abstract void processData(Object sender, Object[] data);
 }
