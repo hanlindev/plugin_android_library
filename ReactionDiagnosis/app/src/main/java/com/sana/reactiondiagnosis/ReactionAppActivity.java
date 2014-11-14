@@ -202,7 +202,7 @@ public class ReactionAppActivity extends Activity {
                 });
 
                 Random rand = new Random();
-                int time = (int) (1500 + rand.nextInt(1000) * 3);
+                int time = (int) (1000 + rand.nextInt(1000) * 3);
                 try {
                     Thread.sleep(time);
                     curTime = System.currentTimeMillis();
@@ -281,9 +281,9 @@ public class ReactionAppActivity extends Activity {
                             @Override
                             public void run() {
                                 actionMessage.setText("Done");
+                                sendButton.setVisibility(View.VISIBLE);
                             }
                         });
-                        sendButton.setVisibility(View.VISIBLE);
                         break;
                     }
 
@@ -327,8 +327,9 @@ public class ReactionAppActivity extends Activity {
         return "Average reaction time is: " + reactionTime + "ms.";
     }
 
-    private void sendDataToSana(View view) {
+    public void sendDataToSana(View view) {
         CommManager cm = CommManager.getInstance();
+        cm.respondToIntent(getIntent());
         cm.sendData(this, getDataString());
     }
 }

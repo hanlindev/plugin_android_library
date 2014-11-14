@@ -66,7 +66,7 @@
         android:layout_gravity="center_horizontal"
         android:textColor="#FFFF"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="500dp"
+        android:layout_marginTop="650dp"
         android:onClick="sendDataToSana"/>
 
     <!-- This FrameLayout insets its children based on system windows using

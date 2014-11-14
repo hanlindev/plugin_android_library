@@ -12,8 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.sana.android.plugin.application.CaptureManager;
+import com.sana.android.plugin.communication.MimeType;
 import com.sana.android.plugin.data.DataWithEvent;
 import com.sana.android.plugin.data.listener.TimedListener;
+import com.sana.android.plugin.hardware.Feature;
 import com.sana.android.plugin.hardware.UsbAccessoryDevice;
 
 import java.util.concurrent.TimeUnit;
