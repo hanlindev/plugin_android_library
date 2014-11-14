@@ -8,6 +8,13 @@ What's in here
 The libary code is in the PluginAndroidLibrary folder.
 The other folders in the repository root are the sample apps showing the usage of the library and how to import the library. The ReactionDiagnosis requires additional hardware. Please refer to the readme in that project directory.
 
+Prerequisite
+------------
+* Android Studio
+* JDK 7
+* Android SDK 19
+* Android Build Tools 19.1
+
 How to import the library
 -------------------------
 This section assumes that the Android app's project directory and the Library's project directory are in the same parent directory.
