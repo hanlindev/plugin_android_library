@@ -115,7 +115,11 @@ public class RecordHeartbeat extends Activity {
         if(!continueRecording && bluetoothConnected) {
             ProgressWheel start = (ProgressWheel) findViewById(R.id.startButton);
             start.setText("Recording");
-            captureManager.prepare();
+            try{
+                captureManager.prepare();
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
             captureManager.begin();
             startTime = System.nanoTime();
             // ... do recording ...
@@ -191,10 +195,15 @@ public class RecordHeartbeat extends Activity {
     }
 
     public void sendDataToSana(View view) {
-        if (!continueRecording) {
+        if (!continueRecording && CommManager.getInstance().getMimeType().toString().equals("text/plain")) {
             CommManager cm = CommManager.getInstance();
             cm.sendData(this, getDataString());
-        } else {
+        }
+        else if (!continueRecording && CommManager.getInstance().getMimeType().toString().equals("audio/3gpp")) {
+            CommManager cm = CommManager.getInstance();
+            cm.sendData(this);
+        }
+        else {
             Toast errorToast = Toast.makeText(
                     getApplicationContext(),
                     "Please finish recording heartbeat before sending data",
