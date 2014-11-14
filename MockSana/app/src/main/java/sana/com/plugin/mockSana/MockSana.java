@@ -98,7 +98,6 @@ public class MockSana extends ActionBarActivity {
                     showToast("IO exception");
                 }
             }
-            System.out.println(data);
         }
         showToast("binary data recieved");
     }
@@ -128,25 +127,21 @@ public class MockSana extends ActionBarActivity {
             case TEXT_DATA_REQUEST:
                 if (resultCode == RESULT_OK) {
                     //react when plain text is received
-                    System.out.println("++++++++++++++++Text data intent received.");
                     handleSendText(data);
                 }
                 break;
             case IMAGE_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    System.out.println("++++++++++++++++Binary data intent received.");
                     showToast("Image saved.");
                 }
                 break;
             case AUDIO_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    System.out.println("++++++++++++++++Binary data intent received.");
                     showToast("Audio saved.");
                 }
                 break;
             case VIDEO_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    System.out.println("++++++++++++++++Binary data intent received.");
                     showToast("Video saved.");
                 }
                 break;
@@ -167,7 +162,6 @@ public class MockSana extends ActionBarActivity {
             createLaunchIntent("sana.com.plugin.mockApp.PICTURE", "image/jpeg" , "jpg", "images", IMAGE_REQUEST);
         }
         else if (audioRadio.isChecked()) {
-            System.out.println("++++++++++++++++++++++++audio intent launched");
             createLaunchIntent("sana.com.plugin.mockApp.AUDIO", "audio/3gpp" , "3gp", "audio", AUDIO_REQUEST);
         }
         else if (videoRadio.isChecked()) {
@@ -202,7 +196,6 @@ public class MockSana extends ActionBarActivity {
         LaunchIntent.setAction(action);
         LaunchIntent.setType(type);
         Uri contentUri = getContentUri(generateRandomFileName(ext), subfolder);
-        System.out.println("---------------------------" + getContentResolver().getType(contentUri));
 
         // grant permission for writing and reading the uri
         grantUriPermission("sana.com.plugin.mockApp", contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -232,7 +225,7 @@ public class MockSana extends ActionBarActivity {
             newFile.getParentFile().mkdirs();
             newFile.createNewFile();
         } catch (IOException e) {
-            System.out.println("++++++++++++++++ failed creating new file");
+            e.printStackTrace();
         }
         Uri contentUri = getUriForFile(this, "sana.com.plugin.mockSana.fileprovider", newFile);
         return contentUri;

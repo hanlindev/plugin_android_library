@@ -16,6 +16,7 @@ public class ImagePreview extends ActionBarActivity {
 
     private ImageView imgPreview;
     private String imagePath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,14 +56,10 @@ public class ImagePreview extends ActionBarActivity {
         try {
             // bimatp factory
             BitmapFactory.Options options = new BitmapFactory.Options();
-
             // downsizing image as it throws OutOfMemory Exception for larger
             // images
             options.inSampleSize = 8;
-
-            final Bitmap bitmap = BitmapFactory.decodeFile(imagePath,
-                    options);
-
+            final Bitmap bitmap = BitmapFactory.decodeFile(imagePath,options);
             imgPreview.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
